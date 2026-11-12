@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumineglyph | 日英対応のWebデザインと開発</title>
+<meta name="description" content="バイリンガルWebデザイナーとフルスタックエンジニアが、要件整理からデザイン・開発まで連携する制作チーム。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Sans+JP:wght@400;500&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   Lumineglyph Wireframe
+   色・文字の仮設定は :root の変数でまとめて変更できます
+   ========================================================= */
+:root{
+  --bg:#121212;
+  --bg-center:#161616;
+  --text:#F5F3EF;
+  --muted:rgba(245,243,239,.62);
+  --faint:rgba(245,243,239,.14);
+  --line:rgba(245,243,239,.22);
+  --accent:#FF8A45;
+  --serif-en:"Cormorant Garamond","Times New Roman",serif;
+  --serif-jp:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --sans:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --center-w:640px;
+  --header-h:60px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:15px;line-height:1.9;letter-spacing:.03em;
+  overflow-x:hidden;
+  /* 背景の細い縦罫線 */
+  background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(12.5vw - 1px),rgba(255,255,255,.035) calc(12.5vw - 1px),rgba(255,255,255,.035) 12.5vw);
+}
+html[lang="en"] body{letter-spacing:.01em}
+a{color:inherit}
+img{max-width:100%;display:block}
+ul,ol{margin:0;padding:0;list-style:none}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- 3カラム（PC） ---------- */
+.layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,var(--center-w)) minmax(0,1fr);
+  min-height:100vh;
+}
+.col-side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.col-center{
+  background:var(--bg-center);
+  border-left:1px solid var(--faint);border-right:1px solid var(--faint);
+  min-width:0;
+}
+
+/* ---------- 左カラム ---------- */
+.left{padding:48px 40px;align-items:center;justify-content:space-between}
+/* 線画の共通設定（細く白い線） */
+.g{display:block;fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round;overflow:visible}
+.g *{vector-effect:non-scaling-stroke}
+.g .dot{fill:currentColor;stroke:none}
+.g.fill{fill:currentColor;stroke:none}
+.hero-sun,.v-sun,.v-moon,.contact-moon{aspect-ratio:1}
+.orbit{aspect-ratio:400/210}
+.mark{align-self:flex-start;display:block;text-decoration:none}
+.mark img{width:84px;height:auto}
+.brand-visual{position:relative;width:min(240px,62%);margin:0 auto}
+.brand-visual .orbit{position:absolute;width:190%;left:-45%;top:50%;transform:translateY(-50%);color:rgba(245,243,239,.45);pointer-events:none}
+.brand-visual .ph{z-index:1}
+.brand-visual .v-sun{position:absolute;width:46px;left:-60px;top:-60px;color:rgba(245,243,239,.55)}
+.brand-visual .v-moon{position:absolute;width:24px;right:-40px;bottom:-38px;color:rgba(245,243,239,.75)}
+.ph{
+  position:relative;background:
+    linear-gradient(135deg,transparent calc(50% - .5px),var(--faint) calc(50% - .5px),var(--faint) calc(50% + .5px),transparent calc(50% + .5px)),
+    linear-gradient(45deg,transparent calc(50% - .5px),var(--faint) calc(50% - .5px),var(--faint) calc(50% + .5px),transparent calc(50% + .5px)),
+    #1d1d1d;
+  border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+}
+.ph-label{font-family:var(--serif-en);font-style:italic;font-size:14px;color:var(--muted);background:#1d1d1d;padding:2px 10px;letter-spacing:.06em}
+.brand-visual .ph{aspect-ratio:3/4.2}
+.left-brand{text-align:center}
+.left-brand .name{margin:0 auto;width:min(250px,80%)}
+.left-brand .name img{width:100%;height:auto}
+.left-brand .tagline{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:18px;line-height:1.9}
+
+/* ---------- 右カラム ---------- */
+.right{padding:48px 40px;justify-content:space-between;align-items:flex-start}
+/* 言語切り替え：テキスト＋下線 */
+.lang{display:inline-flex;align-items:center;gap:2px}
+.lang .sep{color:var(--line);font-size:12px}
+.lang button{
+  appearance:none;border:0;background:transparent;color:var(--muted);cursor:pointer;position:relative;
+  font-family:var(--sans);font-size:12px;letter-spacing:.2em;padding:8px 4px 8px 7px;line-height:1.4;
+}
+.lang button[aria-pressed="true"]{color:var(--text)}
+.lang button[aria-pressed="true"]::after{content:"";position:absolute;left:7px;right:4px;bottom:3px;height:1px;background:var(--accent)}
+.lang button:hover:not([aria-pressed="true"]){color:var(--accent)}
+
+/* セクションナビ：縦の細いレール＋現在地は太陽（Contactは月） */
+.side-nav ol{position:relative}
+.side-nav ol::before{content:"";position:absolute;left:7px;top:18px;bottom:18px;width:1px;background:var(--faint)}
+.side-nav a{
+  display:grid;grid-template-columns:15px 26px auto;align-items:center;column-gap:12px;
+  padding:9px 0;text-decoration:none;color:var(--muted);
+  font-family:var(--sans);font-size:12px;letter-spacing:.22em;text-transform:uppercase;line-height:1.4;transition:color .2s;
+}
+.side-nav .mk{position:relative;width:15px;height:15px;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.side-nav .mk::before{content:"";width:5px;height:5px;border-radius:50%;background:rgba(245,243,239,.35);transition:opacity .2s}
+.side-nav .mk .g{position:absolute;inset:0;width:15px;height:15px;color:var(--accent);opacity:0;transition:opacity .2s}
+.side-nav .n{font-family:var(--serif-en);font-size:14px;letter-spacing:.04em;text-transform:none}
+.side-nav .lb{position:relative;display:inline-flex;align-items:center;gap:12px}
+.side-nav .lb::after{content:"";width:0;height:1px;background:var(--accent);transition:width .3s}
+.side-nav a:hover{color:var(--text)}
+.side-nav a[aria-current="true"]{color:var(--text)}
+.side-nav a[aria-current="true"] .mk::before{opacity:0}
+.side-nav a[aria-current="true"] .mk .g{opacity:1}
+.side-nav a[aria-current="true"] .n{color:var(--accent)}
+.side-nav a[aria-current="true"] .lb::after{width:28px}
+
+/* お問い合わせボタン：細い枠の長方形＋矢印線 */
+.side-cta{
+  display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:10px;row-gap:6px;
+  width:100%;max-width:240px;padding:22px 22px 20px;border:1px solid var(--line);text-decoration:none;transition:border-color .25s;
+}
+.side-cta .g{width:15px;height:15px;color:var(--accent)}
+.side-cta .t{font-family:var(--serif-en);font-size:25px;line-height:1.1;letter-spacing:.01em}
+.side-cta .s{grid-column:1/-1;font-size:12px;color:var(--muted);letter-spacing:.06em}
+.side-cta .ln{grid-column:1/-1;position:relative;width:48px;height:1px;background:var(--accent);margin-top:12px;transition:width .35s}
+.side-cta .ln::after{content:"";position:absolute;right:0;top:-3px;width:7px;height:7px;border-top:1px solid var(--accent);border-right:1px solid var(--accent);transform:rotate(45deg)}
+.side-cta:hover{border-color:var(--accent)}
+.side-cta:hover .ln{width:100%}
+
+/* ---------- 中央：共通 ---------- */
+.section{padding:120px 56px;border-top:1px solid var(--faint);scroll-margin-top:0}
+.section:first-child{border-top:0}
+.eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--serif-en);font-style:italic;font-size:18px;color:var(--accent);letter-spacing:.04em}
+.eyebrow .g{width:18px;height:18px;flex:none}
+.h2{font-family:var(--serif-jp);font-weight:400;font-size:30px;line-height:1.6;margin-top:18px;letter-spacing:.06em}
+html[lang="en"] .h2{font-family:var(--serif-en);font-size:38px;line-height:1.2;letter-spacing:0;font-weight:500}
+.lead{margin-top:32px;color:var(--text)}
+.muted{color:var(--muted)}
+
+/* ボタン */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:54px;padding:12px 26px;
+  border-radius:999px;text-decoration:none;font-size:15px;font-weight:500;letter-spacing:.06em;line-height:1.4;text-align:center;
+  border:1px solid var(--accent);transition:background .2s,color .2s;
+}
+.btn svg{width:18px;height:18px;flex:none}
+.btn-primary{background:var(--accent);color:var(--bg)}
+.btn-primary:hover{background:transparent;color:var(--accent)}
+.btn-ghost{border-color:var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ---------- Top ---------- */
+.hero{padding-top:96px;padding-bottom:110px;position:relative;overflow:hidden}
+.hero-sun{position:absolute;width:330px;right:-120px;top:-140px;color:rgba(245,243,239,.32);pointer-events:none}
+.hero-mark{width:132px;height:auto;margin-top:48px}
+.hero>*:not(.hero-sun){position:relative}
+.hero-brand{font-family:var(--serif-en);font-weight:500;font-size:clamp(52px,7vw,84px);line-height:1;letter-spacing:.01em;margin-top:28px}
+.hero h1{font-family:var(--serif-jp);font-weight:400;font-size:28px;line-height:1.6;margin-top:28px;letter-spacing:.08em}
+html[lang="en"] .hero h1{font-family:var(--serif-en);font-style:italic;font-size:30px;line-height:1.3;letter-spacing:0;color:var(--accent)}
+html[lang="ja"] .hero h1{color:var(--accent)}
+.hero-text{margin-top:26px;max-width:34em}
+.duo{margin-top:48px;padding:26px 0;border-top:1px solid var(--faint);border-bottom:1px solid var(--faint)}
+.duo-row{display:flex;align-items:center;gap:0}
+.duo-node{flex:none;width:118px;height:118px;border:1px solid var(--line);border-radius:50%;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;text-align:center;font-family:var(--serif-en);font-style:italic;font-size:16px;line-height:1.25;padding:10px}
+.duo-node .g{width:20px;height:20px;color:var(--text);opacity:.8}
+.duo-link{flex:1;height:1px;background:var(--line);position:relative;min-width:24px}
+.duo-link::after{content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;border-radius:50%;background:var(--accent);transform:translate(-50%,-50%)}
+.duo-caption{margin-top:18px;font-size:14px;color:var(--muted)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:44px}
+
+/* ---------- About ---------- */
+.points{margin-top:48px;display:grid;gap:0}
+.point{display:grid;grid-template-columns:56px 1fr;gap:18px;padding:28px 0;border-top:1px solid var(--faint)}
+.point:last-child{border-bottom:1px solid var(--faint)}
+.point .num{width:44px;height:44px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--serif-en);font-style:italic;font-size:17px;color:var(--accent)}
+.point h3{font-size:17px;font-weight:500;line-height:1.6}
+.point p{margin-top:6px;color:var(--muted);font-size:14.5px}
+
+/* ---------- Services ---------- */
+.services{margin-top:48px;display:grid;gap:20px}
+.service{border:1px solid var(--line);padding:34px 32px;position:relative}
+.service .num{font-family:var(--serif-en);font-style:italic;font-size:16px;color:var(--accent)}
+.service h3{font-family:var(--serif-jp);font-weight:500;font-size:22px;line-height:1.5;margin-top:8px;letter-spacing:.05em}
+html[lang="en"] .service h3{font-family:var(--serif-en);font-size:27px;letter-spacing:0;line-height:1.2}
+.service p.desc{margin-top:14px;color:var(--muted);font-size:14.5px}
+.example{margin-top:22px;padding-top:18px;border-top:1px dashed var(--line);display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+.example .tag{font-size:12px;letter-spacing:.08em;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:2px 12px;white-space:nowrap;line-height:1.7;margin-top:2px}
+.example p{font-size:14.5px}
+
+/* ---------- Works（空の枠のみ） ---------- */
+.works-grid{margin-top:48px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 24px}
+.work-frame{aspect-ratio:4/3;border:1px dashed var(--line);background:#1a1a1a;pointer-events:none}
+
+/* ---------- Team ---------- */
+.profiles{margin-top:48px;display:grid;gap:64px}
+.profile{display:grid;grid-template-columns:180px minmax(0,1fr);gap:32px;align-items:start}
+.profile .ph{aspect-ratio:4/5;border-radius:0}
+.profile .role{font-size:13px;color:var(--accent);letter-spacing:.08em}
+.profile .pname{font-family:var(--serif-jp);font-size:26px;font-weight:400;line-height:1.4;margin-top:6px;letter-spacing:.06em}
+.profile .pname-en{display:block;font-family:var(--serif-en);font-style:italic;font-size:17px;color:var(--muted);letter-spacing:.02em}
+html[lang="en"] .profile .pname{font-family:var(--serif-en);font-size:32px;letter-spacing:0;font-weight:500}
+html[lang="en"] .profile .pname-en{display:none}
+.profile .pname-slot:empty{display:none}
+.profile .pdesc{margin-top:18px;font-size:14.5px}
+.scope{margin-top:16px;font-size:14px;color:var(--muted)}
+.scope b{color:var(--text);font-weight:500;margin-right:.5em}
+.skills{margin-top:24px;padding-top:20px;border-top:1px solid var(--faint);display:grid;gap:14px}
+.skills h4{margin:0;font-family:var(--serif-en);font-style:italic;font-weight:400;font-size:16px;color:var(--accent);letter-spacing:.04em}
+html[lang="ja"] .skills h4.jp{font-family:var(--sans);font-style:normal;font-size:13px;letter-spacing:.08em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chips li{font-size:13px;line-height:1.6;border:1px solid var(--line);border-radius:999px;padding:3px 12px;letter-spacing:.04em}
+
+/* ---------- Process ---------- */
+.steps{margin-top:48px;position:relative}
+.steps::before{content:"";position:absolute;left:27px;top:28px;bottom:28px;width:1px;background:var(--line)}
+.step{display:grid;grid-template-columns:56px 1fr;gap:22px;padding:14px 0 30px;position:relative}
+.step .num{width:56px;height:56px;border-radius:50%;border:1px solid var(--line);background:var(--bg-center);display:flex;align-items:center;justify-content:center;font-family:var(--serif-en);font-style:italic;font-size:19px;position:relative;z-index:1}
+.step:last-child .num{border-color:var(--accent);color:var(--accent)}
+.step h3{font-size:18px;font-weight:500;line-height:1.6;margin-top:12px}
+.step p{margin-top:4px;color:var(--muted);font-size:14.5px}
+
+/* ---------- Contact ---------- */
+.contact{text-align:center;padding-bottom:64px}
+.contact .eyebrow{justify-content:center}
+.contact-moon{width:84px;margin:0 auto 28px;color:rgba(245,243,239,.7)}
+.contact-title{font-family:var(--serif-en);font-style:normal;font-weight:400;letter-spacing:.01em;font-size:clamp(48px,7vw,76px);line-height:1.05;margin-top:22px}
+.contact .lead{max-width:30em;margin-left:auto;margin-right:auto}
+.channels{margin:48px auto 0;max-width:500px;display:grid;text-align:left;border-top:1px solid var(--line)}
+.channel{
+  display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:center;padding:22px 6px;
+  border-bottom:1px solid var(--line);text-decoration:none;transition:background .2s;
+}
+.channel .ico{font-family:var(--serif-en);font-size:20px;line-height:1;color:var(--accent)}
+.channel .label{font-size:15px;font-weight:500;line-height:1.5}
+.channel .sub{display:block;font-size:12.5px;color:var(--muted);font-weight:400}
+.channel .go{color:var(--accent)}
+.channel .go svg{width:20px;height:20px;display:block;transition:transform .2s}
+a.channel:hover{background:rgba(255,138,69,.06)}
+a.channel:hover .go svg{transform:translateX(4px)}
+a.channel.primary .label{color:var(--accent)}
+.channel.is-disabled{cursor:default}
+.channel.is-disabled .ico,.channel.is-disabled .label{opacity:.55}
+.channel.is-disabled .go{color:var(--muted);font-size:12px;letter-spacing:.06em}
+.footer{margin-top:96px;padding-top:28px;border-top:1px solid var(--faint);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.footer .fbrand img{height:16px;width:auto}
+
+/* ---------- モバイルヘッダー / メニュー ---------- */
+.m-header,.m-menu{display:none}
+
+/* =========================================================
+   タブレット・スマホ（1199px以下は1カラム）
+   ========================================================= */
+@media (max-width:1199px){
+  body{background-image:none}
+  .layout{display:block}
+  .col-side{display:none}
+  .col-center{max-width:680px;margin:0 auto;border:0;background:transparent}
+  .section{scroll-margin-top:var(--header-h)}
+
+  .m-header{
+    display:flex;position:fixed;inset:0 0 auto 0;height:var(--header-h);z-index:50;
+    align-items:center;justify-content:space-between;gap:10px;padding:0 16px;
+    background:rgba(18,18,18,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--faint);
+  }
+  .m-brand{display:flex;align-items:center;text-decoration:none;min-width:0}
+  .m-brand img{height:13px;width:auto;max-width:100%}
+  .m-actions{display:flex;align-items:center;gap:8px}
+  .m-actions .lang button{padding:8px 2px 8px 5px}
+  .m-actions .lang button[aria-pressed="true"]::after{left:5px;right:2px}
+  .m-contact{
+    display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 14px;border-radius:999px;
+    background:var(--accent);color:var(--bg);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.04em;white-space:nowrap;
+  }
+  .m-toggle{
+    appearance:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--text);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;padding:0;
+  }
+  .m-toggle span{display:block;width:16px;height:1px;background:currentColor;transition:transform .25s,opacity .25s}
+  .m-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(3px) rotate(45deg)}
+  .m-toggle[aria-expanded="true"] span:nth-child(2){transform:translateY(-3px) rotate(-45deg)}
+
+  .m-menu{
+    display:block;position:fixed;inset:var(--header-h) 0 0 0;z-index:49;background:var(--bg);overflow-y:auto;
+    padding:28px 24px 40px;visibility:hidden;opacity:0;transform:translateY(-8px);transition:opacity .25s,transform .25s,visibility 0s .25s;
+  }
+  .m-menu.open{visibility:visible;opacity:1;transform:none;transition:opacity .25s,transform .25s}
+  .m-menu ol{border-top:1px solid var(--faint)}
+  .m-menu li a{
+    display:flex;align-items:baseline;gap:14px;padding:16px 4px;border-bottom:1px solid var(--faint);text-decoration:none;
+    font-family:var(--serif-en);font-style:normal;font-size:24px;line-height:1.3;
+  }
+  .m-menu li a .n{font-size:14px;color:var(--accent)}
+  .m-menu li a .jp{margin-left:auto;font-family:var(--sans);font-style:normal;font-size:12px;color:var(--muted);letter-spacing:.06em}
+  .m-menu li a .jp:empty{display:none}
+  .m-menu li a[aria-current="true"]{color:var(--accent)}
+  .m-menu .btn{width:100%;margin-top:28px}
+
+  .hero{padding-top:calc(var(--header-h) + 56px)}
+  .hero-brand{margin-top:36px}
+}
+
+@media (max-width:640px){
+  body{font-size:15px}
+  .section{padding:88px 22px}
+  .hero{padding-top:calc(var(--header-h) + 44px);padding-bottom:88px}
+  .hero-sun{width:230px;right:-100px;top:-95px}
+  .hero-mark{width:104px;margin-top:36px}
+  .hero-brand{font-size:clamp(46px,14vw,60px);margin-top:30px}
+  .hero h1{font-size:21px;letter-spacing:.04em}
+  html[lang="en"] .hero h1{font-size:26px}
+  .duo-node{width:100px;height:100px;font-size:14.5px}
+  .hero-cta{flex-direction:column}
+  .hero-cta .btn{width:100%}
+  .h2{font-size:24px}
+  html[lang="en"] .h2{font-size:31px}
+  .service{padding:28px 22px}
+  .example{grid-template-columns:1fr;gap:10px}
+  .example .tag{justify-self:start}
+  .works-grid{grid-template-columns:1fr;gap:28px}
+  .profile{grid-template-columns:1fr;gap:22px}
+  .profile .ph{width:62%;max-width:240px}
+  .contact-title{font-size:clamp(44px,13vw,60px)}
+  .channel{padding:20px 4px;gap:12px;grid-template-columns:28px 1fr auto}
+  .footer{justify-content:center;text-align:center;flex-direction:column;align-items:center}
+}
+@media (max-width:360px){
+  .m-brand img{height:11px}
+  .m-contact{padding:0 10px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 太陽・月・軌道の線画（ロゴのモチーフ） ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="g-sun" viewBox="0 0 200 200"><circle cx="100" cy="100" r="42"/><path d="M151.9 103.6L197.8 106.8M149.2 116.9L160.5 120.8M143.1 129.1L169.6 147.0M134.1 139.2L145.9 152.8M122.8 146.7L140.3 182.7M109.9 151.0L111.4 158.9M96.4 151.9L94.4 179.8M83.1 149.2L75.9 170.0M70.9 143.1L45.2 181.2M60.8 134.1L51.7 142.0M53.3 122.8L24.5 136.8M49.0 109.9L31.3 113.4M48.1 96.4L8.2 93.6M50.8 83.1L43.3 80.5M56.9 70.9L33.7 55.3M65.9 60.8L51.5 44.2M77.2 53.3L57.0 11.9M90.1 49.0L87.8 37.2M103.6 48.1L105.9 16.2M116.9 50.8L122.8 33.8M129.1 56.9L151.4 23.7M139.2 65.9L145.3 60.6M146.7 77.2L171.9 64.9M151.0 90.1L172.6 85.9"/></symbol>
+  <symbol id="g-sun-s" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M19 12L23 12M16.95 16.95L19.78 19.78M12 19L12 23M7.05 16.95L4.22 19.78M5 12L1 12M7.05 7.05L4.22 4.22M12 5L12 1M16.95 7.05L19.78 4.22"/></symbol>
+  <symbol id="g-moon" viewBox="0 0 200 200"><path d="M91.4 30.5A70 70 0 1 0 158.7 138.2A64 64 0 0 1 91.4 30.5Z"/></symbol>
+  <symbol id="g-orbit" viewBox="0 0 400 210"><path d="M4 70A100 100 0 0 1 196.5 86.6"/><path d="M203.5 117.4A100 100 0 0 0 396 134"/><circle cx="200" cy="102" r="3.2" class="dot"/></symbol>
+</svg>
+
+<!-- ===== モバイル用ヘッダー（1199px以下で表示） ===== -->
+<header class="m-header">
+  <a class="m-brand" href="#top"><img src="assets/logo-type-white.png" alt="Lumineglyph Design"></a>
+  <div class="m-actions">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="ja" aria-pressed="true">JP</button><span class="sep" aria-hidden="true">/</span><button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <a class="m-contact" href="#contact" data-i18n="headerContact">相談する</a>
+    <button class="m-toggle" type="button" aria-expanded="false" aria-controls="m-menu" data-i18n-aria="menuOpen" aria-label="メニューを開く">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+<nav class="m-menu" id="m-menu" aria-label="Mobile">
+  <ol class="nav-list">
+    <li><a href="#top"><span class="n">00.</span>Top<span class="jp" data-i18n="navTopSub">トップ</span></a></li>
+    <li><a href="#about"><span class="n">01.</span>About<span class="jp" data-i18n="navAboutSub">私たちについて</span></a></li>
+    <li><a href="#services"><span class="n">02.</span>Services<span class="jp" data-i18n="navServicesSub">サービス</span></a></li>
+    <li><a href="#works"><span class="n">03.</span>Works<span class="jp" data-i18n="navWorksSub">制作実績</span></a></li>
+    <li><a href="#team"><span class="n">04.</span>Team<span class="jp" data-i18n="navTeamSub">チーム紹介</span></a></li>
+    <li><a href="#process"><span class="n">05.</span>Process<span class="jp" data-i18n="navProcessSub">制作の流れ</span></a></li>
+    <li><a href="#contact"><span class="n">06.</span>Contact<span class="jp" data-i18n="navContactSub">お問い合わせ</span></a></li>
+  </ol>
+  <a class="btn btn-primary" href="#contact"><span data-i18n="ctaConsult">制作の相談をする</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+</nav>
+
+<div class="layout">
+
+  <!-- ===== 左カラム：屋号・ビジュアル（PCで固定表示） ===== -->
+  <aside class="col-side left" aria-label="Lumineglyph">
+    <!-- ロゴ：assets/logo-mark-white.png -->
+    <a class="mark" href="#top"><img src="assets/logo-mark-white.png" alt="Lumineglyph Top"></a>
+    <div class="brand-visual">
+      <svg class="g v-sun" aria-hidden="true"><use href="#g-sun"/></svg>
+      <svg class="g fill v-moon" aria-hidden="true"><use href="#g-moon"/></svg>
+      <!-- ▼差し替え：ブランドビジュアル（縦長）。 .ph を <img src="..." alt=""> に置き換え -->
+      <div class="ph"><span class="ph-label">Brand Visual</span></div>
+    </div>
+    <div class="left-brand">
+      <p class="name"><img src="assets/logo-type-white.png" alt="Lumineglyph Design"></p>
+      <p class="tagline">Bilingual Web Design<br>&amp; Full-Stack Development</p>
+    </div>
+  </aside>
+
+  <!-- ===== 中央カラム：コンテンツ ===== -->
+  <main class="col-center">
+
+    <!-- Top -->
+    <section class="section hero" id="top" data-nav="top">
+      <svg class="g hero-sun" aria-hidden="true"><use href="#g-sun"/></svg>
+      <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>Bilingual Web Design &amp; Development</p>
+      <img class="hero-mark" src="assets/logo-mark-white.png" alt="">
+      <p class="hero-brand">Lumineglyph</p>
+      <h1 data-i18n="heroTitle">日英対応のWebデザインと開発</h1>
+      <p class="hero-text" data-i18n="heroText">教室や小規模事業のホームページから、予約・申込機能の開発まで。要件整理から公開まで、デザイナーとエンジニアが連携して進めます。</p>
+
+      <div class="duo">
+        <div class="duo-row" aria-hidden="true">
+          <span class="duo-node"><svg class="g"><use href="#g-sun-s"/></svg><span>Bilingual<br>Web Designer</span></span>
+          <span class="duo-link"></span>
+          <span class="duo-node"><svg class="g fill"><use href="#g-moon"/></svg><span>Full-Stack<br>Engineer</span></span>
+        </div>
+        <p class="duo-caption" data-i18n="heroDuo">バイリンガルWebデザイナーとフルスタックエンジニアが、要件整理からデザイン・開発まで連携するチームです。</p>
+      </div>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#contact"><span data-i18n="ctaConsult">制作の相談をする</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn-ghost" href="#services" data-i18n="ctaServices">サービスを見る</a>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about" data-nav="about">
+      <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>01 — About</p>
+      <h2 class="h2" data-i18n="aboutTitle">日本語でも英語でも、<br>相談から公開まで一緒に。</h2>
+      <p class="lead" data-i18n="aboutLead">Lumineglyphは、バイリンガルWebデザイナーとフルスタックエンジニアの夫婦で運営する制作チームです。日本語・英語のどちらでもご相談いただけます。日英両方でサービスを届けたい事業者さまの想いを、伝わるWebの形に整えます。</p>
+      <ol class="points">
+        <li class="point">
+          <span class="num">01</span>
+          <div><h3 data-i18n="about1T">日英のコミュニケーション</h3>
+            <p data-i18n="about1D">打ち合わせ、メール、サイトの文言まで、日本語と英語のどちらでも対応します。英語ページは直訳ではなく、読み手に伝わる表現に整えます。</p></div>
+        </li>
+        <li class="point">
+          <span class="num">02</span>
+          <div><h3 data-i18n="about2T">ヒアリング・要件定義</h3>
+            <p data-i18n="about2D">目的や対象、必要なページや機能を一緒に整理し、サイト構成と導線を設計します。内容がまだ固まっていない段階からご相談いただけます。</p></div>
+        </li>
+        <li class="point">
+          <span class="num">03</span>
+          <div><h3 data-i18n="about3T">デザインと開発の連携</h3>
+            <p data-i18n="about3D">デザイナーとエンジニアが最初から同じ要件を共有します。見た目と機能のずれを抑え、公開まで一貫して進めます。</p></div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Services -->
+    <section class="section" id="services" data-nav="services">
+      <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>02 — Services</p>
+      <h2 class="h2" data-i18n="servicesTitle">ご相談いただけること</h2>
+      <div class="services">
+        <article class="service">
+          <p class="num">01</p>
+          <h3 data-i18n="s1T">ホームページ・LP制作</h3>
+          <p class="desc" data-i18n="s1D">教室や事業の魅力が伝わるホームページや、集客用のランディングページを、構成づくりからデザイン・公開まで制作します。</p>
+          <div class="example"><span class="tag" data-i18n="exLabel">相談例</span><p data-i18n="s1E">英語教室の体験レッスンを案内するLPを作り、お問い合わせを増やしたい。</p></div>
+        </article>
+        <article class="service">
+          <p class="num">02</p>
+          <h3 data-i18n="s2T">日英バイリンガルサイト制作</h3>
+          <p class="desc" data-i18n="s2D">日本語と英語の両方でサービスを案内するサイトを制作します。言語の切り替えから、それぞれの読み手に合わせた文言の整理まで対応します。</p>
+          <div class="example"><span class="tag" data-i18n="exLabel">相談例</span><p data-i18n="s2E">海外出身の保護者にも伝わるよう、教室のサイトに英語ページを追加したい。</p></div>
+        </article>
+        <article class="service">
+          <p class="num">03</p>
+          <h3 data-i18n="s3T">予約・申込機能や管理画面の開発</h3>
+          <p class="desc" data-i18n="s3D">予約・申込フォームや、申込者・会員の管理画面など、日々の運営を支える仕組みを開発します。</p>
+          <div class="example"><span class="tag" data-i18n="exLabel">相談例</span><p data-i18n="s3E">体験レッスンの予約受付と申込者の管理を、Web上でまとめて行いたい。</p></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Works：後から実績を追加するための空の枠のみ（クリック動作なし） -->
+    <section class="section" id="works" data-nav="works">
+      <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>03 — Works</p>
+      <h2 class="h2" data-i18n="worksTitle">制作実績</h2>
+      <div class="works-grid" aria-hidden="true">
+        <!-- ▼差し替え：実績を追加するときは .work-frame の中に画像・案件名などを入れる -->
+        <div class="work-frame"></div>
+        <div class="work-frame"></div>
+        <div class="work-frame"></div>
+        <div class="work-frame"></div>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section" id="team" data-nav="team">
+      <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>04 — Team</p>
+      <h2 class="h2" data-i18n="teamTitle">チーム紹介</h2>
+      <div class="profiles">
+
+        <article class="profile">
+          <!-- ▼差し替え：プロフィール写真（Moena） -->
+          <div class="ph"><span class="ph-label">Photo</span></div>
+          <div>
+            <p class="role" data-i18n="p1Role">バイリンガルWebデザイナー / Webディレクター</p>
+            <h3 class="pname"><span data-i18n="p1Name">マイナー萌惠奈</span><span class="pname-en">Moena Miner</span></h3>
+            <p class="pdesc" data-i18n="p1Lead">日本語・英語でのご相談窓口です。何を載せるか、誰に届けるかがまだ決まっていない段階から、一緒に整理してサイトの形にしていきます。</p>
+            <p class="scope"><b data-i18n="scopeLabel">担当</b><span data-i18n="p1Scope">日英での顧客対応、ヒアリング、要件定義、サイト構成・導線設計、日英の文言整理、Webデザイン、STUDIOでのサイト制作、制作ディレクション。SNS投稿の企画・デザイン、イベントの告知バナー・スライド・Peatixページなどの販促制作にも対応します。</span></p>
+            <div class="skills">
+              <div><h4>Tools</h4>
+                <ul class="chips"><li>Figma</li><li>STUDIO</li><li>Canva</li><li>Photoshop</li><li>Illustrator</li></ul></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="profile">
+          <!-- ▼差し替え：プロフィール写真（Engineer） -->
+          <div class="ph"><span class="ph-label">Photo</span></div>
+          <div>
+            <p class="role" data-i18n="p2Role">フルスタックエンジニア</p>
+            <!-- ▼差し替え：氏名。下の data-name 内に名前を入れると肩書きの代わりに表示されます -->
+            <h3 class="pname"><span class="pname-slot" data-name=""></span><span class="p2-title">Full-Stack Engineer</span></h3>
+            <p class="pdesc" data-i18n="p2Lead">予約・申込機能や管理画面など、サイトの裏側で動く仕組みの開発をご相談いただけます。必要な機能と運用に合わせて、無理のない構成をご提案します。</p>
+            <p class="scope"><b data-i18n="scopeLabel">担当</b><span data-i18n="p2Scope">フロントエンド、バックエンド、データベース、クラウド、DevOps。</span></p>
+            <div class="skills">
+              <div><h4 class="jp" data-i18n="sk1">Web開発</h4>
+                <ul class="chips"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>TypeScript</li><li>React</li><li>Next.js</li><li>Nuxt</li><li>NestJS</li></ul></div>
+              <div><h4 class="jp" data-i18n="sk2">バックエンド・データベース</h4>
+                <ul class="chips"><li>Python</li><li>Ruby on Rails</li><li data-i18n="skDb">データベース設計・実装</li></ul></div>
+              <div><h4 class="jp" data-i18n="sk3">インフラ・開発環境</h4>
+                <ul class="chips"><li>AWS</li><li>Terraform</li><li>Docker</li><li>Linux</li><li>Bash</li><li>Git</li><li>GitHub</li></ul></div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section class="section" id="process" data-nav="process">
+      <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>05 — Process</p>
+      <h2 class="h2" data-i18n="processTitle">制作の流れ</h2>
+      <ol class="steps">
+        <li class="step"><span class="num">01</span><div><h3 data-i18n="st1T">ヒアリング</h3><p data-i18n="st1D">目的や対象、必要なページ・機能を伺い、要件を整理します。</p></div></li>
+        <li class="step"><span class="num">02</span><div><h3 data-i18n="st2T">ご提案・お見積もり</h3><p data-i18n="st2D">サイト構成と進め方、お見積もり、スケジュールをご提案します。</p></div></li>
+        <li class="step"><span class="num">03</span><div><h3 data-i18n="st3T">デザイン・開発</h3><p data-i18n="st3D">デザイナーとエンジニアが連携し、デザインと機能を形にします。</p></div></li>
+        <li class="step"><span class="num">04</span><div><h3 data-i18n="st4T">確認・公開</h3><p data-i18n="st4D">表示や動作を一緒に確認し、調整を経て公開します。</p></div></li>
+      </ol>
+    </section>
+
+    <!-- Contact -->
+    <section class="section contact" id="contact" data-nav="contact">
+      <svg class="g contact-moon" aria-hidden="true" viewBox="0 0 200 200"><use href="#g-moon"/></svg>
+      <p class="eyebrow"><svg class="g fill" aria-hidden="true"><use href="#g-moon"/></svg>06 — Contact</p>
+      <h2 class="contact-title">Contact Us</h2>
+      <p class="lead" data-i18n="contactLead">新しいサイトの制作やリニューアル、日英対応、機能の開発など、内容がまだ固まっていない段階でもお気軽にご相談ください。日本語・英語のどちらでも対応します。</p>
+      <!-- 各リンクのURLは下の <script> 冒頭 CONTACT_LINKS で設定します。未設定の項目はリンクになりません -->
+      <div class="channels" id="channels"></div>
+      <footer class="footer">
+        <span class="fbrand"><img src="assets/logo-type-white.png" alt="Lumineglyph Design"></span>
+        <span>© 2026 Lumineglyph</span>
+      </footer>
+    </section>
+
+  </main>
+
+  <!-- ===== 右カラム：ナビ・言語切り替え・お問い合わせ（PCで固定表示） ===== -->
+  <aside class="col-side right" aria-label="Navigation">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="ja" aria-pressed="true">JP</button><span class="sep" aria-hidden="true">/</span><button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <nav class="side-nav" aria-label="Sections">
+      <ol class="nav-list">
+        <li><a href="#top"><span class="mk"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg></span><span class="n">00</span><span class="lb">Top</span></a></li>
+        <li><a href="#about"><span class="mk"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg></span><span class="n">01</span><span class="lb">About</span></a></li>
+        <li><a href="#services"><span class="mk"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg></span><span class="n">02</span><span class="lb">Services</span></a></li>
+        <li><a href="#works"><span class="mk"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg></span><span class="n">03</span><span class="lb">Works</span></a></li>
+        <li><a href="#team"><span class="mk"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg></span><span class="n">04</span><span class="lb">Team</span></a></li>
+        <li><a href="#process"><span class="mk"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg></span><span class="n">05</span><span class="lb">Process</span></a></li>
+        <li><a href="#contact"><span class="mk"><svg class="g fill" aria-hidden="true"><use href="#g-moon"/></svg></span><span class="n">06</span><span class="lb">Contact</span></a></li>
+      </ol>
+    </nav>
+    <a class="side-cta" href="#contact">
+      <svg class="g fill" aria-hidden="true"><use href="#g-moon"/></svg><span class="t">Contact Us</span>
+      <span class="s" data-i18n="sideCtaSub">制作のご相談はこちら</span>
+      <span class="ln" aria-hidden="true"></span>
+    </a>
+  </aside>
+
+</div>
+
+<script>
+/* =========================================================
+   ▼差し替え：お問い合わせ先のURL
+   空欄（""）のままの項目はリンクとして動作せず「準備中」と表示されます。
+   メールの場合は "mailto:info@example.com" の形式で入力してください。
+   ========================================================= */
+const CONTACT_LINKS = {
+  inquiry:  "",   // お問い合わせ（フォームURL または mailto:）
+  linkedin: "",   // LinkedIn プロフィールURL
+  coconala: ""    // ココナラ 出品ページURL
+};
+
+/* ---------- 翻訳テキスト ---------- */
+const I18N = {
+  ja:{
+    docTitle:"Lumineglyph | 日英対応のWebデザインと開発",
+    docDesc:"バイリンガルWebデザイナーとフルスタックエンジニアが、要件整理からデザイン・開発まで連携する制作チーム。",
+    headerContact:"相談する", menuOpen:"メニューを開く", menuClose:"メニューを閉じる",
+    navTopSub:"トップ", navAboutSub:"私たちについて", navServicesSub:"サービス", navWorksSub:"制作実績",
+    navTeamSub:"チーム紹介", navProcessSub:"制作の流れ", navContactSub:"お問い合わせ",
+    heroTitle:"日英対応のWebデザインと開発",
+    heroText:"教室や小規模事業のホームページから、予約・申込機能の開発まで。要件整理から公開まで、デザイナーとエンジニアが連携して進めます。",
+    heroDuo:"バイリンガルWebデザイナーとフルスタックエンジニアが、要件整理からデザイン・開発まで連携するチームです。",
+    ctaConsult:"制作の相談をする", ctaServices:"サービスを見る",
+    aboutTitle:"日本語でも英語でも、<br>相談から公開まで一緒に。",
+    aboutLead:"Lumineglyphは、バイリンガルWebデザイナーとフルスタックエンジニアの夫婦で運営する制作チームです。日本語・英語のどちらでもご相談いただけます。日英両方でサービスを届けたい事業者さまの想いを、伝わるWebの形に整えます。",
+    about1T:"日英のコミュニケーション",
+    about1D:"打ち合わせ、メール、サイトの文言まで、日本語と英語のどちらでも対応します。英語ページは直訳ではなく、読み手に伝わる表現に整えます。",
+    about2T:"ヒアリング・要件定義",
+    about2D:"目的や対象、必要なページや機能を一緒に整理し、サイト構成と導線を設計します。内容がまだ固まっていない段階からご相談いただけます。",
+    about3T:"デザインと開発の連携",
+    about3D:"デザイナーとエンジニアが最初から同じ要件を共有します。見た目と機能のずれを抑え、公開まで一貫して進めます。",
+    servicesTitle:"ご相談いただけること", exLabel:"相談例",
+    s1T:"ホームページ・LP制作",
+    s1D:"教室や事業の魅力が伝わるホームページや、集客用のランディングページを、構成づくりからデザイン・公開まで制作します。",
+    s1E:"英語教室の体験レッスンを案内するLPを作り、お問い合わせを増やしたい。",
+    s2T:"日英バイリンガルサイト制作",
+    s2D:"日本語と英語の両方でサービスを案内するサイトを制作します。言語の切り替えから、それぞれの読み手に合わせた文言の整理まで対応します。",
+    s2E:"海外出身の保護者にも伝わるよう、教室のサイトに英語ページを追加したい。",
+    s3T:"予約・申込機能や管理画面の開発",
+    s3D:"予約・申込フォームや、申込者・会員の管理画面など、日々の運営を支える仕組みを開発します。",
+    s3E:"体験レッスンの予約受付と申込者の管理を、Web上でまとめて行いたい。",
+    worksTitle:"制作実績",
+    teamTitle:"チーム紹介", scopeLabel:"担当",
+    p1Role:"バイリンガルWebデザイナー / Webディレクター", p1Name:"マイナー萌惠奈",
+    p1Lead:"日本語・英語でのご相談窓口です。何を載せるか、誰に届けるかがまだ決まっていない段階から、一緒に整理してサイトの形にしていきます。",
+    p1Scope:"日英での顧客対応、ヒアリング、要件定義、サイト構成・導線設計、日英の文言整理、Webデザイン、STUDIOでのサイト制作、制作ディレクション。SNS投稿の企画・デザイン、イベントの告知バナー・スライド・Peatixページなどの販促制作にも対応します。",
+    p2Role:"フルスタックエンジニア",
+    p2Lead:"予約・申込機能や管理画面など、サイトの裏側で動く仕組みの開発をご相談いただけます。必要な機能と運用に合わせて、無理のない構成をご提案します。",
+    p2Scope:"フロントエンド、バックエンド、データベース、クラウド、DevOps。",
+    sk1:"Web開発", sk2:"バックエンド・データベース", sk3:"インフラ・開発環境", skDb:"データベース設計・実装",
+    processTitle:"制作の流れ",
+    st1T:"ヒアリング", st1D:"目的や対象、必要なページ・機能を伺い、要件を整理します。",
+    st2T:"ご提案・お見積もり", st2D:"サイト構成と進め方、お見積もり、スケジュールをご提案します。",
+    st3T:"デザイン・開発", st3D:"デザイナーとエンジニアが連携し、デザインと機能を形にします。",
+    st4T:"確認・公開", st4D:"表示や動作を一緒に確認し、調整を経て公開します。",
+    contactLead:"新しいサイトの制作やリニューアル、日英対応、機能の開発など、内容がまだ固まっていない段階でもお気軽にご相談ください。日本語・英語のどちらでも対応します。",
+    chInquiry:"お問い合わせ", chInquirySub:"制作のご相談・お見積もり",
+    chLinkedin:"LinkedIn", chLinkedinSub:"プロフィール・メッセージ",
+    chCoconala:"ココナラ", chCoconalaSub:"サービスページから相談",
+    chSoon:"準備中", sideCtaSub:"制作のご相談はこちら"
+  },
+  en:{
+    docTitle:"Lumineglyph | Web Design & Development in Japanese and English",
+    docDesc:"A bilingual web designer and a full-stack engineer working together from planning to design and development.",
+    headerContact:"Contact", menuOpen:"Open menu", menuClose:"Close menu",
+    navTopSub:"", navAboutSub:"", navServicesSub:"", navWorksSub:"", navTeamSub:"", navProcessSub:"", navContactSub:"",
+    heroTitle:"Web Design & Development in Japanese and English",
+    heroText:"We design and build websites for schools and small businesses, with custom booking and registration features when needed. As a designer and developer team, we work with you from planning through launch.",
+    heroDuo:"A bilingual web designer and a full-stack engineer, working together from planning to design and development.",
+    ctaConsult:"Discuss Your Project", ctaServices:"View Services",
+    aboutTitle:"One team, two languages —<br>from first call to launch.",
+    aboutLead:"Lumineglyph is a husband-and-wife studio: a bilingual web designer and a full-stack engineer. You can talk to us in Japanese or English, and we'll help you share your services clearly with both audiences.",
+    about1T:"Japanese & English Communication",
+    about1D:"Meetings, emails, and website copy — we work comfortably in both languages. English pages are written to read naturally, not translated word for word.",
+    about2T:"Discovery & Requirements",
+    about2D:"We clarify your goals, audience, and the pages and features you need, then plan the site structure and user flow. Ideas still taking shape? That's a fine place to start.",
+    about3T:"Design and Development, Together",
+    about3D:"Our designer and engineer share the same requirements from day one, so the look and the functionality stay aligned all the way to launch.",
+    servicesTitle:"What We Can Help With", exLabel:"Example",
+    s1T:"Websites & Landing Pages",
+    s1D:"Websites and landing pages that show what makes your school or business special — from structure and design through to launch.",
+    s1E:"“We'd like a landing page for our trial English lessons that brings in more inquiries.”",
+    s2T:"Bilingual Japanese–English Websites",
+    s2D:"Sites that present your services in both Japanese and English, including language switching and copy written for each audience.",
+    s2E:"“We want to add English pages so international parents can understand our school.”",
+    s3T:"Booking, Registration & Admin Tools",
+    s3D:"Booking and registration forms, applicant and member dashboards, and other tools that support your day-to-day operations.",
+    s3E:"“We want to take trial-lesson bookings and manage applicants all in one place online.”",
+    worksTitle:"Selected Works",
+    teamTitle:"Meet the Team", scopeLabel:"Focus",
+    p1Role:"Bilingual Web Designer / Web Director", p1Name:"Moena Miner",
+    p1Lead:"Your point of contact in Japanese or English. Even if you're not sure yet what to include or who you're speaking to, she'll help you sort it out and shape it into a website.",
+    p1Scope:"Client communication in Japanese and English, discovery, requirements, site structure and user flow, bilingual copy editing, web design, STUDIO site building, and project direction. Also social media post planning and design, and promotional materials such as event banners, slides, and Peatix pages.",
+    p2Role:"Full-Stack Engineer",
+    p2Lead:"Your go-to for booking and registration features, admin dashboards, and the systems that run behind your site — with a setup that fits your features and the way you operate.",
+    p2Scope:"Front end, back end, databases, cloud, and DevOps.",
+    sk1:"Web Development", sk2:"Back End & Databases", sk3:"Infrastructure & Tooling", skDb:"Database design & implementation",
+    processTitle:"How We Work",
+    st1T:"Discovery", st1D:"We learn about your goals, audience, and the pages and features you need.",
+    st2T:"Proposal & Estimate", st2D:"We propose a site structure, approach, estimate, and schedule.",
+    st3T:"Design & Development", st3D:"Our designer and engineer work side by side to bring the design and features to life.",
+    st4T:"Review & Launch", st4D:"We review everything with you, make final adjustments, and launch.",
+    contactLead:"Whether it's a new site, a redesign, bilingual support, or a custom feature, feel free to reach out — even if your ideas are still taking shape. We're happy to talk in Japanese or English.",
+    chInquiry:"Send an Inquiry", chInquirySub:"Project inquiries & estimates",
+    chLinkedin:"LinkedIn", chLinkedinSub:"Profile & messages",
+    chCoconala:"Coconala", chCoconalaSub:"Inquire via our service page",
+    chSoon:"Coming soon", sideCtaSub:"Tell us about your project"
+  }
+};
+
+const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>';
+let currentLang = "ja";
+
+/* ---------- Contact の各リンクを描画（URL未設定はリンクにしない） ---------- */
+function renderChannels(){
+  const t = I18N[currentLang];
+  const items = [
+    {key:"inquiry",  ico:"@",  label:t.chInquiry,  sub:t.chInquirySub,  primary:true},
+    {key:"linkedin", ico:"in", label:t.chLinkedin, sub:t.chLinkedinSub},
+    {key:"coconala", ico:"C",  label:t.chCoconala, sub:t.chCoconalaSub}
+  ];
+  const wrap = document.getElementById("channels");
+  wrap.innerHTML = "";
+  items.forEach(it=>{
+    const url = (CONTACT_LINKS[it.key]||"").trim();
+    const el = document.createElement(url ? "a" : "div");
+    el.className = "channel" + (url && it.primary ? " primary" : "") + (url ? "" : " is-disabled");
+    if(url){
+      el.href = url;
+      if(/^https?:/i.test(url)){ el.target = "_blank"; el.rel = "noopener"; }
+    }else{
+      el.setAttribute("aria-disabled","true");
+    }
+    el.innerHTML =
+      '<span class="ico" aria-hidden="true">'+it.ico+'</span>'+
+      '<span class="label">'+it.label+'<span class="sub">'+it.sub+'</span></span>'+
+      '<span class="go">'+(url ? ARROW : t.chSoon)+'</span>';
+    wrap.appendChild(el);
+  });
+}
+
+/* ---------- 閲覧中のセクションを求める ---------- */
+const sections = Array.from(document.querySelectorAll("[data-nav]"));
+function headerOffset(){ return window.matchMedia("(max-width:1199px)").matches ? 60 : 0; }
+function currentSection(){
+  const line = headerOffset() + window.innerHeight * 0.35;
+  let cur = sections[0];
+  for(const s of sections){ if(s.getBoundingClientRect().top <= line) cur = s; }
+  if(window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) cur = sections[sections.length-1];
+  return cur;
+}
+
+/* ---------- 言語切り替え（閲覧中のセクションに留まる） ---------- */
+function setLang(lang, keepPosition){
+  if(!I18N[lang]) return;
+  let anchor = null, ratio = 0;
+  if(keepPosition){
+    anchor = currentSection();
+    const r = anchor.getBoundingClientRect();
+    // セクション内のどの位置を見ていたかを割合で保持
+    ratio = Math.min(Math.max((headerOffset() - r.top) / r.height, 0), 1);
+  }
+  currentLang = lang;
+  const t = I18N[lang];
+  document.documentElement.lang = lang;
+  document.title = t.docTitle;
+  document.querySelector('meta[name="description"]').setAttribute("content", t.docDesc);
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const v = t[el.dataset.i18n];
+    if(v === undefined) return;
+    if(v.includes("<br>")) el.innerHTML = v; else el.textContent = v;
+  });
+  document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.lang===lang)));
+  updateMenuLabel();
+  renderChannels();
+  if(anchor){
+    const html = document.documentElement;
+    const prev = html.style.scrollBehavior;
+    html.style.scrollBehavior = "auto";
+    const r = anchor.getBoundingClientRect();
+    const y = window.scrollY + r.top + r.height * ratio - headerOffset();
+    window.scrollTo(0, Math.max(0, Math.round(y)));
+    html.style.scrollBehavior = prev;
+  }
+  updateActive();
+}
+document.querySelectorAll(".lang button").forEach(b=>{
+  b.addEventListener("click",()=>{ if(b.dataset.lang!==currentLang) setLang(b.dataset.lang, true); });
+});
+
+/* ---------- ナビの現在地表示 ---------- */
+function updateActive(){
+  const id = currentSection().id;
+  document.querySelectorAll(".nav-list a").forEach(a=>{
+    if(a.getAttribute("href")==="#"+id) a.setAttribute("aria-current","true");
+    else a.removeAttribute("aria-current");
+  });
+}
+let ticking = false;
+window.addEventListener("scroll",()=>{
+  if(ticking) return; ticking = true;
+  requestAnimationFrame(()=>{ updateActive(); ticking = false; });
+},{passive:true});
+window.addEventListener("resize", updateActive);
+
+/* ---------- スマホメニュー ---------- */
+const toggle = document.querySelector(".m-toggle");
+const menu = document.getElementById("m-menu");
+function updateMenuLabel(){
+  const open = toggle.getAttribute("aria-expanded")==="true";
+  toggle.setAttribute("aria-label", I18N[currentLang][open ? "menuClose" : "menuOpen"]);
+}
+function setMenu(open){
+  toggle.setAttribute("aria-expanded", String(open));
+  menu.classList.toggle("open", open);
+  document.body.style.overflow = open ? "hidden" : "";
+  updateMenuLabel();
+}
+toggle.addEventListener("click",()=>setMenu(toggle.getAttribute("aria-expanded")!=="true"));
+menu.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>setMenu(false)));
+document.addEventListener("keydown",e=>{ if(e.key==="Escape" && menu.classList.contains("open")){ setMenu(false); toggle.focus(); } });
+window.matchMedia("(max-width:1199px)").addEventListener("change",e=>{ if(!e.matches) setMenu(false); });
+
+/* ---------- エンジニアの氏名（設定されていれば表示） ---------- */
+const slot = document.querySelector(".pname-slot");
+if(slot && slot.dataset.name){ slot.textContent = slot.dataset.name; document.querySelector(".p2-title").style.display = "none"; }
+
+renderChannels();
+updateActive();
+</script>
+</body>
+</html>
