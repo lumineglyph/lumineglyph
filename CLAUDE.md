@@ -8,6 +8,10 @@ Static marketing site for Lumineglyph, a bilingual (Japanese/English) web design
 
 To preview, open `index.html` directly in a browser, or serve the folder (e.g. `python3 -m http.server`) and visit `http://localhost:8000/`.
 
+## Rebuild in progress
+
+Matthew is rebuilding the site using Astro, AWS and Terraform, following the tutorial in [docs/rebuild/](docs/rebuild/README.md). Before helping with anything related to the rebuild, read `docs/rebuild/README.md` (especially its "For Claude" section) and `docs/rebuild/PROGRESS.md`. In short: act as a tutor and reviewer, don't write the code for him unless he asks, and never apply, push or buy anything without his explicit go-ahead. New code comments in the rebuild are in English. Until step 01 finishes, the sections below still describe the files at the repo root.
+
 ## Live files vs. snapshots
 
 - **Live:** `index.html` (top page), `works.html` (full works list), `style.css` (shared styles), `works.js` (shared works data and helpers), `assets/`.
