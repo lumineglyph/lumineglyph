@@ -37,11 +37,13 @@ Everything else should match the current site exactly.
 
 ### A. Scaffold
 
-1. From the repo root, create the project (minimal template, strict TypeScript, no new git repo):
+1. From the repo root, create the project. These flags were checked against create-astro 5.3.2 on 2026-11-14:
    ```sh
-   npm create astro@latest site
+   npm create astro@latest site -- --template minimal --install --no-git --no-ai
    ```
-   The setup asks about the template, TypeScript, installing dependencies and git. Answer with the minimal template, strict TypeScript, install dependencies, and **no** git (the repo already has one). **(verify)**: the CLI flags may have changed.
+   - `--no-git`: the repo already has git.
+   - `--no-ai`: skips the AI agent files the template would add. The root `CLAUDE.md` already covers this repo.
+   - There's no TypeScript question any more. Check that `site/tsconfig.json` extends `astro/tsconfigs/strict`.
 2. Pin Node and set up type checking:
    ```sh
    cd site
@@ -52,7 +54,7 @@ Everything else should match the current site exactly.
 3. Add these scripts to `package.json`:
    - `"check": "astro check"`
    - `"verify": "astro check && astro build"`
-4. Start your `astro.config.mjs`. Steps 02 and 05 add more to it.
+4. Replace the template's `astro.config.mjs` with the version below. Later steps add more settings to this same file (fonts, CSP and the sitemap in step 02).
    ```js
    // @ts-check
    import { defineConfig } from "astro/config";
@@ -255,7 +257,7 @@ When it all matches:
 
 ## Checkpoint
 
-**A, scaffold.** `cd site && npm run check && npm run build` has 0 errors, and `dist/index.html` and `dist/en/index.html` exist.
+**A, scaffold.** `cd site && npm run check && npm run build` has 0 errors, and `dist/index.html` exists. `dist/en/index.html` only appears once C adds the English pages.
 
 **B, content model.** Claude checks that the build-time validation actually works by temporarily breaking things, then restoring them:
 - delete a key from `en.json` → `npm run check` fails
