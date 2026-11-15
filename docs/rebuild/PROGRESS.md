@@ -60,6 +60,7 @@ Use one line per decision, with the date, and link the ADR if there is one.
 - 2026-11-14: Delete the old design drafts (`index_v*.html`, `index-light_v1.html`) at the end of step 01. Git history keeps them.
 - 2026-11-14: Accessibility target is WCAG 2.2 AA in both themes.
 - 2026-11-14: Replace the `?theme=` override with a System / Light / Dark switch saved in localStorage (step 01 C). Recommended by Claude; Matthew asked for the industry-standard approach. Moena designs how it looks.
+- 2026-11-15: Matthew runs every git and gh command that changes anything (commits, branches, pushes, PRs, merges). Claude leaves changes uncommitted and says when a step is ready.
 
 ## Deviations from the tutorial
 
