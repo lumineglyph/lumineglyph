@@ -8,6 +8,12 @@
     "menuOpen": "メニューを開く",
     "menuClose": "メニューを閉じる"
   },
+  "theme": {
+    "label": "表示テーマ",
+    "system": "OSの設定に合わせる",
+    "light": "ライト",
+    "dark": "ダーク"
+  },
   "nav": {
     "top": "トップ",
     "about": "私たちについて",
@@ -114,7 +120,8 @@
   },
   "worksPage": {
     "meta": {
-      "title": "制作実績 | Lumineglyph"
+      "title": "制作実績 | Lumineglyph",
+      "description": "Lumineglyphがこれまでに制作したWebサイトの一覧です。"
     },
     "title": "制作実績",
     "lead": "これまでに制作したWebサイトをご紹介します。各サイトは新しいタブで開きます。",

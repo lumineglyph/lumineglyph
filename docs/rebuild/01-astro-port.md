@@ -231,29 +231,80 @@ The current CSS styles `.lang button[aria-pressed="true"]`. Update those selecto
 
 ### D. Check it matches the current site
 
-Run the old site and the new one side by side. A git worktree gives you an untouched copy of the old site:
+Claude already compared full-page screenshots of the old and new sites (1440px and 390px, both themes, ja and en). It also tested the theme switch, nav highlight, language hash, mobile menu and works counts in headless Chrome, and all passed. This part is your own look with real eyes and hands, so follow it exactly.
 
+**Expected differences.** Everything else should be identical:
+- three small icons (System / Light / Dark) next to JP/EN, in the works page header, and at the bottom of the mobile menu
+- no "View More" button under the works grid, so everything below it sits about 106px higher
+- JP/EN links go to `/en/…` URLs instead of adding `?lang=en`
+
+**1. Start both sites.** Use two terminals, both starting from the repo root.
+
+Terminal 1, the old site. The root copy can't show the work screenshots any more, because part B moved them, so use the first commit:
 ```sh
 git worktree add ../lumineglyph-legacy 9233aa2
-(cd ../lumineglyph-legacy && python3 -m http.server 8000)    # old site
-(cd site && npm run build && npx astro preview)               # new site, http://localhost:4321
+cd ../lumineglyph-legacy && python3 -m http.server 8000
 ```
+Terminal 2, the new site:
+```sh
+cd site && npm run build && npx astro preview
+```
+Leave both running. If a port is already in use, find the process with `ss -ltnp | grep -E '8000|4321'` and stop it.
 
-Compare these at 1440px and at 390px wide (browser devtools device mode):
-- [ ] `/` and `/en/`, against `?lang=en` on the old site
-- [ ] dark and light themes: change the OS setting and use the new switch. Use `?theme=` on the old site to compare. The choice survives a reload and moving between pages, with no flash of the wrong theme.
-- [ ] three-column layout: left orbit animation, slideshow cross-fade, right nav highlight while scrolling
-- [ ] mobile header, menu open/close, Escape closes it, the menu closes when the window grows past 1199px
-- [ ] the JP/EN switch from mid-page lands on the same section
-- [ ] works grid with 2 works + 2 empty frames; "View More" hidden; `/works/` count reads "2 Works"
-- [ ] contact channels: the form is a link; LinkedIn and Coconala show "Coming soon"
-- [ ] `prefers-reduced-motion` (devtools → Rendering): animations stop, sun and moon stay fixed
-- [ ] keyboard: Tab order, focus rings, `aria-current` on the nav
+**2. Open two browser windows side by side.** Open Chrome devtools in both (F12), then device mode (Ctrl+Shift+M). Set the size in the toolbar at the top to **1440 × 900**.
 
-When it all matches:
-- `git rm` the old `index.html`, `works.html`, `style.css`, `works.js` and `assets/`.
-- `git rm` the `index_v*.html` and `index-light_v1.html` snapshots. Moena agreed on 2026-11-14, and git history keeps them.
-- Remove the worktree: `git worktree remove ../lumineglyph-legacy`.
+**3. Compare these four page pairs** (old on the left, new on the right). For each pair, scroll slowly from top to bottom.
+
+| Old (port 8000) | New (port 4321) |
+|---|---|
+| `localhost:8000/` | `localhost:4321/` |
+| `localhost:8000/?lang=en` | `localhost:4321/en/` |
+| `localhost:8000/works.html` | `localhost:4321/works/` |
+| `localhost:8000/works.html?lang=en` | `localhost:4321/en/works/` |
+
+- [ ] 1440 × 900: all four pairs match, apart from the expected differences
+- [ ] Change the size to **390 × 844** and do the four pairs again
+
+**4. Themes.** Do this in the new site at 1440 × 900.
+- [ ] Click the sun icon: the page turns light. On the old site, `localhost:8000/?theme=light` should look the same.
+- [ ] Press F5 to reload. The page is still light, and there's no dark flash first.
+- [ ] Click "JP"/"EN" and the works page links. The page stays light everywhere.
+- [ ] Click the moon icon: dark. Compare with `localhost:8000/?theme=dark`.
+- [ ] Click the half-circle icon (System). In devtools, open ⋮ → More tools → Rendering, then switch "Emulate CSS media feature prefers-color-scheme" between light and dark. The page follows it.
+
+**5. Desktop behaviour** (new site, 1440 × 900, `localhost:4321/`):
+- [ ] The sun and moon circle the slideshow. Wait 6s: the screenshot cross-fades to the other work.
+- [ ] Scroll down: the right-hand nav's highlight (orange sun, line) moves to each section as you reach it.
+- [ ] Scroll to **Team** and click **EN**. You land on `/en/#team` at the Team section. Click **JP** and you're back at Team on `/#team`.
+
+**6. Mobile behaviour** (new site, 390 × 844, `localhost:4321/`):
+- [ ] Tap the round ☰ button: the menu opens and the page behind it can't scroll. The theme icons are at the bottom.
+- [ ] Press Escape: the menu closes, and the ☰ button has the orange focus ring.
+- [ ] Open the menu again, then change the size to 1440 wide. The menu is gone. Change back to 390: it's still closed.
+- [ ] Open the menu and tap "Team": the menu closes and the page scrolls to Team.
+
+**7. Content.**
+- [ ] Works: 2 works with screenshots plus 2 empty dashed frames, and no "View More".
+- [ ] `/works/` and `/en/works/` say "2 Works".
+- [ ] Contact: "お問い合わせフォーム" opens the Google Form in a new tab. LinkedIn and ココナラ show 準備中 (and "Coming soon" on `/en/`) and aren't links.
+
+**8. Reduced motion.** In devtools Rendering, set "Emulate CSS media feature prefers-reduced-motion" to **reduce** and reload.
+- [ ] The sun stays at the upper left and the moon at the lower right, not moving.
+- [ ] The slideshow still changes every 6s, but without the fade. The old site does the same.
+
+**9. Keyboard.** Close device mode, click the address bar, then press Tab repeatedly.
+- [ ] The focus order matches the old site, plus the three theme buttons right after JP/EN. Every focused item has an orange outline.
+- [ ] In the Elements panel, the nav link for the section on screen has `aria-current="true"`.
+
+**10. When everything is ticked, clean up.** Stop both servers (Ctrl+C), then from the repo root:
+```sh
+git worktree remove ../lumineglyph-legacy
+git rm -r index.html works.html style.css works.js assets index_v*.html index-light_v1.html
+git commit -m "chore: remove legacy static site"
+```
+Moena agreed to deleting the snapshots on 2026-11-14, and git history keeps everything. `site/src/assets/` already has copies of every file in `assets/`.
+
+If anything doesn't match, note the page, the size, the theme and what's different, and tell Claude.
 
 ## Checkpoint
 
@@ -267,7 +318,7 @@ When it all matches:
 **C, built HTML.**
 - `grep -L 'lang="en"' dist/en/**/*.html` prints nothing.
 - No `onerror=` and no `style="` in `dist/**/*.html`.
-- The JS shipped in `dist/_astro/*.js` is small. Claude reports the total size.
+- The JS is small. Claude reports the total size. Astro inlines small scripts as `<script type="module">` in each page instead of writing `dist/_astro/*.js`, so measure the inline scripts.
 
 **D, parity.** You go through the checklist above. Claude reviews the components for leftovers from the old JS-rendering approach.
 

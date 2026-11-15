@@ -1,0 +1,38 @@
+/* ===== 実績一覧ページ専用 ===== */
+.w-header{
+  position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  height:72px;padding:0 40px;background:var(--header-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--faint);
+}
+.w-brand{display:flex;align-items:center;text-decoration:none;min-width:0}
+.w-brand img{height:30px;width:auto;max-width:100%}
+.w-actions{display:flex;align-items:center;gap:22px}
+.w-back{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;color:var(--muted);white-space:nowrap}
+.w-back svg{width:16px;height:16px}
+.w-back:hover{color:var(--accent)}
+.w-main{max-width:1080px;margin:0 auto;padding:96px 48px 0}
+.w-intro{max-width:640px}
+.w-title{font-family:var(--serif-jp);font-weight:400;font-size:34px;line-height:1.5;margin-top:18px;letter-spacing:.06em}
+html[lang="en"] .w-title{font-family:var(--serif-en);font-size:44px;line-height:1.15;letter-spacing:0;font-weight:500}
+.w-count{margin-top:12px;font-family:var(--serif-en);font-size:16px;color:var(--muted);letter-spacing:.04em}
+.w-main .works-grid{margin-top:64px;gap:64px 40px}
+.w-cta{margin:120px auto 0;max-width:640px;text-align:center;padding:56px 32px;border:1px solid var(--line)}
+.w-cta .g{width:44px;height:44px;margin:0 auto 18px;color:var(--deco-mid)}
+.w-cta h2{font-family:var(--serif-en);font-weight:400;font-size:40px;line-height:1.1}
+.w-cta p{margin-top:16px;color:var(--muted);font-size:14.5px}
+.w-cta .btn{margin-top:28px}
+.w-main .footer{margin-top:96px;padding-bottom:40px}
+@media (max-width:640px){
+  .w-header{height:60px;padding:0 16px;gap:10px}
+  .w-brand img{height:20px}
+  .w-actions{gap:10px}
+  .w-back .lb{display:none}
+  .w-back{width:36px;height:36px;justify-content:center;border:1px solid var(--line);border-radius:50%}
+  .w-main{padding:56px 22px 0}
+  .w-title{font-size:26px}
+  html[lang="en"] .w-title{font-size:34px}
+  .w-main .works-grid{margin-top:44px;gap:44px}
+  .w-cta{margin-top:88px;padding:44px 22px}
+  .w-cta h2{font-size:34px}
+  .w-cta .btn{width:100%}
+}

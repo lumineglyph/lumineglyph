@@ -1,0 +1,57 @@
+---
+// Contact channels come from src/data/site.json. An empty URL renders as a plain row marked "Coming soon".
+import Arrow from "../Arrow.astro";
+import Logo from "../Logo.astro";
+import site from "../../data/site.json";
+import { copy, type Lang } from "../../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const t = copy[Astro.props.lang].contact;
+
+const channels = [
+  { key: "inquiry", icon: "sun", primary: true },
+  { key: "linkedin", icon: "in", primary: false },
+  { key: "coconala", icon: "C", primary: false },
+] as const;
+---
+
+<section class="section contact" id="contact" data-nav="contact">
+  <svg class="g contact-moon" aria-hidden="true" viewBox="0 0 200 200"><use href="#g-moon"/></svg>
+  <p class="eyebrow"><svg class="g fill" aria-hidden="true"><use href="#g-moon"/></svg>06 — Contact</p>
+  <h2 class="contact-title">Contact Us</h2>
+  <p class="lead">{t.lead}</p>
+  <div class="channels">
+    {
+      channels.map((ch) => {
+        const url = site.contact[ch.key].trim();
+        const external = /^https?:/i.test(url);
+        const text = t.channels[ch.key];
+        const Tag = url ? "a" : "div";
+        return (
+          <Tag
+            class:list={["channel", url && ch.primary && "primary", !url && "is-disabled"]}
+            href={url || undefined}
+            target={external ? "_blank" : undefined}
+            rel={external ? "noopener" : undefined}
+          >
+            <span class="ico" aria-hidden="true">
+              {ch.icon === "sun" ? <svg class="g"><use href="#g-sun-s" /></svg> : ch.icon}
+            </span>
+            <span class="label">
+              {text.label}
+              <span class="sub">{text.sub}</span>
+            </span>
+            <span class="go">{url ? <Arrow /> : t.comingSoon}</span>
+          </Tag>
+        );
+      })
+    }
+  </div>
+  <footer class="footer">
+    <span class="fbrand"><Logo variant="symboltype" alt="Lumineglyph Design" loading="lazy" /></span>
+    <span>© 2026 Lumineglyph</span>
+  </footer>
+</section>

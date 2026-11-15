@@ -1,0 +1,27 @@
+---
+import { copy, type Lang } from "../../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const t = copy[Astro.props.lang].process;
+---
+
+<section class="section" id="process" data-nav="process">
+  <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>05 — Process</p>
+  <h2 class="h2">{t.title}</h2>
+  <ol class="steps">
+    {
+      t.steps.map((s, i) => (
+        <li class="step">
+          <span class="num">{String(i + 1).padStart(2, "0")}</span>
+          <div>
+            <h3>{s.title}</h3>
+            <p>{s.desc}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</section>

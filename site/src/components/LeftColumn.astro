@@ -1,0 +1,41 @@
+---
+// Desktop left column: logo mark, the orbiting sun and moon around the works slideshow, and the brand.
+import { Image } from "astro:assets";
+import Logo from "./Logo.astro";
+import { getWorks } from "../lib/works";
+import { copy, type Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copy[lang].works;
+const works = await getWorks();
+---
+
+<aside class="col-side left" aria-label="Lumineglyph">
+  <a class="mark" href="#top"><Logo variant="mark" alt="Lumineglyph Top" /></a>
+  <div class="brand-visual">
+    <!-- Sun and moon circle the slideshow on an elliptical orbit -->
+    <span class="orbiter sun" aria-hidden="true"><span><svg class="g sun-fill"><use href="#g-sun-fill"/></svg></span></span>
+    <span class="orbiter moon" aria-hidden="true"><span><svg class="g fill"><use href="#g-moon"/></svg></span></span>
+    <div class="slides ph" id="slides" aria-label="Works">
+      {
+        works.map((w, i) => (
+          <a class:list={["slide", i === 0 && "is-active"]} href="#works" tabindex="-1">
+            <Image src={w.data.image} alt={w.data.title[lang] + t.imageAltSuffix} loading="eager" />
+          </a>
+        ))
+      }
+    </div>
+  </div>
+  <div class="left-brand">
+    <p class="name"><Logo variant="type" alt="Lumineglyph Design" /></p>
+    <p class="tagline">Bilingual Web Design<br />&amp; Full-Stack Development</p>
+  </div>
+</aside>
+
+<script>
+  import "../scripts/slideshow.ts";
+</script>

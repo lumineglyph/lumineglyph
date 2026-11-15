@@ -8,6 +8,12 @@
     "menuOpen": "Open menu",
     "menuClose": "Close menu"
   },
+  "theme": {
+    "label": "Theme",
+    "system": "Match system",
+    "light": "Light",
+    "dark": "Dark"
+  },
   "nav": {
     "top": "",
     "about": "",
@@ -114,7 +120,8 @@
   },
   "worksPage": {
     "meta": {
-      "title": "Works | Lumineglyph"
+      "title": "Works | Lumineglyph",
+      "description": "Websites designed and built by Lumineglyph."
     },
     "title": "Selected Works",
     "lead": "Here are some of the websites we have designed and built. Each site opens in a new tab.",
