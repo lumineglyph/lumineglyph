@@ -3,14 +3,14 @@
 Claude keeps this file up to date as checkpoints pass. If it disagrees with the repo, the repo wins; fix this file.
 
 - **Last updated:** 2026-11-14
-- **Current step:** 01 — Astro port (next: B, content model)
+- **Current step:** 01 — Astro port (next: C, layout, pages and components)
 
 ## Steps
 
 | # | Step | Status | Notes |
 |---|------|--------|-------|
 | 00 | Prep | Done (2026-11-14) | Org and transfer done; SSO login; no IAM users; root MFA on with no root keys; 2FA required in the org. Commits use the GitHub no-reply email. Registrar: Route 53 |
-| 01 | Astro port | In progress (A passed 2026-11-14) | Astro 7.4.12, @astrojs/check 0.9.12, TypeScript 6.0.3, Node 24 |
+| 01 | Astro port | In progress (A and B passed 2026-11-14) | Astro 7.4.12, @astrojs/check 0.9.12, TypeScript 6.0.3, Node 24. B: Claude moved the copy into JSON at Matthew's request. Re-run the missing-image test in C, because it only fails once a page renders the works collection |
 | 02 | Performance, SEO, CSP, accessibility | Not started | |
 | 03 | CI | Not started | |
 | 04 | AWS foundation | Not started | |

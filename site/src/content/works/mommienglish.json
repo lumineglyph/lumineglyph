@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../.astro/collections/works.schema.json",
+  "order": 1,
+  "url": "https://mommienglish.com/",
+  "image": "./mommienglish.jpg",
+  "title": { "ja": "MommiEnglish", "en": "MommiEnglish" },
+  "category": { "ja": "ホームページ制作", "en": "Website" },
+  "desc": {
+    "ja": "ママ向けのおうち英語レッスンと、子ども向けオンライン英語教室「Smilingual」を運営する英語事業のホームページ。",
+    "en": "Website for an English education business offering at-home English lessons for moms and Smilingual, an online English school for kids."
+  }
+}

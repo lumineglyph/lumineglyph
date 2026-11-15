@@ -1,0 +1,126 @@
+{
+  "meta": {
+    "title": "Lumineglyph | Web Design & Development in Japanese and English",
+    "description": "A bilingual web designer and a full-stack engineer working together from planning to design and development."
+  },
+  "header": {
+    "contact": "Contact",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
+  },
+  "nav": {
+    "top": "",
+    "about": "",
+    "services": "",
+    "works": "",
+    "team": "",
+    "process": "",
+    "contact": ""
+  },
+  "cta": {
+    "consult": "Discuss Your Project",
+    "services": "View Services",
+    "sideSub": "Tell us about your project"
+  },
+  "hero": {
+    "title": "Web Design & Development in Japanese and English",
+    "text": "We design and build websites for schools and small businesses, with custom booking and registration features when needed. As a designer and developer team, we work with you from planning through launch.",
+    "duo": "A bilingual web designer and a full-stack engineer, working together from planning to design and development."
+  },
+  "about": {
+    "title": "One team, two languages —\nfrom first call to launch.",
+    "lead": "Lumineglyph is a husband-and-wife studio: a bilingual web designer and a full-stack engineer. You can talk to us in Japanese or English, and we'll help you share your services clearly with both audiences.",
+    "points": [
+      {
+        "title": "Japanese & English Communication",
+        "desc": "Meetings, emails, and website copy — we work comfortably in both languages. English pages are written to read naturally, not translated word for word."
+      },
+      {
+        "title": "Discovery & Requirements",
+        "desc": "We clarify your goals, audience, and the pages and features you need, then plan the site structure and user flow. Ideas still taking shape? That's a fine place to start."
+      },
+      {
+        "title": "Design and Development, Together",
+        "desc": "Our designer and engineer share the same requirements from day one, so the look and the functionality stay aligned all the way to launch."
+      }
+    ]
+  },
+  "services": {
+    "title": "What We Can Help With",
+    "exampleLabel": "Example",
+    "items": [
+      {
+        "title": "Websites & Landing Pages",
+        "desc": "Websites and landing pages that show what makes your school or business special — from structure and design through to launch.",
+        "example": "“We'd like a landing page for our trial English lessons that brings in more inquiries.”"
+      },
+      {
+        "title": "Bilingual Japanese–English Websites",
+        "desc": "Sites that present your services in both Japanese and English, including language switching and copy written for each audience.",
+        "example": "“We want to add English pages so international parents can understand our school.”"
+      },
+      {
+        "title": "Booking, Registration & Admin Tools",
+        "desc": "Booking and registration forms, applicant and member dashboards, and other tools that support your day-to-day operations.",
+        "example": "“We want to take trial-lesson bookings and manage applicants all in one place online.”"
+      }
+    ]
+  },
+  "works": {
+    "title": "Selected Works",
+    "viewSite": "View Site",
+    "newTab": " (opens in a new tab)",
+    "imageAltSuffix": " — first view"
+  },
+  "team": {
+    "title": "Meet the Team",
+    "scopeLabel": "Focus",
+    "moena": {
+      "role": "Bilingual Web Designer / Web Director",
+      "name": "Moena Miner",
+      "lead": "Your point of contact in Japanese or English. Even if you're not sure yet what to include or who you're speaking to, she'll help you sort it out and shape it into a website.",
+      "scope": "Client communication in Japanese and English, discovery, requirements, site structure and user flow, bilingual copy editing, web design, STUDIO site building, and project direction. Also social media post planning and design, and promotional materials such as event banners, slides, and Peatix pages."
+    },
+    "matthew": {
+      "role": "Full-Stack Engineer",
+      "name": "Matthew Ged Miner",
+      "lead": "Your go-to for booking and registration features, admin dashboards, and the systems that run behind your site — with a setup that fits your features and the way you operate.",
+      "scope": "Front end, back end, databases, cloud, and DevOps.",
+      "skills": {
+        "web": "Web Development",
+        "backend": "Back End & Databases",
+        "infra": "Infrastructure & Tooling",
+        "databaseDesign": "Database design & implementation"
+      }
+    }
+  },
+  "process": {
+    "title": "How We Work",
+    "steps": [
+      { "title": "Discovery", "desc": "We learn about your goals, audience, and the pages and features you need." },
+      { "title": "Proposal & Estimate", "desc": "We propose a site structure, approach, estimate, and schedule." },
+      { "title": "Design & Development", "desc": "Our designer and engineer work side by side to bring the design and features to life." },
+      { "title": "Review & Launch", "desc": "We review everything with you, make final adjustments, and launch." }
+    ]
+  },
+  "contact": {
+    "lead": "Whether it's a new site, a redesign, bilingual support, or a custom feature, feel free to reach out — even if your ideas are still taking shape. We're happy to talk in Japanese or English.",
+    "comingSoon": "Coming soon",
+    "channels": {
+      "inquiry": { "label": "Inquiry Form", "sub": "Project inquiries & estimates (Google Forms)" },
+      "linkedin": { "label": "LinkedIn", "sub": "Profile & messages" },
+      "coconala": { "label": "Coconala", "sub": "Inquire via our service page" }
+    }
+  },
+  "worksPage": {
+    "meta": {
+      "title": "Works | Lumineglyph"
+    },
+    "title": "Selected Works",
+    "lead": "Here are some of the websites we have designed and built. Each site opens in a new tab.",
+    "count": { "one": "{n} Work", "other": "{n} Works" },
+    "ctaText": "Have a project in mind? Feel free to reach out in Japanese or English.",
+    "ctaButton": "Discuss Your Project",
+    "backToTop": "Back to the top page"
+  }
+}

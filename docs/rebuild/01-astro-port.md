@@ -111,7 +111,7 @@ export const collections = { works };
 ```
 
 Notes:
-- **(verify)** Check that `image()` resolves relative paths like `"./mommienglish.jpg"` in JSON entries loaded by `glob()`. If it doesn't, put screenshots in `src/assets/works/` and use paths relative to the JSON file.
+- `image()` resolves paths relative to the JSON file, like `"./mommienglish.jpg"` (checked on Astro 7.4.12). A missing file only fails the build once a page actually renders the image, not when the collection syncs.
 - The order of `getCollection("works")` isn't guaranteed. Always `.sort((a, b) => a.data.order - b.data.order)`.
 
 A work file:
@@ -261,7 +261,7 @@ When it all matches:
 
 **B, content model.** Claude checks that the build-time validation actually works by temporarily breaking things, then restoring them:
 - delete a key from `en.json` → `npm run check` fails
-- point a work's `image` at a file that doesn't exist → `npm run build` fails
+- point a work's `image` at a file that doesn't exist → `npm run build` fails. This test only works once C has a page rendering the works, so run it again at checkpoint C.
 - set `url` to `"not a url"` → build fails
 
 **C, built HTML.**
