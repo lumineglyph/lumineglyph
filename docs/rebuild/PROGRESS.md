@@ -3,14 +3,14 @@
 Claude keeps this file up to date as checkpoints pass. If it disagrees with the repo, the repo wins; fix this file.
 
 - **Last updated:** 2026-11-15
-- **Current step:** 01 — Astro port (next: D, Matthew's side-by-side parity check, then cleanup and PR)
+- **Current step:** 01 — Astro port (next: ADR-001, then push and open the PR)
 
 ## Steps
 
 | # | Step | Status | Notes |
 |---|------|--------|-------|
 | 00 | Prep | Done (2026-11-14) | Org and transfer done; SSO login; no IAM users; root MFA on with no root keys; 2FA required in the org. Commits use the GitHub no-reply email. Registrar: Route 53 |
-| 01 | Astro port | In progress (A and B passed 2026-11-14; C passed 2026-11-15) | Astro 7.4.12, @astrojs/check 0.9.12, TypeScript 6.0.3, Node 24. B: Claude moved the copy into JSON at Matthew's request. C: Claude wrote it at Matthew's request. `astro check` 0 errors; the en pages have `lang="en"`; no `style=`/`onerror=`; a missing work image fails the build (`ImageNotFound`). JS: home 2.7 KB (1.2 KB gzipped), works 0.7 KB, plus `theme.js` 0.5 KB. Screenshot diff vs the old site: identical apart from the expected differences. 36 headless-Chrome behaviour checks pass; the only console error is the missing favicon (step 02) |
+| 01 | Astro port | In progress (A and B passed 2026-11-14; C and D passed 2026-11-15) | Astro 7.4.12, @astrojs/check 0.9.12, TypeScript 6.0.3, Node 24. B: Claude moved the copy into JSON at Matthew's request. C: Claude wrote it at Matthew's request. `astro check` 0 errors; the en pages have `lang="en"`; no `style=`/`onerror=`; a missing work image fails the build (`ImageNotFound`). JS: home 2.7 KB (1.2 KB gzipped), works 0.7 KB, plus `theme.js` 0.5 KB. Screenshot diff vs the old site: identical apart from the expected differences. 36 headless-Chrome behaviour checks pass; the only console error is the missing favicon (step 02). D: Matthew's side-by-side check matched (only "View More" is gone, as intended); old root files and snapshots removed |
 | 02 | Performance, SEO, CSP, accessibility | Not started | Matthew handed this step to Claude (2026-11-15) |
 | 03 | CI | Not started | |
 | 04 | AWS foundation | Not started | |
