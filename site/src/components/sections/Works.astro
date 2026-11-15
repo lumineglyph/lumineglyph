@@ -1,0 +1,38 @@
+---
+// The first `topWorks` works, padded with empty frames. "View More" appears only when there are more.
+import { getRelativeLocaleUrl } from "astro:i18n";
+import Arrow from "../Arrow.astro";
+import WorkCard from "../WorkCard.astro";
+import { getWorks } from "../../lib/works";
+import site from "../../data/site.json";
+import { copy, type Lang } from "../../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copy[lang].works;
+const works = await getWorks();
+const shown = works.slice(0, site.topWorks);
+const emptyFrames = site.topWorks - shown.length;
+---
+
+<section class="section" id="works" data-nav="works">
+  <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>03 — Works</p>
+  <h2 class="h2">{t.title}</h2>
+  <div class="works-grid">
+    {shown.map((w) => <WorkCard work={w} lang={lang} />)}
+    {Array.from({ length: emptyFrames }, () => <div class="work-frame" aria-hidden="true" />)}
+  </div>
+  {
+    works.length > site.topWorks && (
+      <div class="works-more">
+        <a class="btn btn-ghost" href={getRelativeLocaleUrl(lang, "works/")}>
+          <span>View More</span>
+          <Arrow />
+        </a>
+      </div>
+    )
+  }
+</section>

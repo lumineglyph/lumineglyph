@@ -1,0 +1,29 @@
+---
+import { copy, type Lang } from "../../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const t = copy[Astro.props.lang].services;
+---
+
+<section class="section" id="services" data-nav="services">
+  <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>02 — Services</p>
+  <h2 class="h2">{t.title}</h2>
+  <div class="services">
+    {
+      t.items.map((s, i) => (
+        <article class="service">
+          <p class="num">{String(i + 1).padStart(2, "0")}</p>
+          <h3>{s.title}</h3>
+          <p class="desc">{s.desc}</p>
+          <div class="example">
+            <span class="tag">{t.exampleLabel}</span>
+            <p>{s.example}</p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>

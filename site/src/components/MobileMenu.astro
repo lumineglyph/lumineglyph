@@ -1,0 +1,36 @@
+---
+// The slide-out menu opened from the mobile header.
+import Arrow from "./Arrow.astro";
+import ThemeSwitch from "./ThemeSwitch.astro";
+import { sections } from "../data/sections";
+import { copy, type Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copy[lang];
+---
+
+<nav class="m-menu" id="m-menu" aria-label="Mobile">
+  <ol class="nav-list">
+    {
+      sections.map((s) => (
+        <li>
+          <a href={`#${s.id}`}>
+            <span class="n">{s.n}.</span>
+            {s.label}
+            <span class="jp">{t.nav[s.id]}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+  <a class="btn btn-primary" href="#contact"><span>{t.cta.consult}</span><Arrow /></a>
+  <ThemeSwitch lang={lang} />
+</nav>
+
+<script>
+  import "../scripts/menu.ts";
+</script>

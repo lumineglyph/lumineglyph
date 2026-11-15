@@ -29,7 +29,7 @@
   --center-w:640px;
   --header-h:60px;
 }
-/* ライト配色：OSがライトモードのとき自動で切り替え（?theme=dark / ?theme=light で固定表示も可） */
+/* Light palette: follows the OS unless the theme switch sets data-theme="dark" or "light" */
 @media (prefers-color-scheme:light){
 :root:not([data-theme="dark"]){
   color-scheme:light;
@@ -89,6 +89,8 @@ ul,ol{margin:0;padding:0;list-style:none}
 h1,h2,h3,p{margin:0}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* Hidden SVG sprite holding the <symbol>s (replaces an inline style, which the CSP blocks) */
+.sprite{position:absolute}
 
 /* ---------- 3カラム（PC） ---------- */
 .layout{
@@ -168,13 +170,27 @@ h1,h2,h3,p{margin:0}
 /* 言語切り替え：テキスト＋下線 */
 .lang{display:inline-flex;align-items:center;gap:2px}
 .lang .sep{color:var(--line);font-size:12px}
-.lang button{
-  appearance:none;border:0;background:transparent;color:var(--muted);cursor:pointer;position:relative;
+.lang a{
+  color:var(--muted);text-decoration:none;cursor:pointer;position:relative;
   font-family:var(--sans);font-size:12px;letter-spacing:.2em;padding:8px 4px 8px 7px;line-height:1.4;
 }
-.lang button[aria-pressed="true"]{color:var(--text)}
-.lang button[aria-pressed="true"]::after{content:"";position:absolute;left:7px;right:4px;bottom:3px;height:1px;background:var(--accent)}
-.lang button:hover:not([aria-pressed="true"]){color:var(--accent)}
+.lang a[aria-current="page"]{color:var(--text)}
+.lang a[aria-current="page"]::after{content:"";position:absolute;left:7px;right:4px;bottom:3px;height:1px;background:var(--accent)}
+.lang a:hover:not([aria-current="page"]){color:var(--accent)}
+/* Language and theme switches side by side at the top of the right column */
+.side-tools{display:flex;align-items:center;gap:14px}
+/* Theme switch (System / Light / Dark): icon buttons styled like the language switch.
+   Rendered with `hidden`; theme-switch.ts reveals it once it's wired up. */
+.theme{display:inline-flex;align-items:center;gap:2px}
+.theme[hidden]{display:none}
+.theme button{
+  appearance:none;border:0;background:transparent;color:var(--muted);cursor:pointer;position:relative;
+  display:flex;align-items:center;justify-content:center;width:28px;height:32px;padding:0;
+}
+.theme .g{width:14px;height:14px}
+.theme button[aria-pressed="true"]{color:var(--text)}
+.theme button[aria-pressed="true"]::after{content:"";position:absolute;left:7px;right:7px;bottom:3px;height:1px;background:var(--accent)}
+.theme button:hover:not([aria-pressed="true"]){color:var(--accent)}
 
 /* セクションナビ：縦の細いレール＋現在地は太陽（Contactは月） */
 .side-nav ol{position:relative}
@@ -359,8 +375,8 @@ a.channel.primary .label{color:var(--accent)}
   .m-brand{display:flex;align-items:center;text-decoration:none;min-width:0}
   .m-brand img{height:13px;width:auto;max-width:100%}
   .m-actions{display:flex;align-items:center;gap:8px}
-  .m-actions .lang button{padding:8px 2px 8px 5px}
-  .m-actions .lang button[aria-pressed="true"]::after{left:5px;right:2px}
+  .m-actions .lang a{padding:8px 2px 8px 5px}
+  .m-actions .lang a[aria-current="page"]::after{left:5px;right:2px}
   .m-contact{
     display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 14px;border-radius:999px;
     background:var(--accent);color:var(--on-accent);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.04em;white-space:nowrap;
@@ -388,6 +404,8 @@ a.channel.primary .label{color:var(--accent)}
   .m-menu li a .jp:empty{display:none}
   .m-menu li a[aria-current="true"]{color:var(--accent)}
   .m-menu .btn{width:100%;margin-top:28px}
+  /* No room for the theme switch in the mobile header, so it sits under the menu's button */
+  .m-menu .theme:not([hidden]){display:flex;justify-content:center;margin-top:20px}
 
   .hero{padding-top:calc(var(--header-h) + 56px)}
   .hero-brand{margin-top:36px}

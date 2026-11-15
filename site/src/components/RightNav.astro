@@ -1,0 +1,47 @@
+---
+// Desktop right column: language and theme switches, section nav, and the contact button.
+import LangSwitch from "./LangSwitch.astro";
+import ThemeSwitch from "./ThemeSwitch.astro";
+import { sections } from "../data/sections";
+import { copy, type Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copy[lang];
+---
+
+<aside class="col-side right" aria-label="Navigation">
+  <div class="side-tools">
+    <LangSwitch lang={lang} path="" />
+    <ThemeSwitch lang={lang} />
+  </div>
+  <nav class="side-nav" aria-label="Sections">
+    <ol class="nav-list">
+      {
+        sections.map((s) => (
+          <li>
+            <a href={`#${s.id}`}>
+              <span class="mk">
+                {s.id === "contact" ? (
+                  <svg class="g fill" aria-hidden="true"><use href="#g-moon" /></svg>
+                ) : (
+                  <svg class="g" aria-hidden="true"><use href="#g-sun-s" /></svg>
+                )}
+              </span>
+              <span class="n">{s.n}</span>
+              <span class="lb">{s.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+  <a class="side-cta" href="#contact">
+    <svg class="g fill" aria-hidden="true"><use href="#g-moon"/></svg><span class="t">Contact Us</span>
+    <span class="s">{t.cta.sideSub}</span>
+    <span class="ln" aria-hidden="true"></span>
+  </a>
+</aside>

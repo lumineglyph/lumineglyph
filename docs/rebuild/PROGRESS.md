@@ -2,16 +2,16 @@
 
 Claude keeps this file up to date as checkpoints pass. If it disagrees with the repo, the repo wins; fix this file.
 
-- **Last updated:** 2026-11-14
-- **Current step:** 01 — Astro port (not started)
+- **Last updated:** 2026-11-15
+- **Current step:** 01 — Astro port (next: ADR-001, then push and open the PR)
 
 ## Steps
 
 | # | Step | Status | Notes |
 |---|------|--------|-------|
 | 00 | Prep | Done (2026-11-14) | Org and transfer done; SSO login; no IAM users; root MFA on with no root keys; 2FA required in the org. Commits use the GitHub no-reply email. Registrar: Route 53 |
-| 01 | Astro port | Not started | |
-| 02 | Performance, SEO, CSP, accessibility | Not started | |
+| 01 | Astro port | In progress (A and B passed 2026-11-14; C and D passed 2026-11-15) | Astro 7.4.12, @astrojs/check 0.9.12, TypeScript 6.0.3, Node 24. B: Claude moved the copy into JSON at Matthew's request. C: Claude wrote it at Matthew's request. `astro check` 0 errors; the en pages have `lang="en"`; no `style=`/`onerror=`; a missing work image fails the build (`ImageNotFound`). JS: home 2.7 KB (1.2 KB gzipped), works 0.7 KB, plus `theme.js` 0.5 KB. Screenshot diff vs the old site: identical apart from the expected differences. 36 headless-Chrome behaviour checks pass; the only console error is the missing favicon (step 02). D: Matthew's side-by-side check matched (only "View More" is gone, as intended); old root files and snapshots removed |
+| 02 | Performance, SEO, CSP, accessibility | Not started | Matthew handed this step to Claude (2026-11-15) |
 | 03 | CI | Not started | |
 | 04 | AWS foundation | Not started | |
 | 05 | Hosting | Not started | |
@@ -60,12 +60,18 @@ Use one line per decision, with the date, and link the ADR if there is one.
 - 2026-11-14: Delete the old design drafts (`index_v*.html`, `index-light_v1.html`) at the end of step 01. Git history keeps them.
 - 2026-11-14: Accessibility target is WCAG 2.2 AA in both themes.
 - 2026-11-14: Replace the `?theme=` override with a System / Light / Dark switch saved in localStorage (step 01 C). Recommended by Claude; Matthew asked for the industry-standard approach. Moena designs how it looks.
+- 2026-11-15: Matthew runs every git and gh command that changes anything (commits, branches, pushes, PRs, merges). Claude leaves changes uncommitted and says when a step is ready.
 
 ## Deviations from the tutorial
 
 Log anything done differently from the step files, and why.
 
-- (none yet)
+- 2026-11-15, whole tutorial: Matthew found the step files too vague to follow. Before he starts a step, Claude turns it into exact numbered instructions (files, code, commands, checks). Step 01 D has been rewritten that way.
+- 2026-11-15, 01 C and 02: Claude writes them at Matthew's request, because he's behind schedule and wants to spend his time on the DevOps steps (03–08). He reviews the code and does the 01 D parity check himself.
+- 01 C, theme switch: three icon buttons (half circle / sun / moon) with visually hidden labels, a working placeholder for Moena to restyle. On mobile it sits at the bottom of the slide-out menu, not in the header: at 390px the header is already full. `aria-pressed` shows the saved choice, not the resulting theme, so it doesn't need an OS-change listener. Added: other open tabs update when the choice changes.
+- 01 C: `assets/` was copied into `site/src/assets/`, not moved, so the old site keeps working until the D cleanup. Removed the Astro template's favicons; step 02 A adds the real one.
+- 01 C: the "Coming soon" contact rows lost `aria-disabled` (not valid on a plain `div`; the visible text already says it). The work images lost their hidden `.ph-label` fallback text, since a missing image now fails the build. The first slide is marked active at build time so something shows without JS; the script then jumps to a random slide without a fade.
+- 01 C: the JP/EN links get the current section's `#hash` on every scroll update, not only on click, so middle-click and "copy link" keep it too.
 
 ## Waiting on Moena / open questions
 
@@ -77,7 +83,8 @@ Log anything done differently from the step files, and why.
   - Plan: usable for the rebuild. Ask Moena whether an original vector file exists; if so, swap it in later. In step 02 A, use one traced version per logo with `fill="currentColor"` rather than separate black and white files, drop the grey specks, and run SVGO.
 - [ ] Matthew's profile photo, 4:5, about 800×1000 (step 01/02)
 - [ ] Social share (OG) image, 1200×630 (step 02)
-- [ ] Design for the theme switch: System / Light / Dark, placed next to JP/EN (step 01)
+- [ ] Design for the theme switch: a working icon version is in place (step 01 C). Moena can restyle it, and should decide whether she wants it in the mobile header rather than the menu.
+- [ ] Review the new Japanese copy for the theme switch: 表示テーマ / OSの設定に合わせる / ライト / ダーク (`site/src/i18n/ja.json`, `theme`)
 - [ ] **Light-mode orange text contrast.** It's 2.1:1 and needs 4.5:1. Moena picks a deeper orange for text in light mode only; `#B54708` is one example that passes (step 02 E).
 - [ ] Design for a pause/play button for the orbit animation and slideshow (WCAG 2.2.2) (step 02 E)
 - [x] Old design drafts: delete

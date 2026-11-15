@@ -1,0 +1,29 @@
+---
+import Lines from "../Lines.astro";
+import { copy, type Lang } from "../../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const t = copy[Astro.props.lang].about;
+---
+
+<section class="section" id="about" data-nav="about">
+  <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>01 — About</p>
+  <h2 class="h2"><Lines text={t.title} /></h2>
+  <p class="lead">{t.lead}</p>
+  <ol class="points">
+    {
+      t.points.map((p, i) => (
+        <li class="point">
+          <span class="num">{String(i + 1).padStart(2, "0")}</span>
+          <div>
+            <h3>{p.title}</h3>
+            <p>{p.desc}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</section>

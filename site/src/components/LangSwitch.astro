@@ -1,0 +1,17 @@
+---
+// JP / EN links to the same page in the other language.
+// On the home page, nav.ts adds the current section as the #hash so the reader keeps their place.
+import { getRelativeLocaleUrl } from "astro:i18n";
+import type { Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+  path: string; // "" for home, "works/" for the works page
+}
+
+const { lang, path } = Astro.props;
+---
+
+<div class="lang" role="group" aria-label="Language">
+  <a href={getRelativeLocaleUrl("ja", path)} hreflang="ja" lang="ja" aria-current={lang === "ja" ? "page" : undefined}>JP</a><span class="sep" aria-hidden="true">/</span><a href={getRelativeLocaleUrl("en", path)} hreflang="en" lang="en" aria-current={lang === "en" ? "page" : undefined}>EN</a>
+</div>

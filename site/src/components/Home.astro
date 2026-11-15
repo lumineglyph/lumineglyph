@@ -1,0 +1,48 @@
+---
+// The home page in one language. src/pages/index.astro and src/pages/en/index.astro render this.
+import Base from "../layouts/Base.astro";
+import MobileHeader from "./MobileHeader.astro";
+import MobileMenu from "./MobileMenu.astro";
+import LeftColumn from "./LeftColumn.astro";
+import RightNav from "./RightNav.astro";
+import Hero from "./sections/Hero.astro";
+import About from "./sections/About.astro";
+import Services from "./sections/Services.astro";
+import Works from "./sections/Works.astro";
+import Team from "./sections/Team.astro";
+import Process from "./sections/Process.astro";
+import Contact from "./sections/Contact.astro";
+import { copy, type Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copy[lang];
+---
+
+<Base lang={lang} title={t.meta.title} description={t.meta.description}>
+  <MobileHeader lang={lang} />
+  <MobileMenu lang={lang} />
+
+  <div class="layout">
+    <LeftColumn lang={lang} />
+
+    <main class="col-center">
+      <Hero lang={lang} />
+      <About lang={lang} />
+      <Services lang={lang} />
+      <Works lang={lang} />
+      <Team lang={lang} />
+      <Process lang={lang} />
+      <Contact lang={lang} />
+    </main>
+
+    <RightNav lang={lang} />
+  </div>
+</Base>
+
+<script>
+  import "../scripts/nav.ts";
+</script>

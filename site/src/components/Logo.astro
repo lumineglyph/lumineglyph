@@ -1,0 +1,30 @@
+---
+// One logo as a white/black pair; the CSS shows whichever suits the theme (.on-dark / .on-light).
+// Step 02 A replaces the PNG pair with a single inline SVG that uses currentColor.
+import { Image } from "astro:assets";
+import markWhite from "../assets/logo-mark-white.png";
+import markBlack from "../assets/logo-mark-black.png";
+import typeWhite from "../assets/logo-type-white.png";
+import typeBlack from "../assets/logo-type-black.png";
+import symboltypeWhite from "../assets/logo-symboltype-white.png";
+import symboltypeBlack from "../assets/logo-symboltype-black.png";
+
+const files = {
+  mark: [markWhite, markBlack],
+  type: [typeWhite, typeBlack],
+  symboltype: [symboltypeWhite, symboltypeBlack],
+};
+
+interface Props {
+  variant: keyof typeof files;
+  alt: string;
+  class?: string;
+  loading?: "eager" | "lazy";
+}
+
+const { variant, alt, class: extraClass, loading = "eager" } = Astro.props;
+const [white, black] = files[variant];
+---
+
+<Image src={white} alt={alt} class:list={[extraClass, "on-dark"]} loading={loading} />
+<Image src={black} alt={alt} class:list={[extraClass, "on-light"]} loading={loading} />

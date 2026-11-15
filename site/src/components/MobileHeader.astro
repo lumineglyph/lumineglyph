@@ -1,0 +1,32 @@
+---
+// Fixed header shown at 1199px and below, in place of the side columns.
+import Logo from "./Logo.astro";
+import LangSwitch from "./LangSwitch.astro";
+import { copy, type Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copy[lang].header;
+---
+
+<header class="m-header">
+  <a class="m-brand" href="#top"><Logo variant="type" alt="Lumineglyph Design" /></a>
+  <div class="m-actions">
+    <LangSwitch lang={lang} path="" />
+    <a class="m-contact" href="#contact">{t.contact}</a>
+    <button
+      class="m-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="m-menu"
+      aria-label={t.menuOpen}
+      data-label-open={t.menuOpen}
+      data-label-close={t.menuClose}
+    >
+      <span></span><span></span>
+    </button>
+  </div>
+</header>

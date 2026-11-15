@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Static marketing site for Lumineglyph, a bilingual (Japanese/English) web design and development studio. It is plain HTML, CSS and vanilla JS. There is no build step, package manager, linter or test suite. Code comments and most user-facing copy are in Japanese, so keep new comments in Japanese to match.
+Static marketing site for Lumineglyph, a bilingual (Japanese/English) web design and development studio. Since step 01 of the rebuild, the site is an Astro project in `site/` (`cd site && npm run dev`, or `npm run verify` to type-check and build). The old plain HTML/CSS/JS files at the repo root were removed; they're in git history at `9233aa2`.
 
-To preview, open `index.html` directly in a browser, or serve the folder (e.g. `python3 -m http.server`) and visit `http://localhost:8000/`.
+The "Live files", "Architecture" and "Contact links" sections below still describe that old site. They explain the design and behaviour the Astro port reproduces, but the file names and mechanisms (`works.js`, `data-i18n`, `?lang=`, `?theme=`) no longer exist. Step 09 rewrites this file.
 
 ## Rebuild in progress
 
-Matthew is rebuilding the site using Astro, AWS and Terraform, following the tutorial in [docs/rebuild/](docs/rebuild/README.md). Before helping with anything related to the rebuild, read `docs/rebuild/README.md` (especially its "For Claude" section) and `docs/rebuild/PROGRESS.md`. In short: act as a tutor and reviewer, don't write the code for him unless he asks, and never apply, push or buy anything without his explicit go-ahead. New code comments in the rebuild are in English. Until step 01 finishes, the sections below still describe the files at the repo root.
+Matthew is rebuilding the site using Astro, AWS and Terraform, following the tutorial in [docs/rebuild/](docs/rebuild/README.md). Before helping with anything related to the rebuild, read `docs/rebuild/README.md` (especially its "For Claude" section) and `docs/rebuild/PROGRESS.md`. In short: act as a tutor and reviewer, don't write the code for him unless he asks, and never apply, push or buy anything without his explicit go-ahead. New code comments in the rebuild are in English. Step 01 has removed the old root files (see the Overview above).
 
 ## Live files vs. snapshots
 

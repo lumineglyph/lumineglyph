@@ -1,0 +1,64 @@
+---
+// The full works list in one language. src/pages/works.astro and src/pages/en/works.astro render this.
+import { getRelativeLocaleUrl } from "astro:i18n";
+import Base from "../layouts/Base.astro";
+import "../styles/works.css";
+import Arrow from "./Arrow.astro";
+import LangSwitch from "./LangSwitch.astro";
+import Logo from "./Logo.astro";
+import ThemeSwitch from "./ThemeSwitch.astro";
+import WorkCard from "./WorkCard.astro";
+import { getWorks } from "../lib/works";
+import { copy, type Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copy[lang].worksPage;
+const works = await getWorks();
+const home = getRelativeLocaleUrl(lang, "");
+
+// "{n} Works" / "{n} Work": Japanese always uses "other", English uses "one" for 1.
+const plural = new Intl.PluralRules(lang).select(works.length) === "one" ? "one" : "other";
+const count = t.count[plural].replace("{n}", String(works.length));
+---
+
+<Base lang={lang} title={t.meta.title} description={t.meta.description}>
+  <header class="w-header">
+    <a class="w-brand" href={home}><Logo variant="symboltype" alt="Lumineglyph Design" /></a>
+    <div class="w-actions">
+      <LangSwitch lang={lang} path="works/" />
+      <ThemeSwitch lang={lang} />
+      <a class="w-back" href={`${home}#works`}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6"/></svg><span class="lb">Top</span><span class="sr-only">{t.backToTop}</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="w-main">
+    <section class="w-intro">
+      <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>Works</p>
+      <h1 class="w-title">{t.title}</h1>
+      <p class="lead">{t.lead}</p>
+      <p class="w-count">{count}</p>
+    </section>
+
+    <div class="works-grid">
+      {works.map((w) => <WorkCard work={w} lang={lang} />)}
+    </div>
+
+    <section class="w-cta">
+      <svg class="g fill" aria-hidden="true" viewBox="0 0 200 200"><use href="#g-moon"/></svg>
+      <h2>Contact Us</h2>
+      <p>{t.ctaText}</p>
+      <a class="btn btn-primary" href={`${home}#contact`}><span>{t.ctaButton}</span><Arrow /></a>
+    </section>
+
+    <footer class="footer">
+      <span class="fbrand"><Logo variant="symboltype" alt="Lumineglyph Design" loading="lazy" /></span>
+      <span>© 2026 Lumineglyph</span>
+    </footer>
+  </main>
+</Base>

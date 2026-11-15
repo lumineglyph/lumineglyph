@@ -1,0 +1,27 @@
+---
+// System / Light / Dark switch. Rendered hidden because it can't work without JavaScript;
+// theme-switch.ts sets the pressed state from the saved choice and then reveals it.
+import { copy, type Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const t = copy[Astro.props.lang].theme;
+---
+
+<div class="theme" role="group" aria-label={t.label} hidden data-theme-switch>
+  <button type="button" aria-pressed="true" data-theme-value="system" title={t.system}>
+    <svg class="g" aria-hidden="true"><use href="#g-auto"/></svg><span class="sr-only">{t.system}</span>
+  </button>
+  <button type="button" aria-pressed="false" data-theme-value="light" title={t.light}>
+    <svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg><span class="sr-only">{t.light}</span>
+  </button>
+  <button type="button" aria-pressed="false" data-theme-value="dark" title={t.dark}>
+    <svg class="g fill" aria-hidden="true" viewBox="0 0 200 200"><use href="#g-moon"/></svg><span class="sr-only">{t.dark}</span>
+  </button>
+</div>
+
+<script>
+  import "../scripts/theme-switch.ts";
+</script>

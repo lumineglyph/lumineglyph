@@ -1,0 +1,34 @@
+---
+import Arrow from "../Arrow.astro";
+import Logo from "../Logo.astro";
+import { copy, type Lang } from "../../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const t = copy[Astro.props.lang];
+---
+
+<section class="section hero" id="top" data-nav="top">
+  <svg class="g hero-sun" aria-hidden="true"><use href="#g-sun"/></svg>
+  <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>Bilingual Web Design &amp; Development</p>
+  <Logo variant="mark" alt="" class="hero-mark" />
+  <p class="hero-brand">Lumineglyph</p>
+  <h1>{t.hero.title}</h1>
+  <p class="hero-text">{t.hero.text}</p>
+
+  <div class="duo">
+    <div class="duo-row" aria-hidden="true">
+      <span class="duo-node"><svg class="g"><use href="#g-sun-s"/></svg><span>Bilingual<br />Web Designer</span></span>
+      <span class="duo-link"></span>
+      <span class="duo-node"><svg class="g fill"><use href="#g-moon"/></svg><span>Full-Stack<br />Engineer</span></span>
+    </div>
+    <p class="duo-caption">{t.hero.duo}</p>
+  </div>
+
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#contact"><span>{t.cta.consult}</span><Arrow /></a>
+    <a class="btn btn-ghost" href="#services">{t.cta.services}</a>
+  </div>
+</section>
