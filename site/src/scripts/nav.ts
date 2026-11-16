@@ -55,3 +55,6 @@ window.addEventListener(
 );
 window.addEventListener("resize", update);
 update();
+
+// Marks this file as a module so its top-level names stay private to it.
+export {};

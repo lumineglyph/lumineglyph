@@ -8,6 +8,19 @@
     "menuOpen": "メニューを開く",
     "menuClose": "メニューを閉じる"
   },
+  "a11y": {
+    "skipToContent": "本文へ移動",
+    "pauseMotion": "アニメーションを一時停止",
+    "language": "言語",
+    "navigation": "ナビゲーション",
+    "sections": "セクション",
+    "menu": "メニュー"
+  },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "text": "お探しのページは、移動または削除された可能性があります。",
+    "home": "トップページへ"
+  },
   "theme": {
     "label": "表示テーマ",
     "system": "OSの設定に合わせる",

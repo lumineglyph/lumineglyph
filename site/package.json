@@ -15,10 +15,14 @@
     "verify": "astro check && astro build"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.5",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/shippori-mincho": "^5.3.0",
     "astro": "^7.4.12"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "subset-font": "^2.9.0",
     "typescript": "^6.0.3"
   }
 }

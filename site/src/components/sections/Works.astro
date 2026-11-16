@@ -22,7 +22,12 @@ const emptyFrames = site.topWorks - shown.length;
   <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>03 — Works</p>
   <h2 class="h2">{t.title}</h2>
   <div class="works-grid">
-    {shown.map((w) => <WorkCard work={w} lang={lang} />)}
+    {
+      shown.map((w) => (
+        // Two columns about 260px wide inside the 640px center column; one full-width column at 640px and below.
+        <WorkCard work={w} lang={lang} sizes="(max-width: 640px) calc(100vw - 44px), 280px" />
+      ))
+    }
     {Array.from({ length: emptyFrames }, () => <div class="work-frame" aria-hidden="true" />)}
   </div>
   {

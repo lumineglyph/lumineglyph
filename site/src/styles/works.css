@@ -5,11 +5,11 @@
   border-bottom:1px solid var(--faint);
 }
 .w-brand{display:flex;align-items:center;text-decoration:none;min-width:0}
-.w-brand img{height:30px;width:auto;max-width:100%}
+.w-brand .logo{height:30px;width:auto;max-width:100%}
 .w-actions{display:flex;align-items:center;gap:22px}
 .w-back{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;color:var(--muted);white-space:nowrap}
 .w-back svg{width:16px;height:16px}
-.w-back:hover{color:var(--accent)}
+.w-back:hover{color:var(--accent-text)}
 .w-main{max-width:1080px;margin:0 auto;padding:96px 48px 0}
 .w-intro{max-width:640px}
 .w-title{font-family:var(--serif-jp);font-weight:400;font-size:34px;line-height:1.5;margin-top:18px;letter-spacing:.06em}
@@ -24,7 +24,7 @@ html[lang="en"] .w-title{font-family:var(--serif-en);font-size:44px;line-height:
 .w-main .footer{margin-top:96px;padding-bottom:40px}
 @media (max-width:640px){
   .w-header{height:60px;padding:0 16px;gap:10px}
-  .w-brand img{height:20px}
+  .w-brand .logo{height:20px}
   .w-actions{gap:10px}
   .w-back .lb{display:none}
   .w-back{width:36px;height:36px;justify-content:center;border:1px solid var(--line);border-radius:50%}
@@ -36,3 +36,7 @@ html[lang="en"] .w-title{font-family:var(--serif-en);font-size:44px;line-height:
   .w-cta h2{font-size:34px}
   .w-cta .btn{width:100%}
 }
+/* 404 page: the English half below the Japanese one, with the English heading style */
+.not-found-en{margin-top:64px;padding-top:48px;border-top:1px solid var(--faint)}
+.not-found-en .w-title{margin-top:0;font-family:var(--serif-en);font-size:44px;line-height:1.15;letter-spacing:0;font-weight:500}
+@media (max-width:640px){.not-found-en .w-title{font-size:34px}}

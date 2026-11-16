@@ -13,7 +13,7 @@ const { lang } = Astro.props;
 const t = copy[lang];
 ---
 
-<nav class="m-menu" id="m-menu" aria-label="Mobile">
+<nav class="m-menu" id="m-menu" aria-label={t.a11y.menu}>
   <ol class="nav-list">
     {
       sections.map((s) => (

@@ -1,5 +1,6 @@
 // Left-column slideshow. The slides are rendered at build time; this shows them
 // in a random order, cross-fading to the next one every 6 seconds.
+// It holds still while hovered and while the pause button (motion.ts) is on.
 
 const INTERVAL_MS = 6000;
 
@@ -25,8 +26,14 @@ if (slides.length > 0) {
   for (const s of slides) s.style.transition = "";
 
   if (slides.length > 1) {
+    let hovered = false;
+    const box = document.getElementById("slides");
+    box?.addEventListener("mouseenter", () => (hovered = true));
+    box?.addEventListener("mouseleave", () => (hovered = false));
+
     setInterval(() => {
       if (document.hidden) return; // don't advance in a background tab
+      if (hovered || document.documentElement.dataset.motion === "paused") return;
       const prev = order[pos];
       pos++;
       if (pos >= order.length) {
@@ -40,3 +47,6 @@ if (slides.length > 0) {
     }, INTERVAL_MS);
   }
 }
+
+// Marks this file as a module so its top-level names stay private to it.
+export {};

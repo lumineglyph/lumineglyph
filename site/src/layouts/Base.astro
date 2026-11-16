@@ -1,16 +1,40 @@
 ---
-// The shell every page shares: <html lang>, <head>, the theme script and the SVG sprite.
+// The shell every page shares: <html lang>, <head> (SEO metadata, fonts, icons, saved preferences),
+// the skip link and the SVG sprite.
+
+// Self-hosted fonts for the headings. Body text uses the system font (--sans in global.css).
+// Latin glyphs come from Fontsource's latin files. Japanese heading glyphs come from subsets made
+// at build time with only the characters the headings use (integrations/subset-fonts.mjs).
+// The Japanese file must come last: browsers try same-family faces in reverse order.
+import "@fontsource/shippori-mincho/latin-400.css";
+import "@fontsource/shippori-mincho/latin-500.css";
+import "@fontsource/cormorant-garamond/latin-400.css";
+import "@fontsource/cormorant-garamond/latin-500.css";
+import "@fontsource/cormorant-garamond/latin-400-italic.css";
+import "@fontsource/cormorant-garamond/latin-500-italic.css";
+import "../generated/fonts/japanese.css";
+import heroFont from "@fontsource/cormorant-garamond/files/cormorant-garamond-latin-500-normal.woff2?url";
 import "../styles/global.css";
+import { getRelativeLocaleUrl } from "astro:i18n";
 import Sprite from "../components/Sprite.astro";
-import type { Lang } from "../i18n";
+import { copy, type Lang } from "../i18n";
 
 interface Props {
   lang: Lang;
   title: string;
   description: string;
+  // The page's path without the language prefix: "" for home, "works/" for works.
+  // Leave it out on pages with no language versions (the 404 page): they get no canonical or hreflang links.
+  path?: string;
 }
 
-const { lang, title, description } = Astro.props;
+const { lang, title, description, path } = Astro.props;
+
+// Absolute URL of this page in the given language.
+const urlFor = (l: Lang) => (path === undefined ? undefined : new URL(getRelativeLocaleUrl(l, path), Astro.site).href);
+const canonical = urlFor(lang);
+const ogLocale = { ja: "ja_JP", en: "en_US" } as const;
+const otherLang: Lang = lang === "ja" ? "en" : "ja";
 ---
 
 <!doctype html>
@@ -20,16 +44,43 @@ const { lang, title, description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <!-- Google Fonts for now; step 02 B self-hosts them -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Sans+JP:wght@400;500&family=Shippori+Mincho:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <script is:inline src="/theme.js"></script>
+
+    {
+      canonical && (
+        <>
+          <link rel="canonical" href={canonical} />
+          <link rel="alternate" hreflang="ja" href={urlFor("ja")} />
+          <link rel="alternate" hreflang="en" href={urlFor("en")} />
+          <link rel="alternate" hreflang="x-default" href={urlFor("ja")} />
+          <meta property="og:url" content={canonical} />
+        </>
+      )
+    }
+    <!-- Social share cards. og:image (1200×630) is added once Moena supplies the image;
+         twitter:card becomes summary_large_image then. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Lumineglyph" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content={ogLocale[lang]} />
+    <meta property="og:locale:alternate" content={ogLocale[otherLang]} />
+    <meta name="twitter:card" content="summary" />
+
+    <!-- Browser UI color: the page background of each theme (--bg in global.css) -->
+    <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F1F0ED" media="(prefers-color-scheme: light)" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Preload only the big "Lumineglyph" heading's font; preloading Japanese slices would waste bandwidth -->
+    <link rel="preload" href={heroFont} as="font" type="font/woff2" crossorigin />
+
+    <script is:inline src="/prefs.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">{copy[lang].a11y.skipToContent}</a>
     <Sprite />
     <slot />
   </body>

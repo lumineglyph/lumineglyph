@@ -1,0 +1,40 @@
+---
+// "Page not found" in both languages on one page: CloudFront serves this same file for any
+// missing URL (step 05), so it can't know which language the visitor wanted.
+import Base from "../layouts/Base.astro";
+import "../styles/works.css";
+import Logo from "../components/Logo.astro";
+import ThemeSwitch from "../components/ThemeSwitch.astro";
+import { copy } from "../i18n";
+
+const { ja, en } = copy;
+---
+
+<Base lang="ja" title={`${ja.notFound.title} | Lumineglyph`} description={ja.notFound.text}>
+  <header class="w-header">
+    <a class="w-brand" href="/"><Logo variant="symboltype" alt="Lumineglyph Design" /></a>
+    <div class="w-actions">
+      <ThemeSwitch lang="ja" />
+    </div>
+  </header>
+
+  <main class="w-main" id="main">
+    <section class="w-intro">
+      <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>404</p>
+      <h1 class="w-title">{ja.notFound.title}</h1>
+      <p class="lead">{ja.notFound.text}</p>
+      <p class="lead"><a href="/">{ja.notFound.home}</a></p>
+    </section>
+
+    <section class="w-intro not-found-en" lang="en">
+      <h2 class="w-title">{en.notFound.title}</h2>
+      <p class="lead">{en.notFound.text}</p>
+      <p class="lead"><a href="/en/">{en.notFound.home}</a></p>
+    </section>
+
+    <footer class="footer">
+      <span class="fbrand"><Logo variant="symboltype" alt="Lumineglyph Design" /></span>
+      <span>© 2026 Lumineglyph</span>
+    </footer>
+  </main>
+</Base>

@@ -1,5 +1,5 @@
 // Wires up the System / Light / Dark switch (ThemeSwitch.astro).
-// public/theme.js has already applied the saved choice before the first paint;
+// public/prefs.js has already applied the saved choice before the first paint;
 // this keeps the buttons in sync, saves new choices and reveals the switch.
 
 type Choice = "system" | "light" | "dark";
@@ -49,3 +49,6 @@ window.addEventListener("storage", (e) => {
 
 apply(savedChoice());
 for (const g of groups) g.hidden = false;
+
+// Marks this file as a module so its top-level names stay private to it.
+export {};

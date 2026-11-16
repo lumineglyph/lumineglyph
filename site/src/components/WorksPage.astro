@@ -25,7 +25,7 @@ const plural = new Intl.PluralRules(lang).select(works.length) === "one" ? "one"
 const count = t.count[plural].replace("{n}", String(works.length));
 ---
 
-<Base lang={lang} title={t.meta.title} description={t.meta.description}>
+<Base lang={lang} title={t.meta.title} description={t.meta.description} path="works/">
   <header class="w-header">
     <a class="w-brand" href={home}><Logo variant="symboltype" alt="Lumineglyph Design" /></a>
     <div class="w-actions">
@@ -37,7 +37,7 @@ const count = t.count[plural].replace("{n}", String(works.length));
     </div>
   </header>
 
-  <main class="w-main">
+  <main class="w-main" id="main">
     <section class="w-intro">
       <p class="eyebrow"><svg class="g" aria-hidden="true"><use href="#g-sun-s"/></svg>Works</p>
       <h1 class="w-title">{t.title}</h1>
@@ -46,7 +46,17 @@ const count = t.count[plural].replace("{n}", String(works.length));
     </section>
 
     <div class="works-grid">
-      {works.map((w) => <WorkCard work={w} lang={lang} />)}
+      {
+        works.map((w) => (
+          // Two columns up to 472px wide inside the 1080px container; one column at 640px and below.
+          <WorkCard
+            work={w}
+            lang={lang}
+            headingLevel={2}
+            sizes="(max-width: 640px) calc(100vw - 44px), (max-width: 1080px) calc((100vw - 136px) / 2), 472px"
+          />
+        ))
+      }
     </div>
 
     <section class="w-cta">
@@ -57,7 +67,7 @@ const count = t.count[plural].replace("{n}", String(works.length));
     </section>
 
     <footer class="footer">
-      <span class="fbrand"><Logo variant="symboltype" alt="Lumineglyph Design" loading="lazy" /></span>
+      <span class="fbrand"><Logo variant="symboltype" alt="Lumineglyph Design" /></span>
       <span>© 2026 Lumineglyph</span>
     </footer>
   </main>
