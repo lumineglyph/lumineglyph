@@ -8,6 +8,19 @@
     "menuOpen": "Open menu",
     "menuClose": "Close menu"
   },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "pauseMotion": "Pause animations",
+    "language": "Language",
+    "navigation": "Navigation",
+    "sections": "Sections",
+    "menu": "Menu"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "The page you're looking for may have moved or been removed.",
+    "home": "Go to the home page"
+  },
   "theme": {
     "label": "Theme",
     "system": "Match system",

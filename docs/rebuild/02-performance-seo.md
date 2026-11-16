@@ -37,6 +37,8 @@ Self-hosting the fonts also means visitors' browsers never contact Google, which
 
 ### B. Fonts
 
+> **What was actually built (2026-11-15/16).** The Fonts API gave one 1.1–1.4 MB file per Japanese weight. The Fontsource packages gave slices, but about 70 of them (950 KB) per Japanese page. Subsetting both Japanese fonts at build time still left the Japanese home page at 85 on mobile. Final: body text uses the system font, and only Shippori Mincho is self-hosted for Japanese, subset at build time to the headings (19 KB). See `site/fonts/README.md` and `site/integrations/subset-fonts.mjs`. The text below is the original plan, kept for the record.
+
 Use Astro's built-in Fonts API. It downloads the font files at build time and serves them from your own domain.
 
 ```js
@@ -123,7 +125,7 @@ security: {
       "base-uri 'none'",
       "form-action 'none'",
     ],
-    scriptDirective: { resources: ["'self'"] },   // for bundled module scripts and /theme.js
+    scriptDirective: { resources: ["'self'"] },   // for bundled module scripts and /prefs.js (was /theme.js)
     styleDirective: { resources: ["'self'"] },
   },
 },

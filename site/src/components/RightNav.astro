@@ -13,12 +13,12 @@ const { lang } = Astro.props;
 const t = copy[lang];
 ---
 
-<aside class="col-side right" aria-label="Navigation">
+<aside class="col-side right" aria-label={t.a11y.navigation}>
   <div class="side-tools">
     <LangSwitch lang={lang} path="" />
     <ThemeSwitch lang={lang} />
   </div>
-  <nav class="side-nav" aria-label="Sections">
+  <nav class="side-nav" aria-label={t.a11y.sections}>
     <ol class="nav-list">
       {
         sections.map((s) => (

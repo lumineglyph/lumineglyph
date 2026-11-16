@@ -1,26 +1,37 @@
 ---
 // One work: screenshot, category, title, description and a link to the live site (new tab).
-import { Image } from "astro:assets";
+import { Picture } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import { copy, type Lang } from "../i18n";
 
 interface Props {
   work: CollectionEntry<"works">;
   lang: Lang;
+  // The screenshot's displayed width, for the browser to pick a file size (depends on the page's grid).
+  sizes: string;
+  // h3 under the home page's "Works" h2; h2 on the works page, which has no h2 above the grid.
+  headingLevel?: 2 | 3;
 }
 
-const { work, lang } = Astro.props;
+const { work, lang, sizes, headingLevel = 3 } = Astro.props;
 const w = work.data;
 const t = copy[lang].works;
 const title = w.title[lang];
+const Heading = `h${headingLevel}` as "h2" | "h3";
 ---
 
 <article class="work">
   <a class="work-img ph" href={w.url} target="_blank" rel="noopener" aria-label={title + t.newTab}>
-    <Image src={w.image} alt={title + t.imageAltSuffix} />
+    <Picture
+      src={w.image}
+      formats={["avif", "webp"]}
+      widths={[320, 480, 640, 960, 1280]}
+      sizes={sizes}
+      alt={title + t.imageAltSuffix}
+    />
   </a>
   <p class="work-cat">{w.category[lang]}</p>
-  <h3 class="work-title">{title}</h3>
+  <Heading class="work-title">{title}</Heading>
   <p class="work-desc">{w.desc[lang]}</p>
   <a class="work-link" href={w.url} target="_blank" rel="noopener">
     {t.viewSite}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg><span class="sr-only">{t.newTab}</span>

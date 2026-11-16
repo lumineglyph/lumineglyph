@@ -1,30 +1,25 @@
 ---
-// One logo as a white/black pair; the CSS shows whichever suits the theme (.on-dark / .on-light).
-// Step 02 A replaces the PNG pair with a single inline SVG that uses currentColor.
-import { Image } from "astro:assets";
-import markWhite from "../assets/logo-mark-white.png";
-import markBlack from "../assets/logo-mark-black.png";
-import typeWhite from "../assets/logo-type-white.png";
-import typeBlack from "../assets/logo-type-black.png";
-import symboltypeWhite from "../assets/logo-symboltype-white.png";
-import symboltypeBlack from "../assets/logo-symboltype-black.png";
+// A logo as inline SVG. It's drawn in currentColor, and the .logo rule sets that to --logo,
+// so one file serves both themes.
+import Mark from "../assets/logo-mark.svg";
+import Type from "../assets/logo-type.svg";
+import Symboltype from "../assets/logo-symboltype.svg";
 
-const files = {
-  mark: [markWhite, markBlack],
-  type: [typeWhite, typeBlack],
-  symboltype: [symboltypeWhite, symboltypeBlack],
-};
+const logos = { mark: Mark, type: Type, symboltype: Symboltype };
 
 interface Props {
-  variant: keyof typeof files;
-  alt: string;
+  variant: keyof typeof logos;
+  alt: string; // "" for a decorative copy
   class?: string;
-  loading?: "eager" | "lazy";
 }
 
-const { variant, alt, class: extraClass, loading = "eager" } = Astro.props;
-const [white, black] = files[variant];
+const { variant, alt, class: extraClass } = Astro.props;
+const Svg = logos[variant];
 ---
 
-<Image src={white} alt={alt} class:list={[extraClass, "on-dark"]} loading={loading} />
-<Image src={black} alt={alt} class:list={[extraClass, "on-light"]} loading={loading} />
+<Svg
+  class:list={["logo", extraClass]}
+  role={alt ? "img" : undefined}
+  aria-label={alt || undefined}
+  aria-hidden={alt ? undefined : "true"}
+/>

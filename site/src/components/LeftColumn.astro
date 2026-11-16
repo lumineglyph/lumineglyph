@@ -1,6 +1,6 @@
 ---
-// Desktop left column: logo mark, the orbiting sun and moon around the works slideshow, and the brand.
-import { Image } from "astro:assets";
+// Desktop left column: logo mark and pause button, the orbiting sun and moon around the works slideshow, and the brand.
+import { Picture } from "astro:assets";
 import Logo from "./Logo.astro";
 import { getWorks } from "../lib/works";
 import { copy, type Lang } from "../i18n";
@@ -10,21 +10,36 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const t = copy[lang].works;
+const t = copy[lang];
 const works = await getWorks();
 ---
 
 <aside class="col-side left" aria-label="Lumineglyph">
-  <a class="mark" href="#top"><Logo variant="mark" alt="Lumineglyph Top" /></a>
+  <div class="left-top">
+    <a class="mark" href="#top"><Logo variant="mark" alt="Lumineglyph Top" /></a>
+    <!-- Pauses the orbit and the slideshow (WCAG 2.2.2). Hidden until motion.ts wires it up. -->
+    <button class="motion-toggle" type="button" aria-pressed="false" title={t.a11y.pauseMotion} hidden data-motion-toggle>
+      <svg class="pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1h3v10H2zM7 1h3v10H7z"/></svg>
+      <svg class="play" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1v10l8.5-5z"/></svg>
+      <span class="sr-only">{t.a11y.pauseMotion}</span>
+    </button>
+  </div>
   <div class="brand-visual">
     <!-- Sun and moon circle the slideshow on an elliptical orbit -->
     <span class="orbiter sun" aria-hidden="true"><span><svg class="g sun-fill"><use href="#g-sun-fill"/></svg></span></span>
     <span class="orbiter moon" aria-hidden="true"><span><svg class="g fill"><use href="#g-moon"/></svg></span></span>
-    <div class="slides ph" id="slides" aria-label="Works">
+    <div class="slides ph" id="slides" role="group" aria-label={t.works.title}>
       {
         works.map((w, i) => (
           <a class:list={["slide", i === 0 && "is-active"]} href="#works" tabindex="-1">
-            <Image src={w.data.image} alt={w.data.title[lang] + t.imageAltSuffix} loading="eager" />
+            <Picture
+              src={w.data.image}
+              formats={["avif", "webp"]}
+              widths={[270, 540]}
+              sizes="270px"
+              alt={w.data.title[lang] + t.works.imageAltSuffix}
+              loading={i === 0 ? "eager" : "lazy"}
+            />
           </a>
         ))
       }
@@ -38,4 +53,5 @@ const works = await getWorks();
 
 <script>
   import "../scripts/slideshow.ts";
+  import "../scripts/motion.ts";
 </script>

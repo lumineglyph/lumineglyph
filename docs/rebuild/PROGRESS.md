@@ -2,16 +2,16 @@
 
 Claude keeps this file up to date as checkpoints pass. If it disagrees with the repo, the repo wins; fix this file.
 
-- **Last updated:** 2026-11-15
-- **Current step:** 01 — Astro port (next: ADR-001, then push and open the PR)
+- **Last updated:** 2026-11-16
+- **Current step:** 02 — Performance, SEO, CSP, accessibility (built by Claude and reviewed by Matthew; next: finish ADR-002, then commit and PR)
 
 ## Steps
 
 | # | Step | Status | Notes |
 |---|------|--------|-------|
 | 00 | Prep | Done (2026-11-14) | Org and transfer done; SSO login; no IAM users; root MFA on with no root keys; 2FA required in the org. Commits use the GitHub no-reply email. Registrar: Route 53 |
-| 01 | Astro port | In progress (A and B passed 2026-11-14; C and D passed 2026-11-15) | Astro 7.4.12, @astrojs/check 0.9.12, TypeScript 6.0.3, Node 24. B: Claude moved the copy into JSON at Matthew's request. C: Claude wrote it at Matthew's request. `astro check` 0 errors; the en pages have `lang="en"`; no `style=`/`onerror=`; a missing work image fails the build (`ImageNotFound`). JS: home 2.7 KB (1.2 KB gzipped), works 0.7 KB, plus `theme.js` 0.5 KB. Screenshot diff vs the old site: identical apart from the expected differences. 36 headless-Chrome behaviour checks pass; the only console error is the missing favicon (step 02). D: Matthew's side-by-side check matched (only "View More" is gone, as intended); old root files and snapshots removed |
-| 02 | Performance, SEO, CSP, accessibility | Not started | Matthew handed this step to Claude (2026-11-15) |
+| 01 | Astro port | Done (2026-11-15, PR #1) | Astro 7.4.12, @astrojs/check 0.9.12, TypeScript 6.0.3, Node 24. B: Claude moved the copy into JSON at Matthew's request. C: Claude wrote it at Matthew's request. `astro check` 0 errors; the en pages have `lang="en"`; no `style=`/`onerror=`; a missing work image fails the build (`ImageNotFound`). JS: home 2.7 KB (1.2 KB gzipped), works 0.7 KB, plus `theme.js` 0.5 KB (renamed `prefs.js` in step 02). Screenshot diff vs the old site: identical apart from the expected differences. 36 headless-Chrome behaviour checks pass; the only console error is the missing favicon (step 02). D: Matthew's side-by-side check matched (only "View More" is gone, as intended); old root files and snapshots removed |
+| 02 | Performance, SEO, CSP, accessibility | In progress (A–E built 2026-11-15; reviewed by Matthew 2026-11-16; ADR-002 and PR left) | Matthew handed this step to Claude. Images: AVIF + WebP `<picture>`. Fonts: 8 woff2, 180 KB in total, all self-hosted; body text uses the system font; Japanese headings use Shippori Mincho subset at build time (400: 63 characters, 12 KB; 500: 32 characters, 7 KB). Headless Chrome confirms every Japanese heading glyph comes from the subsets. JS unchanged plus `motion.ts`. CSP meta with hashes on all 5 pages; an injected inline script is blocked. axe-core: 0 violations on all 5 pages in both themes. 58 headless-Chrome checks pass. Lighthouse 12.2.1 (gzip server; preview has no compression), all four categories: mobile `/` 98/100/100/100 (85 before the font change), `/en/`, `/works/` and `/en/works/` 100/100/100/100; desktop `/` and `/en/` 100/100/100/100 |
 | 03 | CI | Not started | |
 | 04 | AWS foundation | Not started | |
 | 05 | Hosting | Not started | |
@@ -61,6 +61,7 @@ Use one line per decision, with the date, and link the ADR if there is one.
 - 2026-11-14: Accessibility target is WCAG 2.2 AA in both themes.
 - 2026-11-14: Replace the `?theme=` override with a System / Light / Dark switch saved in localStorage (step 01 C). Recommended by Claude; Matthew asked for the industry-standard approach. Moena designs how it looks.
 - 2026-11-15: Matthew runs every git and gh command that changes anything (commits, branches, pushes, PRs, merges). Claude leaves changes uncommitted and says when a step is ready.
+- 2026-11-16: Japanese body text uses the system font. Shippori Mincho stays as a web font for the Japanese headings, subset at build time per weight to the heading text. This is what current guides and design systems do (sources in `site/fonts/README.md`). It took Lighthouse mobile on `/` from 85 to 98 without lowering the 95 target. Matthew chose it over (a) a lower threshold for `/` and (b) subsetting every face per weight.
 
 ## Deviations from the tutorial
 
@@ -72,6 +73,11 @@ Log anything done differently from the step files, and why.
 - 01 C: `assets/` was copied into `site/src/assets/`, not moved, so the old site keeps working until the D cleanup. Removed the Astro template's favicons; step 02 A adds the real one.
 - 01 C: the "Coming soon" contact rows lost `aria-disabled` (not valid on a plain `div`; the visible text already says it). The work images lost their hidden `.ph-label` fallback text, since a missing image now fails the build. The first slide is marked active at build time so something shows without JS; the script then jumps to a random slide without a fade.
 - 01 C: the JP/EN links get the current section's `#hash` on every scroll update, not only on click, so middle-click and "copy link" keep it too.
+- 02 B, fonts: Astro's Fonts API with the Fontsource provider produced one 1.1–1.4 MB file per Japanese weight instead of slices (the case the step file warned about). The Fontsource npm packages did give slices, but the Japanese home page then made ~70 font requests (~950 KB) and the CSS was 408 KB from the slice rules. Build-time subsetting of both fonts to every character in `src/` (4 files of ~50 KB) still left `/` at 85 on mobile. Final approach (2026-11-16): body text uses the system font (Noto Sans JP is no longer a web font), and `site/integrations/subset-fonts.mjs` subsets Shippori Mincho per weight to the Japanese heading text, read from `ja.json` by key (source fonts in `site/fonts/`, committed, OFL). Latin comes from the `@fontsource/*` latin files, and a small Vite plugin drops their unused `.woff` fallbacks.
+- 02: `public/theme.js` was renamed `public/prefs.js`; it also applies the saved pause choice before the first paint.
+- 02 A, logos: inline SVG through Astro's SVG import, one file per logo, using the black traces (the white symboltype had the grey specks). The color comes from a `--logo` token: `#FFFFFF` dark, `#000000` light, the same as the PNGs. The `.on-dark`/`.on-light` pairs and their variables were removed. Favicon: the logo mark as SVG with a dark-mode media query, a 16/32px `.ico`, and a 180px `apple-touch-icon` (white mark on `#121212`).
+- 02 C: no `og:image` yet (waiting on Moena), so `twitter:card` is `summary` for now. The sitemap uses `hreflang="ja"` (not `ja-JP`) to match the page `<head>`.
+- 02 E: besides the three planned fixes: the light-mode muted grey went from 66% to 70% opacity (4.48:1 → 5.04:1); the disabled contact rows use `--muted` instead of `opacity:.55` (3.4:1 → 4.6:1); landmark and group `aria-label`s are translated (they were English on Japanese pages); the slideshow has `role="group"`; work cards on the works page are `h2` so heading levels don't skip. The pause button sits at the top right of the left column and also pauses the slideshow on hover.
 
 ## Waiting on Moena / open questions
 
@@ -80,12 +86,15 @@ Log anything done differently from the step files, and why.
 - [ ] **Vector logos.**
   - The first SVGs (PNG wrapped in SVG) were replaced on 2026-11-14 with real path-based SVGs made by Matthew. They pass the vector check, are about a third of the PNG size, and look the same as the PNGs at display size.
   - They're traced from the PNGs, not exported from original artwork. Evidence: black and white versions have different geometry, `logo-symboltype-white.svg` has 2 stray grey (`#D2D3D4`) speck paths, and zoomed in the sun rays have wobbly tips and small specks.
-  - Plan: usable for the rebuild. Ask Moena whether an original vector file exists; if so, swap it in later. In step 02 A, use one traced version per logo with `fill="currentColor"` rather than separate black and white files, drop the grey specks, and run SVGO.
+  - Done in step 02 A: one traced (black) version per logo, `currentColor`, SVGO. Still ask Moena whether an original vector file exists; if so, swap it into `site/src/assets/logo-*.svg`.
 - [ ] Matthew's profile photo, 4:5, about 800×1000 (step 01/02)
 - [ ] Social share (OG) image, 1200×630 (step 02)
 - [ ] Design for the theme switch: a working icon version is in place (step 01 C). Moena can restyle it, and should decide whether she wants it in the mobile header rather than the menu.
 - [ ] Review the new Japanese copy for the theme switch: 表示テーマ / OSの設定に合わせる / ライト / ダーク (`site/src/i18n/ja.json`, `theme`)
-- [ ] **Light-mode orange text contrast.** It's 2.1:1 and needs 4.5:1. Moena picks a deeper orange for text in light mode only; `#B54708` is one example that passes (step 02 E).
-- [ ] Design for a pause/play button for the orbit animation and slideshow (WCAG 2.2.2) (step 02 E)
+- [ ] **Light-mode orange text contrast.** It was 2.1:1 and needs 4.5:1. Step 02 E uses `#B54708` (4.8–5.0:1) as `--accent-text` in light mode. Moena confirms or picks another orange that passes. Also tell her the light muted grey went from 66% to 70% opacity to pass.
+- [ ] Design for the pause/play button (WCAG 2.2.2): a working version is at the top right of the left column (step 02 E). Moena can restyle it.
+- [ ] Review the new Japanese copy from step 02: 本文へ移動, アニメーションを一時停止, the landmark labels (言語 / ナビゲーション / セクション / メニュー) and the 404 text (`site/src/i18n/ja.json`, `a11y` and `notFound`)
+- [x] Japanese mobile performance: system font for body text, Shippori subset to the headings (see Decisions, 2026-11-16). Mobile `/` is now 98.
+- [ ] **Tell Moena about the body font.** Noto Sans JP is no longer downloaded as a web font. Windows 10/11 and Android still show Noto (it's built in), but **Apple devices show Hiragino Sans** for body text, including the Latin in English body text. Headings are unchanged everywhere. If she adds a new element in the Japanese mincho style, its copy key goes in `FACES` in `site/integrations/subset-fonts.mjs`.
 - [x] Old design drafts: delete
 - [ ] **Domain email.** Leaning toward free forwarding (`hello@` → both Gmail inboxes) to start, with paid sending or mailboxes later if needed. Decide before step 08. See step 08 A.

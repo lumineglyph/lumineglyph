@@ -33,3 +33,6 @@ if (toggle && menu) {
     if (!e.matches) setMenu(false);
   });
 }
+
+// Marks this file as a module so its top-level names stay private to it.
+export {};

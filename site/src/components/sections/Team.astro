@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import { Picture } from "astro:assets";
 import photoMoena from "../../assets/photo-moena.jpg";
 import { copy, type Lang } from "../../i18n";
 
@@ -15,7 +15,15 @@ const t = copy[Astro.props.lang].team;
   <h2 class="h2">{t.title}</h2>
   <div class="profiles">
     <article class="profile">
-      <Image class="photo" src={photoMoena} alt={t.moena.name} />
+      <!-- 180px wide on desktop, up to 240px at 640px and below -->
+      <Picture
+        class="photo"
+        src={photoMoena}
+        formats={["avif", "webp"]}
+        widths={[180, 240, 360, 480]}
+        sizes="(max-width: 640px) 240px, 180px"
+        alt={t.moena.name}
+      />
       <div>
         <p class="role">{t.moena.role}</p>
         <h3 class="pname"><span>{t.moena.name}</span><span class="pname-en">Moena Miner</span></h3>
