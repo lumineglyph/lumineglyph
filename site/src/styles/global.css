@@ -231,6 +231,14 @@ h1,h2,h3,p{margin:0}
 /* ---------- 中央：共通 ---------- */
 .section{padding:120px 56px;border-top:1px solid var(--faint);scroll-margin-top:0}
 .section:first-child{border-top:0}
+/* Lay out sections below the first screen only when they're about to scroll into view. Laying out
+   the whole long page of Japanese text at once blocked the main thread for ~300 ms on a slow phone
+   (Lighthouse TBT). 1200px stands in for a section's height until it has been laid out once;
+   `auto` then remembers the real height. Content stays in the accessibility tree and find-in-page.
+   Jumping to a section (nav link, /#team) lays them all out first: a smooth scroll aims at the
+   section's position when it starts, so placeholder heights would make it land in the wrong place. */
+.section:not(:first-child){content-visibility:auto;contain-intrinsic-size:auto 1200px}
+html:has(.section:target) .section{content-visibility:visible}
 .eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--serif-en);font-style:italic;font-size:18px;color:var(--accent-text);letter-spacing:.04em}
 .eyebrow .g{width:18px;height:18px;flex:none}
 .h2{font-family:var(--serif-jp);font-weight:400;font-size:30px;line-height:1.6;margin-top:18px;letter-spacing:.06em}
