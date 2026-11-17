@@ -76,8 +76,6 @@ const otherLang: Lang = lang === "ja" ? "en" : "ja";
 
     <!-- Preload only the big "Lumineglyph" heading's font; preloading Japanese slices would waste bandwidth -->
     <link rel="preload" href={heroFont} as="font" type="font/woff2" crossorigin />
-    <!-- Page-specific extras, such as more preloads (see Home.astro) -->
-    <slot name="head" />
 
     <script is:inline src="/prefs.js"></script>
   </head>

@@ -13,9 +13,6 @@ import Team from "./sections/Team.astro";
 import Process from "./sections/Process.astro";
 import Contact from "./sections/Contact.astro";
 import { copy, type Lang } from "../i18n";
-// The Japanese service titles (.service h3) are the only text in Shippori Mincho 500.
-import serviceTitleFont from "../generated/fonts/shippori-mincho-500.woff2?url";
-import serviceTitleFontLatin from "@fontsource/shippori-mincho/files/shippori-mincho-latin-500-normal.woff2?url";
 
 interface Props {
   lang: Lang;
@@ -26,17 +23,6 @@ const t = copy[lang];
 ---
 
 <Base lang={lang} title={t.meta.title} description={t.meta.description} path="">
-  {
-    /* The sections below the first screen are laid out lazily (content-visibility in global.css),
-       so on phones the service titles' font would only download mid-scroll and shift the page
-       under a nav jump. Preloading it fetches it at page load, as before. */
-    lang === "ja" && (
-      <Fragment slot="head">
-        <link rel="preload" href={serviceTitleFont} as="font" type="font/woff2" crossorigin />
-        <link rel="preload" href={serviceTitleFontLatin} as="font" type="font/woff2" crossorigin />
-      </Fragment>
-    )
-  }
   <MobileHeader lang={lang} />
   <MobileMenu lang={lang} />
 
