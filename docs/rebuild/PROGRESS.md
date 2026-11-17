@@ -3,7 +3,7 @@
 Claude keeps this file up to date as checkpoints pass. If it disagrees with the repo, the repo wins; fix this file.
 
 - **Last updated:** 2026-11-16
-- **Current step:** 02 — Performance, SEO, CSP, accessibility (built by Claude and reviewed by Matthew; next: finish ADR-002, then commit and PR)
+- **Current step:** 03 — CI (A done; next: B.0)
 
 ## Steps
 
@@ -11,8 +11,8 @@ Claude keeps this file up to date as checkpoints pass. If it disagrees with the 
 |---|------|--------|-------|
 | 00 | Prep | Done (2026-11-14) | Org and transfer done; SSO login; no IAM users; root MFA on with no root keys; 2FA required in the org. Commits use the GitHub no-reply email. Registrar: Route 53 |
 | 01 | Astro port | Done (2026-11-15, PR #1) | Astro 7.4.12, @astrojs/check 0.9.12, TypeScript 6.0.3, Node 24. B: Claude moved the copy into JSON at Matthew's request. C: Claude wrote it at Matthew's request. `astro check` 0 errors; the en pages have `lang="en"`; no `style=`/`onerror=`; a missing work image fails the build (`ImageNotFound`). JS: home 2.7 KB (1.2 KB gzipped), works 0.7 KB, plus `theme.js` 0.5 KB (renamed `prefs.js` in step 02). Screenshot diff vs the old site: identical apart from the expected differences. 36 headless-Chrome behaviour checks pass; the only console error is the missing favicon (step 02). D: Matthew's side-by-side check matched (only "View More" is gone, as intended); old root files and snapshots removed |
-| 02 | Performance, SEO, CSP, accessibility | In progress (A–E built 2026-11-15; reviewed by Matthew 2026-11-16; ADR-002 and PR left) | Matthew handed this step to Claude. Images: AVIF + WebP `<picture>`. Fonts: 8 woff2, 180 KB in total, all self-hosted; body text uses the system font; Japanese headings use Shippori Mincho subset at build time (400: 63 characters, 12 KB; 500: 32 characters, 7 KB). Headless Chrome confirms every Japanese heading glyph comes from the subsets. JS unchanged plus `motion.ts`. CSP meta with hashes on all 5 pages; an injected inline script is blocked. axe-core: 0 violations on all 5 pages in both themes. 58 headless-Chrome checks pass. Lighthouse 12.2.1 (gzip server; preview has no compression), all four categories: mobile `/` 98/100/100/100 (85 before the font change), `/en/`, `/works/` and `/en/works/` 100/100/100/100; desktop `/` and `/en/` 100/100/100/100 |
-| 03 | CI | Not started | |
+| 02 | Performance, SEO, CSP, accessibility | Done (2026-11-16, PR #2) | Matthew handed this step to Claude. Images: AVIF + WebP `<picture>`. Fonts: 8 woff2, 180 KB in total, all self-hosted; body text uses the system font; Japanese headings use Shippori Mincho subset at build time (400: 63 characters, 12 KB; 500: 32 characters, 7 KB). Headless Chrome confirms every Japanese heading glyph comes from the subsets. JS unchanged plus `motion.ts`. CSP meta with hashes on all 5 pages; an injected inline script is blocked. axe-core: 0 violations on all 5 pages in both themes. 58 headless-Chrome checks pass. Lighthouse 12.2.1 (gzip server; preview has no compression), all four categories: mobile `/` 98/100/100/100 (85 before the font change), `/en/`, `/works/` and `/en/works/` 100/100/100/100; desktop `/` and `/en/` 100/100/100/100 |
+| 03 | CI | In progress (A done 2026-11-17; next: B) | A, checked by Claude through the API: the history was rewritten into new repo `1460696603`; every commit uses a noreply address; the old commit SHAs aren't reachable from the new repo, and `lumineglyph-archive` (private, archived) returns 404 when logged out. The repo is public. Enabled: Dependabot alerts and security updates, secret scanning with push protection, private vulnerability reporting. Actions: only GitHub-owned actions plus `lycheeverse/lychee-action@*`, SHA pinning required, workflow token read-only and can't approve PRs, approval needed for all external contributors' PR runs |
 | 04 | AWS foundation | Not started | |
 | 05 | Hosting | Not started | |
 | 06 | Deploy pipeline | Not started | |
@@ -29,8 +29,8 @@ Fill these in as they're created. Nothing here may be secret, because the repo w
 | Name | Value |
 |------|-------|
 | GitHub repo (owner/name) | `lumineglyph/lumineglyph` (org on the Free plan, owned by a business; owners: Ged-Miner, moena-miner) |
-| GitHub owner ID / repo ID | `356493958` / `1454809896` |
-| OIDC `sub` format in use | (check in step 06; expect the ID-based format because the repo was transferred) |
+| GitHub owner ID / repo ID | `356493958` / `1460696603` (new repo from step 03 A.2; the old repo, now `lumineglyph-archive`, was `1454809896`) |
+| OIDC `sub` format in use | (check in step 06; the repo is no longer a transferred one after step 03 A.2, so don't assume the ID-based format) |
 | AWS CLI profile name | `lumineglyph` (IAM Identity Center, `AdministratorAccess` permission set, SSO session `lumineglyph`) |
 | AWS main region | `ap-northeast-1` (profile default) |
 | Domain | `lumineglyph.com` (planned, not yet bought) |
@@ -62,12 +62,20 @@ Use one line per decision, with the date, and link the ADR if there is one.
 - 2026-11-14: Replace the `?theme=` override with a System / Light / Dark switch saved in localStorage (step 01 C). Recommended by Claude; Matthew asked for the industry-standard approach. Moena designs how it looks.
 - 2026-11-15: Matthew runs every git and gh command that changes anything (commits, branches, pushes, PRs, merges). Claude leaves changes uncommitted and says when a step is ready.
 - 2026-11-16: Japanese body text uses the system font. Shippori Mincho stays as a web font for the Japanese headings, subset at build time per weight to the heading text. This is what current guides and design systems do (sources in `site/fonts/README.md`). It took Lighthouse mobile on `/` from 85 to 98 without lowering the 95 target. Matthew chose it over (a) a lower threshold for `/` and (b) subsetting every face per weight.
+- 2026-11-17: Rewrote the history so every commit uses a noreply address, with Matthew's commits under "Ged Miner", and moved it to a fresh repo (step 03 A.2). A force push couldn't have cleaned GitHub's read-only PR refs. The old repo is `lumineglyph-archive` (private). Email privacy is on for both GitHub accounts.
 
 ## Deviations from the tutorial
 
 Log anything done differently from the step files, and why.
 
-- 2026-11-15, whole tutorial: Matthew found the step files too vague to follow. Before he starts a step, Claude turns it into exact numbered instructions (files, code, commands, checks). Step 01 D has been rewritten that way.
+- 2026-11-15, whole tutorial: Matthew found the step files too vague to follow. Before he starts a step, Claude turns it into exact numbered instructions (files, code, commands, checks). Step 01 D has been rewritten that way, and so has all of step 03 (2026-11-16).
+- 2026-11-16, 03 (planned, changes from the original step file):
+  - Lighthouse CI audits the four pages explicitly, 3 runs each, with performance judged on the median run. The default would judge the best run.
+  - Accessibility, best practices and SEO must be 100, since they already are and don't vary between runs. Performance stays at 95.
+  - The dev dependencies are pinned to the newest releases at least 7 days old (`html-validate@11.21.0`, `@lhci/cli@0.16.0`), to match Dependabot's cooldown.
+  - The repo settings only allow GitHub's own actions plus `lycheeverse/lychee-action`, and require SHA pinning.
+  - The runner is `ubuntu-24.04` rather than `ubuntu-latest`.
+  - A.2 adds a history rewrite (author emails to noreply, Matthew's name to "Ged Miner") pushed to a fresh repo, because a force push can't clean GitHub's read-only `refs/pull/*`. Commit hashes change: `9233aa2` → `a1be813`.
 - 2026-11-15, 01 C and 02: Claude writes them at Matthew's request, because he's behind schedule and wants to spend his time on the DevOps steps (03–08). He reviews the code and does the 01 D parity check himself.
 - 01 C, theme switch: three icon buttons (half circle / sun / moon) with visually hidden labels, a working placeholder for Moena to restyle. On mobile it sits at the bottom of the slide-out menu, not in the header: at 390px the header is already full. `aria-pressed` shows the saved choice, not the resulting theme, so it doesn't need an OS-change listener. Added: other open tabs update when the choice changes.
 - 01 C: `assets/` was copied into `site/src/assets/`, not moved, so the old site keeps working until the D cleanup. Removed the Astro template's favicons; step 02 A adds the real one.

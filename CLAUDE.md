@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Static marketing site for Lumineglyph, a bilingual (Japanese/English) web design and development studio. Since step 01 of the rebuild, the site is an Astro project in `site/` (`cd site && npm run dev`, or `npm run verify` to type-check and build). The old plain HTML/CSS/JS files at the repo root were removed; they're in git history at `9233aa2`.
+Static marketing site for Lumineglyph, a bilingual (Japanese/English) web design and development studio. Since step 01 of the rebuild, the site is an Astro project in `site/` (`cd site && npm run dev`, or `npm run verify` to type-check and build). The old plain HTML/CSS/JS files at the repo root were removed; they're in git history at `a1be813`.
 
 The "Live files", "Architecture" and "Contact links" sections below still describe that old site. They explain the design and behaviour the Astro port reproduces, but the file names and mechanisms (`works.js`, `data-i18n`, `?lang=`, `?theme=`) no longer exist. Step 09 rewrites this file.
 
