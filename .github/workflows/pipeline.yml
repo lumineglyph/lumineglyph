@@ -1,0 +1,73 @@
+name: Pipeline
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# The default token for every job: read the repo, nothing else.
+# Jobs that need more (the deploy jobs in steps 06 and 07) ask for it themselves.
+permissions:
+  contents: read
+
+# A new push to a PR cancels that PR's older, still-running pipeline. Runs on main never cancel.
+concurrency:
+  group: pipeline-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: build # the name branch protection requires (step G)
+    runs-on: ubuntu-24.04 # a fixed image rather than ubuntu-latest, so it doesn't change under us
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false # don't leave the token in .git/config for later steps
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: site/.nvmrc
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run check
+
+      - name: Build
+        run: npm run build
+
+      - name: Validate HTML
+        run: npx html-validate "dist/**/*.html"
+
+      # Internal links and #anchors only. --offline skips external sites, so another site
+      # being down can't block a PR. --root-dir resolves links that start with "/".
+      - name: Check internal links
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: >-
+            --offline
+            --no-progress
+            --include-fragments
+            --index-files index.html
+            --root-dir ${{ github.workspace }}/site/dist
+            site/dist
+
+      - name: Lighthouse
+        run: npx lhci autorun
+
+      - name: Upload the built site
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site-dist
+          path: site/dist
+          if-no-files-found: error
+          retention-days: 7
