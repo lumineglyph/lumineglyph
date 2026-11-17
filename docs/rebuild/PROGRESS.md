@@ -86,6 +86,11 @@ Log anything done differently from the step files, and why.
 - 02 A, logos: inline SVG through Astro's SVG import, one file per logo, using the black traces (the white symboltype had the grey specks). The color comes from a `--logo` token: `#FFFFFF` dark, `#000000` light, the same as the PNGs. The `.on-dark`/`.on-light` pairs and their variables were removed. Favicon: the logo mark as SVG with a dark-mode media query, a 16/32px `.ico`, and a 180px `apple-touch-icon` (white mark on `#121212`).
 - 02 C: no `og:image` yet (waiting on Moena), so `twitter:card` is `summary` for now. The sitemap uses `hreflang="ja"` (not `ja-JP`) to match the page `<head>`.
 - 02 E: besides the three planned fixes: the light-mode muted grey went from 66% to 70% opacity (4.48:1 → 5.04:1); the disabled contact rows use `--muted` instead of `opacity:.55` (3.4:1 → 4.6:1); landmark and group `aria-label`s are translated (they were English on Japanese pages); the slideshow has `role="group"`; work cards on the works page are `h2` so heading levels don't skip. The pause button sits at the top right of the left column and also pauses the slideshow on hover.
+- 2026-11-17, 03 B.5 (site fix, written by Claude at Matthew's request): Lighthouse CI scored the Japanese home page 92–96 (median-of-3 below the 95 gate). The cause was laying out the whole page of Japanese text at once (TBT 220–400 ms), not JS.
+  - The sections below the first screen now use `content-visibility: auto`, and are all laid out before a `#section` jump.
+  - The Japanese home page preloads the Shippori Mincho 500 files, so the service titles' font doesn't arrive mid-scroll on phones.
+  - Result: 100 in all categories on all four pages, TBT 0. Claude's 44 headless-Chrome jump, highlight and menu checks pass, and html-validate passes.
+  - Nothing changes visually.
 
 ## Waiting on Moena / open questions
 
