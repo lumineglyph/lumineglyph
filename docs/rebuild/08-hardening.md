@@ -102,6 +102,7 @@ zizmor .github/workflows     # GitHub Actions security lint
 ```
 
 - Pin any scanner actions by SHA, like everything else. Security tools' own actions have been targets of supply-chain attacks.
+- **Accessibility in both themes.** Lighthouse in CI (step 03) only checks the light theme, because the runner has no dark-mode setting. Add an axe check that loads each page with `prefers-color-scheme` set explicitly to light and to dark, for example `@axe-core/playwright` with Playwright's `colorScheme` option, and fails on any WCAG 2.2 AA violation. Unlike Lighthouse's score, this check gives the same result every run.
 - If a scanner flags something you've decided to accept (for example, "S3 bucket has no access logging" for previews), suppress it inline with a comment saying why. Don't turn the rule off globally.
 
 Also enable in GitHub settings:
