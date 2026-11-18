@@ -25,6 +25,6 @@
     "@lhci/cli": "^0.16.0",
     "html-validate": "^11.21.0",
     "subset-font": "^2.9.0",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }
