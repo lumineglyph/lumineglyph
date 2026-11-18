@@ -30,4 +30,15 @@ updates:
       default-days: 7
     commit-message:
       prefix: ci # → "ci: bump actions/checkout …"
-  # terraform is added in step 04
+  # terraform
+  - package-ecosystem: terraform
+    directories:
+      - /infra/bootstrap
+      - /infra/main
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: chore
+      include: scope
