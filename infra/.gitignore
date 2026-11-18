@@ -1,0 +1,13 @@
+# Provider downloads and local working files
+.terraform/
+crash.log
+
+# State files. State lives in S3; a local copy only exists briefly during the bootstrap.
+*.tfstate
+*.tfstate.*
+
+# Saved plans (terraform plan -out). They hold every value in plain text, sensitive ones included.
+*.tfplan
+
+# Variable values can be personal (the alert email). Commit *.tfvars.example instead.
+*.tfvars
