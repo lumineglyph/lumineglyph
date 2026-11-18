@@ -242,7 +242,7 @@ Claude already compared full-page screenshots of the old and new sites (1440px a
 
 Terminal 1, the old site. The root copy can't show the work screenshots any more, because part B moved them, so use the first commit:
 ```sh
-git worktree add ../lumineglyph-legacy 9233aa2
+git worktree add ../lumineglyph-legacy a1be813
 cd ../lumineglyph-legacy && python3 -m http.server 8000
 ```
 Terminal 2, the new site:

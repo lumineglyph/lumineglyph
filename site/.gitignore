@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # build-time generated files (subset fonts)
 src/generated/
+
+# Lighthouse CI local runs
+.lighthouseci/

@@ -1,0 +1,29 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /site
+    schedule:
+      interval: weekly
+    # Wait 7 days after a release before proposing it. Most malicious releases are caught and
+    # pulled within days. Security fixes skip this wait.
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: chore # → "chore(deps): bump …" and "chore(deps-dev): bump …"
+      include: scope
+    # One PR per group instead of one per package
+    groups:
+      astro:
+        patterns: ["astro", "@astrojs/*"]
+      fontsource:
+        patterns: ["@fontsource/*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ci # → "ci: bump actions/checkout …"
+  # terraform is added in step 04
