@@ -1,141 +1,615 @@
-# 04 — AWS foundation: Terraform state, domain, DNS zone, certificate
+# 04 — AWS foundation: Terraform state, budget, domain, DNS zone, certificate
 
 ## Goal
 
-- A Terraform state bucket that you bootstrap yourself.
-- An `infra/main` stack with a remote backend.
-- `lumineglyph.com` registered, with its hosted zone managed by Terraform.
-- A validated TLS certificate in `us-east-1` covering the apex, `www` and `*.preview`.
-- A budget alarm.
+- An S3 bucket that holds Terraform's state, created by a small `infra/bootstrap` stack.
+- An `infra/main` stack that keeps its state in that bucket.
+- A budget that emails you before AWS costs get out of hand.
+- `lumineglyph.com` registered with Route 53, with its hosted zone and registration settings managed by Terraform.
+- A validated TLS certificate in `us-east-1` covering `lumineglyph.com`, `www.lumineglyph.com` and `*.preview.lumineglyph.com`. Step 05 attaches it to CloudFront.
 
 ## Why it matters
 
-- **The "chicken and egg" of Terraform state.** The bucket that stores Terraform's state can't be created by the stack that uses it. Solving that is a classic interview topic.
-- **The domain is in code.** Name servers, auto-renew and transfer lock are all Terraform settings.
-- **Spending guardrails** before anything can cost money.
+- **The "chicken and egg" of Terraform state.** Terraform records what it created in a state file. A team keeps that file in a shared, versioned, locked bucket. But the bucket can't be created by the stack that stores its state in it. The usual fix is a tiny bootstrap stack that creates the bucket and then moves its own state into it. That fix is the first thing you build here.
+- **The domain is in code.** Its name servers, auto-renew and transfer lock are Terraform settings, not clicks someone has to remember.
+- **Spending guardrails** go in before anything can cost money.
 
-## Steps
+## How this step works
+
+- **You run every `terraform apply`** and buy the domain yourself. Claude never runs `apply`.
+- **Claude runs `terraform plan`** after each change and reads the result with you before you apply. Plans only read.
+- **Terraform runs on your machine, with your SSO login.** CI doesn't touch AWS until step 06.
+- **Real AWS is the reference.** The checks at the end query AWS and DNS directly.
+
+**What it costs:** the bootstrap bucket costs a few cents a year. The hosted zone is $0.50/month. The domain is $16/year, charged when you buy it. Budgets are free.
+
+## What Claude already checked (2026-11-18)
+
+- **Versions:** Terraform 1.17.0 is installed (1.17.2 is the latest; either works). The AWS provider is at 6.73.0, which has been out for 7 days, matching the 7-day Dependabot wait from step 03.
+- **Provider docs at v6.73.0:**
+  - `aws_acm_certificate` and `aws_acm_certificate_validation` take a per-resource `region`, so the `us-east-1` certificate needs no second provider.
+  - `aws_route53domains_registered_domain` has no `region` argument; the provider handles that. It *adopts* a domain you've already registered rather than buying one, and `terraform destroy` never deletes the domain.
+  - Its contact details (name, address, phone) are optional, and privacy defaults to on. **The contacts stay out of the code**, because the repo is public.
+  - `aws_route53_zone`'s `comment` defaults to "Managed by Terraform". The zone that Route 53 creates when you buy the domain has a different comment, so D.3 copies the real one.
+- **Not checked yet:** anything inside your AWS account. Your SSO login had expired. "Before you start" has you log in and run the account checks.
+
+## Before you start
+
+**1. Finish the Dependabot fix from step 03** (the `ignore` block for TypeScript 7, and closing PR #2), if you haven't. This step edits the same `dependabot.yml`.
+
+**2. Branch:**
+```sh
+cd ~/code/ged/lumineglyph
+git switch main && git pull
+git switch -c rebuild/04-aws-foundation
+```
+
+**3. Log in to AWS** and point Terraform at the profile. Do this in every new terminal you use for this step:
+```sh
+aws sso login --profile lumineglyph
+export AWS_PROFILE=lumineglyph
+aws sts get-caller-identity
+```
+- [ ] The `Arn` contains `assumed-role/AWSReservedSSO_AdministratorAccess_`. That means you're using a short-lived SSO role, not an IAM user.
+
+The profile comes from the environment variable, not from the Terraform code. That way the code stays the same when CI runs it with its own credentials later.
+
+**4. Check the domain and price** (read-only):
+```sh
+aws route53domains check-domain-availability --domain-name lumineglyph.com --region us-east-1
+aws route53domains list-prices --tld com --region us-east-1 --query 'Prices[0].[RegistrationPrice,RenewalPrice]'
+```
+- [ ] `"Availability": "AVAILABLE"`
+- [ ] Both prices are about 16 USD.
+
+**5. Tell Claude you're logged in.** Claude then checks the account, all read-only:
+- no existing hosted zones or budgets that would clash
+- the account can create budgets (some organization setups block this for member accounts)
+- no domains registered yet
+
+### 0. A dedicated AWS account for Lumineglyph (added 2026-11-18)
+
+Step 5 showed that the `lumineglyph` profile was logging into the Organization's **management account** (`658606186432`, "Ged Miner"). That account also pays for `workloads-dev` and `beer-platform-workload`. Lumineglyph gets its own member account, for three reasons:
+- **The budget only counts Lumineglyph.** In the management account, a budget counts spending from every account in the Organization.
+- **Security.** The GitHub deploy role (step 06) doesn't sit next to the Organization's controls, and service control policies (SCPs) can restrict the account later. They never apply to the management account.
+- **Nothing to move.** The domain, state and certificate are created in the right place from the start.
+
+Your organization already has these set up, so this section only uses them:
+- IAM Identity Center instance `ssoins-7758215773b460ff` in `ap-northeast-1`
+- permission set `AdministratorAccess` (`ps-7758566bb986fae2`)
+- your SSO user `ged_miner` (`9734fa58-f051-70d9-d23e-9186974be0a2`)
+- **centralized root access**. Because it's on, new member accounts are created with no root password, no root access keys and no root MFA, so there's no root user to secure.
+
+Every command here changes something, so you run them all. Claude checks the result at the end.
+
+**1. Add a profile for the management account.** You'll still need it for Organization-level work, such as this section. Open `~/.aws/config` and add this block under the existing `[profile lumineglyph]` block:
+```ini
+[profile ged-management]
+sso_session = lumineglyph
+sso_account_id = 658606186432
+sso_role_name = AdministratorAccess
+region = ap-northeast-1
+output = json
+```
+It reuses the same SSO login (the `sso_session` name stays `lumineglyph`). Check it:
+```sh
+aws sts get-caller-identity --profile ged-management
+```
+- [ ] `"Account": "658606186432"`.
+
+**2. Create the account.** The email must be one that no other AWS account uses. A Gmail `+` address works and still arrives in your inbox: replace `you+aws-lumineglyph@example.com` below with your own address plus `+aws-lumineglyph`. AWS sends account notices there. With root credentials off, nobody signs in with it. Don't commit the real address anywhere.
+```sh
+aws organizations create-account --profile ged-management \
+  --account-name lumineglyph \
+  --email 'you+aws-lumineglyph@example.com' \
+  --tags Key=Project,Value=lumineglyph \
+  --query 'CreateAccountStatus.Id' --output text
+```
+It prints a request ID starting with `car-`. Creating the account takes about a minute. Check:
+```sh
+aws organizations describe-create-account-status --profile ged-management \
+  --create-account-request-id car-PASTE_THE_ID \
+  --query 'CreateAccountStatus.[State,AccountId,FailureReason]' --output text
+```
+- [ ] `SUCCEEDED` followed by a 12-digit account ID. Note the ID; it's `NEW_ACCOUNT_ID` below. If it says `IN_PROGRESS`, wait 30 seconds and run it again.
+
+AWS also creates a role in the new account called `OrganizationAccountAccessRole`. Admins of the management account can use it to get into the new account if SSO ever breaks. Keep it.
+
+**3. Give your SSO user `AdministratorAccess` in the new account.** Replace `NEW_ACCOUNT_ID`:
+```sh
+aws sso-admin create-account-assignment --profile ged-management \
+  --instance-arn arn:aws:sso:::instance/ssoins-7758215773b460ff \
+  --target-type AWS_ACCOUNT --target-id NEW_ACCOUNT_ID \
+  --permission-set-arn arn:aws:sso:::permissionSet/ssoins-7758215773b460ff/ps-7758566bb986fae2 \
+  --principal-type USER --principal-id 9734fa58-f051-70d9-d23e-9186974be0a2 \
+  --query 'AccountAssignmentCreationStatus.[Status,RequestId]' --output text
+```
+It prints `IN_PROGRESS` and a request ID. After a few seconds:
+```sh
+aws sso-admin describe-account-assignment-creation-status --profile ged-management \
+  --instance-arn arn:aws:sso:::instance/ssoins-7758215773b460ff \
+  --account-assignment-creation-request-id PASTE_THE_REQUEST_ID \
+  --query 'AccountAssignmentCreationStatus.[Status,FailureReason]' --output text
+```
+- [ ] `SUCCEEDED`.
+
+**4. Point the `lumineglyph` profile at the new account:**
+```sh
+aws configure set sso_account_id NEW_ACCOUNT_ID --profile lumineglyph
+export AWS_PROFILE=lumineglyph
+aws sts get-caller-identity
+```
+- [ ] `"Account"` is the new ID, and the `Arn` still contains `assumed-role/AWSReservedSSO_AdministratorAccess_`. If you get an error about the role or access, run `aws sso login --profile lumineglyph` once and try again.
+
+From now on `AWS_PROFILE=lumineglyph` means the Lumineglyph account. Everything in A–F goes there. Use `--profile ged-management` only for Organization or billing work.
+
+**5. Check root access in the console** (read-only). Open the AWS console with the management account, then IAM → **Root access management**.
+- [ ] The `lumineglyph` account shows no root user credentials **(verify the exact wording)**.
+
+**6. Tell Claude.** Claude runs the "Before you start" step 5 checks again, this time in the new account:
+- the domain is available
+- there are no hosted zones, registered domains or budgets
+- the account can create budgets. A brand-new account can take a while for some services to activate; if one says the account isn't ready, wait and try again.
+
+Claude also records the account ID and both profiles in PROGRESS. Nothing here is committed: the account and SSO settings live in AWS and in your `~/.aws/config`, not in the repo.
+
+The management account's `org-monthly-total` budget ($20/month) stays as it is. It still covers the whole Organization, including the new account.
 
 ### A. Bootstrap the state bucket (`infra/bootstrap/`)
 
-1. Write a small stack: AWS provider in `ap-northeast-1`, and an S3 bucket for state.
-   - **Bucket name:** something like `lumineglyph-tfstate-<random suffix>`. Bucket names are global, so they can collide.
-   - **Settings:**
-     - versioning enabled, so you can recover corrupted state
-     - default encryption SSE-S3
-     - all four Block Public Access settings on
-     - object ownership `BucketOwnerEnforced`
-   - **Bucket policy** that denies any request not made over TLS:
-     ```hcl
-     statement {
-       sid       = "DenyInsecureTransport"
-       effect    = "Deny"
-       actions   = ["s3:*"]
-       resources = [aws_s3_bucket.state.arn, "${aws_s3_bucket.state.arn}/*"]
-       principals {
-         type        = "*"
-         identifiers = ["*"]
-       }
-       condition {
-         test     = "Bool"
-         variable = "aws:SecureTransport"
-         values   = ["false"]
-       }
-     }
-     ```
-   - Add `lifecycle { prevent_destroy = true }` on the bucket.
-2. Run `terraform init`, then `terraform apply`. This first run keeps its state in a local file.
-3. **Move the bootstrap stack's own state into the bucket it just created.** Add a backend block:
-   ```hcl
-   terraform {
-     backend "s3" {
-       bucket       = "lumineglyph-tfstate-xxxx"
-       key          = "bootstrap/terraform.tfstate"
-       region       = "ap-northeast-1"
-       encrypt      = true
-       use_lockfile = true      # S3-native locking (Terraform ≥1.10); no DynamoDB table needed
-     }
-   }
-   ```
-   Then run `terraform init -migrate-state` and delete the local `terraform.tfstate*` files.
-4. Commit `.terraform.lock.hcl`, which pins provider checksums. Ignore `.terraform/`, `*.tfstate*` and `*.tfvars` if they contain anything personal.
+**1. Pick the bucket name.** S3 bucket names are global across all AWS customers, so add a random suffix:
+```sh
+echo "lumineglyph-tfstate-$(openssl rand -hex 3)"
+```
+Note the result, for example `lumineglyph-tfstate-a1b2c3`. It goes in two places below and in PROGRESS. It isn't secret.
 
-### B. Main stack skeleton (`infra/main/`)
+**2. Create `infra/.gitignore`:**
+```gitignore
+# Provider downloads and local working files
+.terraform/
+crash.log
 
-Suggested files:
+# State files. State lives in S3; a local copy only exists briefly during the bootstrap.
+*.tfstate
+*.tfstate.*
 
-| File | Contents |
-|------|----------|
-| `versions.tf` | `required_version >= 1.10`, `hashicorp/aws ~> 6.73`, backend with `key = "main/terraform.tfstate"` |
-| `providers.tf` | `provider "aws" { region = "ap-northeast-1"  default_tags { tags = { Project = "lumineglyph", ManagedBy = "terraform" } } }` |
-| `variables.tf` | `domain` (default `lumineglyph.com`), `github_repo` (used in step 06), `alert_email` |
-| `dns.tf`, `cert.tf`, `budget.tf` | this step |
-| `site.tf`, `previews.tf`, `github-oidc.tf` | later steps |
+# Saved plans (terraform plan -out). They hold every value in plain text, sensitive ones included.
+*.tfplan
 
-**Multi-region without provider aliases.** AWS provider v6 lets you set `region` on an individual resource. The certificate and (in step 08) the DNSSEC key go in `us-east-1` like this:
+# Variable values can be personal (the alert email). Commit *.tfvars.example instead.
+*.tfvars
+```
+`.terraform.lock.hcl` is **not** ignored. It pins the exact provider versions and checksums, like `package-lock.json`.
 
+**3. Create `infra/bootstrap/main.tf`.** Replace `lumineglyph-tfstate-a1b2c3` with your name from A.1.
 ```hcl
-resource "aws_acm_certificate" "site" {
-  region                    = "us-east-1"   # CloudFront only accepts certificates from us-east-1
-  domain_name               = var.domain
-  subject_alternative_names = ["www.${var.domain}", "*.preview.${var.domain}"]
-  validation_method         = "DNS"
-  lifecycle { create_before_destroy = true }
+# Creates the S3 bucket that holds Terraform state for every stack in this repo.
+# Run once by hand. Its own state is then moved into the bucket (step 04 A.5).
+
+terraform {
+  required_version = ">= 1.10" # use_lockfile (S3-native state locking) needs 1.10+
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.73"
+    }
+  }
+}
+
+provider "aws" {
+  region = "ap-northeast-1"
+
+  default_tags {
+    tags = {
+      Project   = "lumineglyph"
+      ManagedBy = "terraform"
+      Stack     = "bootstrap"
+    }
+  }
+}
+
+resource "aws_s3_bucket" "state" {
+  bucket = "lumineglyph-tfstate-a1b2c3"
+
+  # Losing this bucket loses track of every resource Terraform manages.
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# Every state write keeps the previous version, so a bad write can be rolled back.
+resource "aws_s3_bucket_versioning" "state" {
+  bucket = aws_s3_bucket.state.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+# Old versions are kept for 90 days, then deleted.
+resource "aws_s3_bucket_lifecycle_configuration" "state" {
+  bucket = aws_s3_bucket.state.id
+
+  rule {
+    id     = "expire-old-state-versions"
+    status = "Enabled"
+    filter {}
+
+    noncurrent_version_expiration {
+      noncurrent_days = 90
+    }
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+  }
+
+  depends_on = [aws_s3_bucket_versioning.state]
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "state" {
+  bucket = aws_s3_bucket.state.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256" # SSE-S3
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "state" {
+  bucket                  = aws_s3_bucket.state.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# ACLs off: access is controlled by IAM and the bucket policy only.
+resource "aws_s3_bucket_ownership_controls" "state" {
+  bucket = aws_s3_bucket.state.id
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+# Refuse any request that isn't over HTTPS.
+data "aws_iam_policy_document" "state" {
+  statement {
+    sid       = "DenyInsecureTransport"
+    effect    = "Deny"
+    actions   = ["s3:*"]
+    resources = [aws_s3_bucket.state.arn, "${aws_s3_bucket.state.arn}/*"]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "state" {
+  bucket = aws_s3_bucket.state.id
+  policy = data.aws_iam_policy_document.state.json
+
+  # Applying the policy while Block Public Access is still being set can fail; do it after.
+  depends_on = [aws_s3_bucket_public_access_block.state]
+}
+
+output "state_bucket" {
+  value = aws_s3_bucket.state.bucket
 }
 ```
 
-Add Terraform to Dependabot (`package-ecosystem: terraform`, `directory: /infra/main`, monthly, with a cooldown).
+**4. Create the bucket.** This first run keeps its state in a local file, `infra/bootstrap/terraform.tfstate`, which is git-ignored.
+```sh
+cd infra/bootstrap
+terraform init
+terraform fmt
+terraform validate
+terraform plan -out=bootstrap.tfplan
+```
+- [ ] Tell Claude, and wait for the go-ahead. Claude runs its own `terraform plan` and checks for **7 to add, 0 to change, 0 to destroy**: the bucket, versioning, lifecycle, encryption, public access block, ownership controls and policy.
 
-### C. Budget
+Then apply exactly that plan. A saved plan doesn't record which AWS account it was made for. `apply` uses whatever credentials the terminal has at that moment, so check the account first:
+```sh
+aws sts get-caller-identity --query Account --output text   # must be the lumineglyph account, 421803180949
+terraform apply bootstrap.tfplan
+rm bootstrap.tfplan
+```
+- [ ] It ends with `Apply complete! Resources: 7 added` and prints `state_bucket`.
 
-`budget.tf`: an `aws_budgets_budget` with a monthly cost limit of about $5. Add notifications to `var.alert_email` at 80% of actual spend and 100% of forecasted spend.
+**5. Move the bootstrap stack's own state into the bucket.** Add this block inside the `terraform { … }` block in `main.tf`, under `required_providers`, with your bucket name:
+```hcl
+  # Added after the first apply: this stack's state now lives in the bucket it created.
+  backend "s3" {
+    bucket       = "lumineglyph-tfstate-a1b2c3"
+    key          = "bootstrap/terraform.tfstate"
+    region       = "ap-northeast-1"
+    encrypt      = true
+    use_lockfile = true # S3-native locking; no DynamoDB table needed
+  }
+```
+Then:
+```sh
+terraform init -migrate-state
+```
+It asks "Do you want to copy existing state to the new backend?" Answer `yes`.
+```sh
+terraform plan                      # expect: No changes. Your infrastructure matches the configuration.
+aws s3 ls s3://lumineglyph-tfstate-a1b2c3/bootstrap/
+rm terraform.tfstate terraform.tfstate.backup
+cd ../..
+```
+- [ ] `plan` says **No changes**, and `aws s3 ls` lists `terraform.tfstate`.
 
-**Expected running cost:**
+Only delete the local files after both of those checks pass. Until then they're your only copy of the state.
 
-| Item | Cost |
-|------|------|
-| Hosted zone | $0.50/month |
-| DNSSEC KMS key (step 08) | $1/month |
-| CloudFront and S3 at this traffic | a few cents |
-| Domain | about $15/year |
+**6. Commit:**
+```sh
+git add infra/.gitignore infra/bootstrap/main.tf infra/bootstrap/.terraform.lock.hcl
+git status                          # only those three files staged; no .tfstate, no .terraform/
+git commit -m "feat(infra): bootstrap state bucket"
+```
+
+### B. Main stack and budget (`infra/main/`)
+
+**1. Create `infra/main/versions.tf`** with your bucket name:
+```hcl
+terraform {
+  required_version = ">= 1.10"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.73"
+    }
+  }
+
+  backend "s3" {
+    bucket       = "lumineglyph-tfstate-a1b2c3"
+    key          = "main/terraform.tfstate"
+    region       = "ap-northeast-1"
+    encrypt      = true
+    use_lockfile = true
+  }
+}
+```
+
+**2. Create `infra/main/providers.tf`:**
+```hcl
+# Tokyo by default; resources that must live elsewhere (the CloudFront certificate) set their own `region`.
+provider "aws" {
+  region = "ap-northeast-1"
+
+  default_tags {
+    tags = {
+      Project   = "lumineglyph"
+      ManagedBy = "terraform"
+      Stack     = "main"
+    }
+  }
+}
+```
+
+**3. Create `infra/main/variables.tf`:**
+```hcl
+variable "domain" {
+  description = "The site's apex domain."
+  type        = string
+  default     = "lumineglyph.com"
+}
+
+variable "alert_email" {
+  description = "Where budget (and, from step 08, alarm) emails go. Set in terraform.tfvars, which is git-ignored."
+  type        = string
+  sensitive   = true # kept out of plan output, which may be pasted into PRs
+}
+```
+
+**4. Give the email a value.** Create `infra/main/terraform.tfvars`, which is git-ignored, with the address that should receive alerts:
+```hcl
+alert_email = "you@example.com"
+```
+Also create `infra/main/terraform.tfvars.example`, which **is** committed, so others can see what's expected:
+```hcl
+# Copy to terraform.tfvars (git-ignored) and fill in.
+alert_email = "you@example.com"
+```
+
+**5. Create `infra/main/budget.tf`:**
+```hcl
+# Emails alert_email when the month's spend looks high. Expected spend is under $1/month,
+# except in the month the domain is bought or renewed ($16), when the "actual" alert will fire.
+resource "aws_budgets_budget" "monthly" {
+  name         = "lumineglyph-monthly"
+  budget_type  = "COST"
+  limit_amount = "5"
+  limit_unit   = "USD"
+  time_unit    = "MONTHLY"
+
+  # Actual spend passed $4
+  notification {
+    comparison_operator        = "GREATER_THAN"
+    threshold                  = 80
+    threshold_type             = "PERCENTAGE"
+    notification_type          = "ACTUAL"
+    subscriber_email_addresses = [var.alert_email]
+  }
+
+  # AWS forecasts the month will end above $5
+  notification {
+    comparison_operator        = "GREATER_THAN"
+    threshold                  = 100
+    threshold_type             = "PERCENTAGE"
+    notification_type          = "FORECASTED"
+    subscriber_email_addresses = [var.alert_email]
+  }
+}
+```
+
+**6. Plan and apply:**
+```sh
+cd infra/main
+terraform init
+terraform fmt
+terraform validate
+terraform plan -out=main.tfplan
+```
+- [ ] Tell Claude, and wait for the go-ahead. Claude checks for **1 to add**, the budget.
+```sh
+terraform apply main.tfplan
+rm main.tfplan
+cd ../..
+```
+
+**7. Commit:**
+```sh
+git add infra/main/versions.tf infra/main/providers.tf infra/main/variables.tf infra/main/budget.tf infra/main/terraform.tfvars.example infra/main/.terraform.lock.hcl
+git status                          # terraform.tfvars must NOT be listed
+git commit -m "feat(infra): main stack and monthly budget"
+```
+
+### C. Dependabot for Terraform
+
+Add a third entry to the end of `.github/dependabot.yml`, replacing the `# terraform is added in step 04` comment:
+```yaml
+  - package-ecosystem: terraform
+    directories:
+      - /infra/bootstrap
+      - /infra/main
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: chore
+      include: scope
+```
+Dependabot then proposes AWS provider updates by changing `.terraform.lock.hcl` and, when needed, the version constraint.
+
+```sh
+git add .github/dependabot.yml
+git commit -m "chore: dependabot for terraform"
+```
 
 ### D. Register the domain
 
-**Route 53 (recommended):**
-1. Buy it in the console: Route 53 → Registered domains → Register. Keep contact privacy on and auto-renew on. A purchase isn't something to do with `terraform apply`.
-2. Route 53 automatically creates a hosted zone for the domain. Bring that zone under Terraform with an `import` block:
-   ```hcl
-   import {
-     to = aws_route53_zone.main
-     id = "Z0123456789ABCDEF"     # from: aws route53 list-hosted-zones-by-name --dns-name lumineglyph.com
-   }
-   resource "aws_route53_zone" "main" {
-     name = var.domain
-   }
-   ```
-3. Manage the registration itself with `aws_route53domains_registered_domain`:
-   - `auto_renew = true`
-   - `transfer_lock = true`
-   - one `name_server` block per name server in `aws_route53_zone.main.name_servers`
+**1. Buy it in the console.** Buying is a one-off purchase, not something to put in `terraform apply`.
 
-   This resource takes over an existing registration; it doesn't buy anything. **(verify)** the arguments in the provider docs.
+First, check availability again from the new account (`AWS_PROFILE=lumineglyph`). On the day the account was created, this check returned `DONT_KNOW`. If it still does, tell Claude before buying.
+```sh
+aws route53domains check-domain-availability --domain-name lumineglyph.com --region us-east-1
+```
+- [ ] `"Availability": "AVAILABLE"`
 
-**Namecheap (alternative):**
-1. Buy the domain at Namecheap.
-2. Create `aws_route53_zone.main` with Terraform.
-3. In Namecheap → Domain → Nameservers → Custom DNS, enter the zone's four name servers.
+1. Open the AWS console with the `lumineglyph` account (the SSO portal → the account → AdministratorAccess).
+2. Route 53 → **Registered domains** → **Register domains**. Search for `lumineglyph.com` and select it.
+3. Duration **1 year**, **Auto-renew on**.
+4. Contacts: fill them in. **Privacy protection on** for all contacts (the default).
+5. Review, and **Submit**. Your card is charged about $16.
 
-Record in PROGRESS that the name server delegation (and later the DS record) is a manual step.
+**2. Confirm the registrant email.** Within minutes AWS (or the registry) sends a verification email to the registrant contact's address. **Click the link.** ICANN rules suspend the domain if it isn't verified within 15 days.
 
-### E. Certificate validation
+Registration takes from a few minutes up to a few hours. Check:
+```sh
+aws route53domains list-operations --region us-east-1 \
+  --query 'Operations[].[Type,Status,SubmittedDate]' --output table
+```
+- [ ] A `REGISTER_DOMAIN` row with status `SUCCESSFUL`. `IN_PROGRESS` means wait and run it again later.
 
-ACM proves you own the domain by checking DNS records it asks you to create. Create those records in Route 53 and wait for validation:
+**3. Find the hosted zone Route 53 created** for the domain:
+```sh
+aws route53 list-hosted-zones-by-name --dns-name lumineglyph.com --max-items 1 \
+  --query 'HostedZones[0].[Id,Name,Config.Comment]'
+```
+Note the zone ID (the part after `/hostedzone/`, starting with `Z`) and the comment exactly as printed.
 
+**4. Bring the zone and the registration under Terraform.** Create `infra/main/dns.tf`. Fill in the zone ID and comment from D.3:
 ```hcl
+# The hosted zone Route 53 created when the domain was registered (step 04 D).
+# Imported rather than created: a new zone would get different name servers.
+import {
+  to = aws_route53_zone.main
+  id = "Z0123456789ABCDEFGHIJ"
+}
+
+resource "aws_route53_zone" "main" {
+  name    = var.domain
+  comment = "HostedZone created by Route53 Registrar" # match the real zone, or Terraform will change it
+
+  # Never let Terraform delete this zone: replacing it changes the name servers and breaks the site.
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# The domain registration itself. Terraform "adopts" the existing registration; it doesn't buy
+# anything, and destroying this resource leaves the domain registered.
+# Contact details are deliberately not here: the repo is public. Privacy protection defaults to on.
+resource "aws_route53domains_registered_domain" "main" {
+  domain_name   = var.domain
+  auto_renew    = true
+  transfer_lock = true
+
+  dynamic "name_server" {
+    for_each = aws_route53_zone.main.name_servers
+    content {
+      name = name_server.value
+    }
+  }
+}
+```
+
+**5. Plan:**
+```sh
+cd infra/main
+terraform plan -out=main.tfplan
+```
+- [ ] Tell Claude, and wait for the go-ahead. Claude checks for **1 to import, 1 to add, 0 to change, 0 to destroy**. The "add" is the registration being adopted.
+  - If the plan wants to **change or replace the zone**, stop. A setting doesn't match the real zone.
+  - If the plan wants to change the **name servers** on the registration, stop too. That's usually only their order, but Claude checks before anything touches delegation.
+
+```sh
+terraform apply main.tfplan
+rm main.tfplan
+terraform plan                      # expect: No changes
+cd ../..
+```
+
+**6. Commit:**
+```sh
+git add infra/main/dns.tf
+git commit -m "feat(infra): import hosted zone and domain registration"
+```
+
+### E. TLS certificate
+
+**1. Create `infra/main/cert.tf`:**
+```hcl
+# One certificate for the site, www and the PR preview sites. CloudFront only accepts certificates from us-east-1.
+resource "aws_acm_certificate" "site" {
+  region                    = "us-east-1"
+  domain_name               = var.domain
+  subject_alternative_names = ["www.${var.domain}", "*.preview.${var.domain}"]
+  validation_method         = "DNS"
+
+  # When the certificate has to be replaced, create the new one before deleting the old one.
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# ACM checks we control the domain by looking for these DNS records.
 resource "aws_route53_record" "cert_validation" {
   for_each = {
     for o in aws_acm_certificate.site.domain_validation_options : o.domain_name => o
   }
+
   zone_id         = aws_route53_zone.main.zone_id
   name            = each.value.resource_record_name
   type            = each.value.resource_record_type
@@ -144,6 +618,7 @@ resource "aws_route53_record" "cert_validation" {
   allow_overwrite = true
 }
 
+# Waits until ACM has seen the records and issued the certificate (usually a few minutes).
 resource "aws_acm_certificate_validation" "site" {
   region                  = "us-east-1"
   certificate_arn         = aws_acm_certificate.site.arn
@@ -151,31 +626,82 @@ resource "aws_acm_certificate_validation" "site" {
 }
 ```
 
+**2. Plan:**
+```sh
+cd infra/main
+terraform plan -out=main.tfplan
+```
+- [ ] Tell Claude, and wait for the go-ahead. Claude checks for **5 to add**: the certificate, three validation records (apex, www, `*.preview`) and the validation.
+```sh
+terraform apply main.tfplan
+rm main.tfplan
+terraform plan                      # expect: No changes
+cd ../..
+```
+The apply waits at `aws_acm_certificate_validation.site: Still creating...` until ACM issues the certificate, usually 1–5 minutes. If it takes longer than 15 minutes, show Claude.
+
+**3. Commit:**
+```sh
+git add infra/main/cert.tf
+git commit -m "feat(infra): TLS certificate"
+```
+
+### F. Push, PR, checks
+
+**1. Push and open the PR:**
+```sh
+git push -u origin rebuild/04-aws-foundation
+gh pr create --fill
+gh pr checks --watch
+```
+The `build` check runs as usual. Nothing in it touches `infra/` yet; step 08 adds Terraform checks to CI.
+
+**2. Tell Claude.** Claude runs the checkpoint checks below and updates PROGRESS. Then merge:
+```sh
+gh pr merge --merge --delete-branch
+git switch main && git pull
+```
+
 ## Checkpoint
 
-Claude runs read-only checks:
-- `terraform -chdir=infra/main plan` shows no changes after your apply.
-- `aws s3api get-bucket-policy`, `get-bucket-versioning` and `get-public-access-block` on the state bucket.
-- `dig NS lumineglyph.com +short` returns the Route 53 name servers. Delegation can take minutes to hours.
-- `aws acm describe-certificate --region us-east-1 --certificate-arn …` shows the status `ISSUED`.
-- `aws budgets describe-budgets --account-id …` shows the budget.
+Claude runs these, all read-only:
+- `terraform plan` in `infra/bootstrap` and in `infra/main`: **No changes** in both.
+- State bucket:
+  - `aws s3api get-bucket-versioning`: versioning is `Enabled`.
+  - `get-public-access-block`: all four settings are `true`.
+  - `get-bucket-policy`: the TLS-only deny.
+  - `get-bucket-encryption`: AES256.
+  - `get-bucket-ownership-controls`: `BucketOwnerEnforced`.
+- `aws route53domains get-domain-detail --region us-east-1 --domain-name lumineglyph.com`:
+  - auto-renew is on
+  - the status includes `clientTransferProhibited`
+  - privacy protection is on for every contact
+  - the name servers match the hosted zone
+- `dig NS lumineglyph.com +short` returns the four Route 53 name servers. A new domain can take up to a few hours to show up everywhere.
+- `aws acm describe-certificate --region us-east-1`: status `ISSUED`, covering all three names.
+- `aws budgets describe-budgets`: `lumineglyph-monthly` with its two notifications.
+- `git ls-files infra` lists no `.tfstate` or `.tfvars` files.
 
-PROGRESS gets the state bucket name, hosted zone ID and registrar details.
+PROGRESS gets the state bucket name, the hosted zone ID and the registration date.
 
 ## Commit
 
-`feat(infra): bootstrap state bucket`, then `feat(infra): domain, hosted zone, certificate, budget`.
+The commits are A.6, B.7, C, D.6 and E.3, merged through the PR in F.
 
 ## ADR
 
-Write `docs/adr/003-aws-hosting.md`. Cover:
-- S3 + CloudFront + Route 53 rather than Netlify, Vercel or Cloudflare Pages
+`docs/adr/003-aws-hosting.md`. Claude drafts it, and you reword it as you did for ADR-001 and 002. It covers:
+- S3 + CloudFront + Route 53, rather than Netlify, Vercel or Cloudflare Pages
 - why Terraform
 - why Tokyo plus `us-east-1`
 - the trade-off: more moving parts in exchange for owning the whole stack
 
 ## Notes for Claude
 
-- Never run `apply`. Run `plan` freely.
-- If the plan wants to replace the imported hosted zone, stop: an attribute doesn't match the real zone, such as `comment` or `force_destroy`. Replacing the zone would change the name servers and break delegation.
+- Never run `apply`. Run `plan` freely; it needs Matthew's SSO session (`AWS_PROFILE=lumineglyph`).
+- Since section 0, `lumineglyph` is the dedicated member account and `ged-management` is the Organization's management account (`658606186432`). Before running anything, check `aws sts get-caller-identity` shows the member account. Nothing in this step should create resources in the management account.
+- Before each apply, read the full plan and compare the counts with the step's expectations. Anything unexpected (a change or replacement, an extra resource) stops the step until it's explained.
+- If the plan wants to replace the imported hosted zone, stop: an attribute doesn't match the real zone. Replacing the zone changes the name servers and breaks delegation. `prevent_destroy` should also make such a plan fail.
 - `use_lockfile` replaces DynamoDB-based locking. Don't suggest a lock table.
+- The repo is public. No contact details, account-specific emails or `.tfvars` in commits. Bucket names and zone IDs are fine.
+- Verified 2026-11-18 against provider v6.73.0 docs (see "What Claude already checked"). Check again if the provider has moved on by the time Matthew starts.
