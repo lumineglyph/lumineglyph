@@ -5,7 +5,7 @@
 - An S3 bucket that holds Terraform's state, created by a small `infra/bootstrap` stack.
 - An `infra/main` stack that keeps its state in that bucket.
 - A budget that emails you before AWS costs get out of hand.
-- `lumineglyph.com` registered with Route 53, with its hosted zone and registration settings managed by Terraform.
+- `lumineglyph.com` registered with Route 53, with its hosted zone and registration settings managed by Terraform. Since 2026-11-19 this happens in two stages: the zone in D, and the registration in G, 14+ days later (see D).
 - A validated TLS certificate in `us-east-1` covering `lumineglyph.com`, `www.lumineglyph.com` and `*.preview.lumineglyph.com`. Step 05 attaches it to CloudFront.
 
 ## Why it matters
@@ -30,7 +30,7 @@
   - `aws_acm_certificate` and `aws_acm_certificate_validation` take a per-resource `region`, so the `us-east-1` certificate needs no second provider.
   - `aws_route53domains_registered_domain` has no `region` argument; the provider handles that. It *adopts* a domain you've already registered rather than buying one, and `terraform destroy` never deletes the domain.
   - Its contact details (name, address, phone) are optional, and privacy defaults to on. **The contacts stay out of the code**, because the repo is public.
-  - `aws_route53_zone`'s `comment` defaults to "Managed by Terraform". The zone that Route 53 creates when you buy the domain has a different comment, so D.3 copies the real one.
+  - `aws_route53_zone`'s `comment` defaults to "Managed by Terraform". (This mattered when D imported the zone that Route 53 creates with the domain. Since 2026-11-19, Terraform creates the zone itself and sets its own comment.)
 - **Not checked yet:** anything inside your AWS account. Your SSO login had expired. "Before you start" has you log in and run the account checks.
 
 ## Before you start
@@ -497,94 +497,140 @@ git add .github/dependabot.yml
 git commit -m "chore: dependabot for terraform"
 ```
 
-### D. Register the domain
+### D. Hosted zone and domain (rewritten 2026-11-19)
 
-**1. Buy it in the console.** Buying is a one-off purchase, not something to put in `terraform apply`.
+**Why D changed.** Route 53 Domains doesn't work yet in the new `lumineglyph` account. For over 24 hours it answered `DONT_KNOW` for every domain, even `google.com`, while the management account and `workloads-dev` answered `AVAILABLE`. A support case is open. So that the rebuild can continue:
+- the **domain is bought in the management account**
+- the **hosted zone is created by Terraform in the `lumineglyph` account**
+- the domain's name servers are pointed at that zone by hand, once
 
-First, check availability again from the new account (`AWS_PROFILE=lumineglyph`). On the day the account was created, this check returned `DONT_KNOW`. If it still does, tell Claude before buying.
-```sh
-aws route53domains check-domain-availability --domain-name lumineglyph.com --region us-east-1
-```
-- [ ] `"Availability": "AVAILABLE"`
+A domain and its hosted zone can be in different AWS accounts without affecting the domain or DNS. AWS doesn't allow moving a domain to another AWS account in its first 14 days, so **part G** moves the registration into `lumineglyph` later and brings it under Terraform.
 
-1. Open the AWS console with the `lumineglyph` account (the SSO portal → the account → AdministratorAccess).
-2. Route 53 → **Registered domains** → **Register domains**. Search for `lumineglyph.com` and select it.
-3. Duration **1 year**, **Auto-renew on**.
-4. Contacts: fill them in. **Privacy protection on** for all contacts (the default).
-5. Review, and **Submit**. Your card is charged about $16.
+Use two kinds of commands in this part:
+- **`lumineglyph` account (the default):** `export AWS_PROFILE=lumineglyph` in your terminal. `terraform` always uses this.
+- **Management account:** add `--profile ged-management` to that one `aws` command. Every command below that needs it already has it.
 
-**2. Confirm the registrant email.** Within minutes AWS (or the registry) sends a verification email to the registrant contact's address. **Click the link.** ICANN rules suspend the domain if it isn't verified within 15 days.
-
-Registration takes from a few minutes up to a few hours. Check:
-```sh
-aws route53domains list-operations --region us-east-1 \
-  --query 'Operations[].[Type,Status,SubmittedDate]' --output table
-```
-- [ ] A `REGISTER_DOMAIN` row with status `SUCCESSFUL`. `IN_PROGRESS` means wait and run it again later.
-
-**3. Find the hosted zone Route 53 created** for the domain:
-```sh
-aws route53 list-hosted-zones-by-name --dns-name lumineglyph.com --max-items 1 \
-  --query 'HostedZones[0].[Id,Name,Config.Comment]'
-```
-Note the zone ID (the part after `/hostedzone/`, starting with `Z`) and the comment exactly as printed.
-
-**4. Bring the zone and the registration under Terraform.** Create `infra/main/dns.tf`. Fill in the zone ID and comment from D.3:
+**1. Create the hosted zone in the `lumineglyph` account.** This works before the domain is bought. Create `infra/main/dns.tf`:
 ```hcl
-# The hosted zone Route 53 created when the domain was registered (step 04 D).
-# Imported rather than created: a new zone would get different name servers.
-import {
-  to = aws_route53_zone.main
-  id = "Z0123456789ABCDEFGHIJ"
-}
-
+# The site's DNS zone, in the lumineglyph account.
+# The domain itself was bought in the management account, because Route 53 Domains didn't work yet in
+# this new account (step 04 D). Its name servers were pointed at this zone by hand (D.4). Step 04 G moves
+# the registration into this account and adds it below.
 resource "aws_route53_zone" "main" {
   name    = var.domain
-  comment = "HostedZone created by Route53 Registrar" # match the real zone, or Terraform will change it
+  comment = "Site DNS for ${var.domain}, managed by Terraform (infra/main)"
 
-  # Never let Terraform delete this zone: replacing it changes the name servers and breaks the site.
+  # Never let Terraform delete this zone. A new zone gets new name servers, and the domain would point at nothing.
   lifecycle {
     prevent_destroy = true
   }
 }
 
-# The domain registration itself. Terraform "adopts" the existing registration; it doesn't buy
-# anything, and destroying this resource leaves the domain registered.
-# Contact details are deliberately not here: the repo is public. Privacy protection defaults to on.
-resource "aws_route53domains_registered_domain" "main" {
-  domain_name   = var.domain
-  auto_renew    = true
-  transfer_lock = true
-
-  dynamic "name_server" {
-    for_each = aws_route53_zone.main.name_servers
-    content {
-      name = name_server.value
-    }
-  }
+output "name_servers" {
+  description = "The zone's name servers. The domain registration must list exactly these."
+  value       = aws_route53_zone.main.name_servers
 }
 ```
-
-**5. Plan:**
+Then:
 ```sh
 cd infra/main
+terraform fmt
+terraform validate
 terraform plan -out=main.tfplan
 ```
-- [ ] Tell Claude, and wait for the go-ahead. Claude checks for **1 to import, 1 to add, 0 to change, 0 to destroy**. The "add" is the registration being adopted.
-  - If the plan wants to **change or replace the zone**, stop. A setting doesn't match the real zone.
-  - If the plan wants to change the **name servers** on the registration, stop too. That's usually only their order, but Claude checks before anything touches delegation.
+- [ ] Tell Claude, and wait for the go-ahead. Claude checks for **1 to add**, the zone, and nothing else.
 
 ```sh
+aws sts get-caller-identity --query Account --output text   # 421803180949
 terraform apply main.tfplan
 rm main.tfplan
-terraform plan                      # expect: No changes
+terraform output name_servers
 cd ../..
 ```
+- [ ] `output` prints four name servers like `ns-123.awsdns-45.com`. The zone costs $0.50/month.
 
-**6. Commit:**
+**2. Buy the domain in the management account.** Check it's still available:
+```sh
+aws route53domains check-domain-availability --profile ged-management --region us-east-1 --domain-name lumineglyph.com
+```
+- [ ] `"Availability": "AVAILABLE"`
+
+Then in the console:
+1. Open the SSO portal, choose the **Ged Miner** (management) account, then **AdministratorAccess**.
+2. Route 53 → **Registered domains** → **Register domains**. Search for `lumineglyph.com`, select it, then **Proceed to checkout**.
+3. Duration **1 year**, **Auto-renew on**.
+4. Contacts: fill them in, with yourself as the registrant. Keep **Privacy protection on** for all contacts (the default).
+5. Review, accept the terms, and **Submit**. The management account's card is charged $16.
+
+Your management account's `org-monthly-total` budget may email an alert this month because of this charge. It's expected.
+
+**3. Confirm the registrant email, and wait for the registration.** Within minutes, an email from `noreply@registrar.amazon` (or the registry) arrives at the registrant address. **Click the link.** ICANN rules suspend the domain if it isn't verified within 15 days. Registration takes a few minutes to a few hours. Check:
+```sh
+aws route53domains list-operations --profile ged-management --region us-east-1 \
+  --query 'Operations[].[Type,Status,SubmittedDate]' --output table
+```
+- [ ] A `REGISTER_DOMAIN` row with status `SUCCESSFUL`. If it says `IN_PROGRESS`, wait and run it again.
+- [ ] Note the registration date. Part G can start **14 days later**. Put a reminder in your calendar.
+
+**The next two steps have a deadline.** When the registration succeeds, Route 53 also creates a hosted zone in the **management** account, and starts charging for it unless it's deleted within 12 hours. D.4 and D.5 replace it with the Terraform zone from D.1. Do them as soon as the registration succeeds.
+
+**4. Point the domain at the Terraform zone.** From the repo root, with `AWS_PROFILE=lumineglyph` exported (Terraform reads the zone's name servers from the state in S3):
+```sh
+NS_JSON=$(terraform -chdir=infra/main output -json name_servers | jq -c 'map({Name: .})')
+echo "$NS_JSON"     # four {"Name":"ns-…"} entries
+aws route53domains update-domain-nameservers --profile ged-management --region us-east-1 \
+  --domain-name lumineglyph.com --nameservers "$NS_JSON"
+```
+It prints an `OperationId`. After a minute or two:
+```sh
+aws route53domains get-domain-detail --profile ged-management --region us-east-1 \
+  --domain-name lumineglyph.com --query 'Nameservers[].Name'
+terraform -chdir=infra/main output name_servers
+```
+- [ ] Both commands list the same four names. The order may differ.
+
+**5. Delete the zone Route 53 created in the management account.** Find it:
+```sh
+aws route53 list-hosted-zones-by-name --profile ged-management --dns-name lumineglyph.com \
+  --query 'HostedZones[?Name==`lumineglyph.com.`].[Id,ResourceRecordSetCount,Config.Comment]' --output text
+```
+- [ ] One line with a `/hostedzone/Z…` ID and `2` records (only the default NS and SOA). If there's more than one line or more than 2 records, stop and show Claude.
+
+```sh
+aws route53 delete-hosted-zone --profile ged-management --id /hostedzone/PASTE_THE_ID
+```
+Check:
+```sh
+aws route53 list-hosted-zones --profile ged-management --query 'HostedZones[].Name'
+```
+- [ ] `[]`: the management account has no hosted zones.
+
+Both commands use `--profile ged-management`, so they can't touch the Terraform zone in the `lumineglyph` account.
+
+**6. Check delegation.** Ask a `.com` server directly what it hands out for the domain:
+```sh
+dig NS lumineglyph.com @a.gtld-servers.net +norec +noall +authority
+dig NS lumineglyph.com +short
+```
+- [ ] The first lists the four name servers from D.1. The second lists them too, though a new domain can take up to an hour or so to show up everywhere.
+- [ ] Tell Claude. Claude also checks auto-renew, the transfer lock and privacy on the registration, from the management account.
+
+**6b. Turn on the transfer lock** (added 2026-11-19). Route 53 registered the domain with only the status `active`, and no transfer lock. The lock (`clientTransferProhibited`) stops anyone from moving the domain to another registrar until it's turned off again. G's Terraform keeps it on after the move.
+```sh
+aws route53domains enable-domain-transfer-lock --profile ged-management --region us-east-1 \
+  --domain-name lumineglyph.com
+```
+It prints an `OperationId`. After a few minutes:
+```sh
+aws route53domains get-domain-detail --profile ged-management --region us-east-1 \
+  --domain-name lumineglyph.com --query 'StatusList'
+```
+- [ ] The list includes `clientTransferProhibited`.
+
+**7. Commit:**
 ```sh
 git add infra/main/dns.tf
-git commit -m "feat(infra): import hosted zone and domain registration"
+git commit -m "feat(infra): hosted zone in the lumineglyph account"
 ```
 
 ### E. TLS certificate
@@ -662,6 +708,95 @@ gh pr merge --merge --delete-branch
 git switch main && git pull
 ```
 
+### G. Move the domain into the `lumineglyph` account (14+ days after D.3)
+
+Do this once 14 days have passed since the registration in D.3. Until then, the domain stays in the management account, which works fine: DNS and the site don't depend on which account holds the registration. Steps 05–07 can go ahead in the meantime.
+
+**0. Check the new account can use Route 53 Domains now:**
+```sh
+export AWS_PROFILE=lumineglyph
+aws route53domains check-domain-availability --region us-east-1 --domain-name example-$(openssl rand -hex 4).com
+```
+- [ ] `AVAILABLE`. If it still says `DONT_KNOW`, don't start the transfer: accepting it would probably fail too. Tell Claude, and follow up on the support case.
+
+**1. Branch:**
+```sh
+git switch main && git pull
+git switch -c rebuild/04g-domain-transfer
+```
+
+**2. Start the transfer from the management account:**
+```sh
+aws route53domains transfer-domain-to-another-aws-account --profile ged-management --region us-east-1 \
+  --domain-name lumineglyph.com --account-id 421803180949
+```
+It prints an `OperationId` and a `Password`. If it fails with an error mentioning the transfer lock instead, turn the lock off with `aws route53domains disable-domain-transfer-lock --profile ged-management --region us-east-1 --domain-name lumineglyph.com` and run it again. Step 4's Terraform turns the lock back on. AWS's docs don't say whether the lock blocks a move between AWS accounts **(verify)**.
+
+The password works like a key to the domain, so keep it out of the repo, PRs and chats. The `lumineglyph` account must accept within **3 days**; otherwise the request is cancelled, and the domain stays where it is.
+
+**3. Accept it in the `lumineglyph` account:**
+```sh
+aws route53domains accept-domain-transfer-from-another-aws-account --region us-east-1 \
+  --domain-name lumineglyph.com --password 'PASTE_THE_PASSWORD'
+```
+Then check from both sides. The transfer can take a few minutes:
+```sh
+aws route53domains list-domains --region us-east-1 --query 'Domains[].DomainName'                           # lumineglyph: ["lumineglyph.com"]
+aws route53domains list-domains --profile ged-management --region us-east-1 --query 'Domains[].DomainName'  # management: []
+```
+- [ ] The domain is listed in `lumineglyph` and not in the management account.
+
+The name servers move with the registration, so DNS doesn't change. Check the domain still points at the Terraform zone:
+```sh
+dig NS lumineglyph.com @a.gtld-servers.net +norec +noall +authority
+```
+
+**4. Bring the registration under Terraform.** Add this to the end of `infra/main/dns.tf`. Also replace the comment at the top of the file, which no longer applies, with `# The site's DNS zone and the domain registration, both in the lumineglyph account.`
+```hcl
+# The domain registration itself. Terraform "adopts" the existing registration; it doesn't buy
+# anything, and destroying this resource leaves the domain registered.
+# Contact details are deliberately not here: the repo is public. Privacy protection defaults to on.
+resource "aws_route53domains_registered_domain" "main" {
+  domain_name   = var.domain
+  auto_renew    = true
+  transfer_lock = true
+
+  dynamic "name_server" {
+    for_each = aws_route53_zone.main.name_servers
+    content {
+      name = name_server.value
+    }
+  }
+}
+```
+```sh
+cd infra/main
+terraform plan -out=main.tfplan
+```
+- [ ] Tell Claude, and wait for the go-ahead. Claude checks for **1 to add**: the registration being adopted, with no change to the zone.
+  - If the plan shows the **name servers** changing, stop. That's usually only their order, but Claude checks before anything touches delegation.
+
+```sh
+terraform apply main.tfplan
+rm main.tfplan
+terraform plan                      # expect: No changes
+cd ../..
+```
+
+**5. Commit, PR, merge:**
+```sh
+git add infra/main/dns.tf
+git commit -m "feat(infra): manage the domain registration in Terraform"
+git push -u origin rebuild/04g-domain-transfer
+gh pr create --fill
+gh pr checks --watch
+```
+Tell Claude. Claude checks the registration from the `lumineglyph` account, updates PROGRESS, and then you merge:
+```sh
+gh pr merge --merge --delete-branch
+git switch main && git pull
+```
+
 ## Checkpoint
 
 Claude runs these, all read-only:
@@ -672,12 +807,13 @@ Claude runs these, all read-only:
   - `get-bucket-policy`: the TLS-only deny.
   - `get-bucket-encryption`: AES256.
   - `get-bucket-ownership-controls`: `BucketOwnerEnforced`.
-- `aws route53domains get-domain-detail --region us-east-1 --domain-name lumineglyph.com`:
+- `aws route53domains get-domain-detail --region us-east-1 --domain-name lumineglyph.com`. Until G, add `--profile ged-management`, because the domain is in the management account. Check:
   - auto-renew is on
   - the status includes `clientTransferProhibited`
   - privacy protection is on for every contact
-  - the name servers match the hosted zone
-- `dig NS lumineglyph.com +short` returns the four Route 53 name servers. A new domain can take up to a few hours to show up everywhere.
+  - the name servers match `terraform output name_servers`
+- The management account has no hosted zones; the only `lumineglyph.com` zone is the Terraform one in `lumineglyph`.
+- `dig NS lumineglyph.com +short` returns the four name servers of the Terraform zone. A new domain can take up to a few hours to show up everywhere.
 - `aws acm describe-certificate --region us-east-1`: status `ISSUED`, covering all three names.
 - `aws budgets describe-budgets`: `lumineglyph-monthly` with its two notifications.
 - `git ls-files infra` lists no `.tfstate` or `.tfvars` files.
@@ -686,7 +822,9 @@ PROGRESS gets the state bucket name, the hosted zone ID and the registration dat
 
 ## Commit
 
-The commits are A.6, B.7, C, D.6 and E.3, merged through the PR in F.
+The commits are A.6, B.7, C, D.7 and E.3, merged through the PR in F. G has its own branch and PR, 14+ days later.
+
+Step 04 counts as done after F. G is a follow-up and doesn't block step 05.
 
 ## ADR
 
@@ -699,9 +837,11 @@ The commits are A.6, B.7, C, D.6 and E.3, merged through the PR in F.
 ## Notes for Claude
 
 - Never run `apply`. Run `plan` freely; it needs Matthew's SSO session (`AWS_PROFILE=lumineglyph`).
-- Since section 0, `lumineglyph` is the dedicated member account and `ged-management` is the Organization's management account (`658606186432`). Before running anything, check `aws sts get-caller-identity` shows the member account. Nothing in this step should create resources in the management account.
+- Since section 0, `lumineglyph` is the dedicated member account and `ged-management` is the Organization's management account (`658606186432`). Before running anything, check `aws sts get-caller-identity` shows the member account. Nothing in this step should create resources in the management account. The one exception, since 2026-11-19, is the domain registration (D.2) until G moves it. The hosted zone Route 53 creates with it must be deleted in D.5.
 - Before each apply, read the full plan and compare the counts with the step's expectations. Anything unexpected (a change or replacement, an extra resource) stops the step until it's explained.
-- If the plan wants to replace the imported hosted zone, stop: an attribute doesn't match the real zone. Replacing the zone changes the name servers and breaks delegation. `prevent_destroy` should also make such a plan fail.
+- If a plan ever wants to replace the hosted zone, stop. Replacing the zone changes the name servers and breaks delegation. `prevent_destroy` should also make such a plan fail.
+- D.4 changes name servers with `update-domain-nameservers` in the management account. Before D.5 deletes a zone, check that the registration's name servers already match `terraform output name_servers`, and that the zone being deleted has the management account's ID and only 2 records.
+- G: never print or log the transfer password. If `accept-domain-transfer-from-another-aws-account` fails, the request expires after 3 days and the domain stays in the management account. Nothing breaks.
 - `use_lockfile` replaces DynamoDB-based locking. Don't suggest a lock table.
 - The repo is public. No contact details, account-specific emails or `.tfvars` in commits. Bucket names and zone IDs are fine.
 - Verified 2026-11-18 against provider v6.73.0 docs (see "What Claude already checked"). Check again if the provider has moved on by the time Matthew starts.
