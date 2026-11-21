@@ -2,8 +2,8 @@
 
 Claude keeps this file up to date as checkpoints pass. If it disagrees with the repo, the repo wins; fix this file.
 
-- **Last updated:** 2026-11-19
-- **Current step:** 06 — Deploy pipeline (not started). Step 05 done 2026-11-21: **site live on CloudFront**, checkpoint passed, both grades A+; PR #5 merges it. Until step 06, deploys are the manual D.2 sync (and, once anything is cached, a `create-invalidation`). Step 04 merged (PR #4, `d14efc7`). The stuck `.github/dependabot.yml` check on the merge (also on `74ba8e7`) is Dependabot's own and not required; ignore it. **Step 04 G (move the domain into `lumineglyph`) from 2026-12-03 22:12 JST.**
+- **Last updated:** 2026-11-21
+- **Current step:** 06 — Deploy pipeline (not started; step file rewritten as exact steps 2026-11-21, start at "Before you start"). Step 05 done 2026-11-21: **site live on CloudFront**, checkpoint passed, both grades A+; PR #5 merges it. Until step 06, deploys are the manual D.2 sync (and, once anything is cached, a `create-invalidation`). Step 04 merged (PR #4, `d14efc7`). The stuck `.github/dependabot.yml` check on the merge (also on `74ba8e7`) is Dependabot's own and not required; ignore it. **Step 04 G (move the domain into `lumineglyph`) from 2026-12-03 22:12 JST.**
 
 ## Steps
 
@@ -30,7 +30,7 @@ Fill these in as they're created. Nothing here may be secret, because the repo w
 |------|-------|
 | GitHub repo (owner/name) | `lumineglyph/lumineglyph` (org on the Free plan, owned by a business; owners: Ged-Miner, moena-miner) |
 | GitHub owner ID / repo ID | `356493958` / `1460696603` (new repo from step 03 A.2; the old repo, now `lumineglyph-archive`, was `1454809896`) |
-| OIDC `sub` format in use | (check in step 06; the repo is no longer a transferred one after step 03 A.2, so don't assume the ID-based format) |
+| OIDC `sub` format in use | Immutable (ID-based). The API reports `use_immutable_subject: true`, prefix `repo:lumineglyph@356493958/lumineglyph@1460696603` (checked 2026-11-21). Expected for production: `…:environment:production`; confirm in step 06 C |
 | AWS account | `421803180949` (`lumineglyph`, member account in organization `o-ec0jf99uep`; created 2026-11-18, no root credentials) |
 | AWS management account | `658606186432` ("Ged Miner"); used only for Organization and billing work |
 | AWS CLI profile names | `lumineglyph` → the member account; `ged-management` → the management account. Both use IAM Identity Center, the `AdministratorAccess` permission set and the SSO session `lumineglyph` |
@@ -44,8 +44,7 @@ Fill these in as they're created. Nothing here may be secret, because the repo w
 | CloudFront distribution | `E3EFRC3I100XWY` (`d1cogdytz45625.cloudfront.net`); OAC `E2D9XOL4FHOC1I` |
 | CloudFront function / headers policy | `lumineglyph-site-viewer-request` / `lumineglyph-site` (`eece9310-0ec5-4935-93a3-8ae373a61f4a`) |
 | ACM certificate (us-east-1) | `arn:aws:acm:us-east-1:421803180949:certificate/29ea34ed-bf54-4b81-a799-52871db2668d` (apex, `www`, `*.preview`) |
-| Site bucket | |
-| Site CloudFront distribution ID | |
+| GitHub OIDC provider ARN | |
 | Previews bucket | |
 | Previews CloudFront distribution ID | |
 | Production deploy role ARN | |
@@ -86,6 +85,15 @@ Log anything done differently from the step files, and why.
   - The repo settings only allow GitHub's own actions plus `lycheeverse/lychee-action`, and require SHA pinning.
   - The runner is `ubuntu-24.04` rather than `ubuntu-latest`.
   - A.2 adds a history rewrite (author emails to noreply, Matthew's name to "Ged Miner") pushed to a fresh repo, because a force push can't clean GitHub's read-only `refs/pull/*`. Commit hashes change: `9233aa2` → `a1be813`.
+- 2026-11-21, 06 (rewritten as exact steps, changes from the original step file):
+  - New section A: the repo's Actions allowlist gets `aws-actions/configure-aws-credentials@*`. Without it, the deploy job would be refused.
+  - The `production` environment is created first, before any job references it; otherwise GitHub would create it without a branch rule. The `sub` is checked from a throwaway PR before the `main`-only rule is added. Re-running that same job after adding the rule is the negative test.
+  - The `sub` check uses a plain `run:` step (`curl` + `node`) instead of `actions/github-script`.
+  - The `sub` lives in a `locals` block in `github-oidc.tf`, not in the git-ignored `terraform.tfvars`.
+  - The role can also do `cloudfront:GetInvalidation`, so the job waits until the invalidation is complete and a green deploy means the site is live.
+  - Credentials last 15 minutes (`role-duration-seconds: 900`). The job has only `id-token: write`, no `contents: read`. `vars` reach `run:` through `env:`. It uses `ubuntu-24.04`. It checks the artifact's layout before the `--delete` sync.
+  - The build artifact is kept 30 days instead of 7, to match GitHub's 30-day re-run limit (the old text said 90 days). The rollback section has the real limits and a drill.
+  - The checkpoint no longer needs a copy change: merging the step 06 PR is the first automatic deploy.
 - 2026-11-20, 05 (rewritten as exact steps, changes from the original step file):
   - The bucket is filled *before* the distribution and DNS exist, so the site goes live complete.
   - The 404 page path is `/404.html` (what Astro actually builds), not `/404/index.html`.
