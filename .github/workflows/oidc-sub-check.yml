@@ -1,0 +1,31 @@
+# TEMPORARY (step 06 C). Prints the OIDC token's sub and aud claims for a job in the
+# production environment. Never merged; the PR is closed and the branch deleted.
+name: OIDC sub check (temporary)
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  show-sub:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment: production
+    permissions:
+      id-token: write # request an OIDC token, to read its claims
+    steps:
+      # The runner gives every job with id-token: write a URL and a bearer token for requesting
+      # an ID token. Only the decoded claims are printed, never the token itself.
+      - name: Print the sub and aud claims
+        run: |
+          curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" \
+            | jq -r '.value' \
+            | node -e '
+                const token = require("fs").readFileSync(0, "utf8").trim();
+                const claims = JSON.parse(Buffer.from(token.split(".")[1], "base64url"));
+                console.log("sub=" + claims.sub);
+                console.log("aud=" + claims.aud);
+              '
