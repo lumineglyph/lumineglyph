@@ -70,4 +70,78 @@ jobs:
           name: site-dist
           path: site/dist
           if-no-files-found: error
-          retention-days: 7
+          # 30 days = how long GitHub lets you re-run a job, so an old deploy can be re-run (rollback).
+          retention-days: 30
+
+  # Deploys the artifact the build job just tested. Pushes to main only (merged PRs); skipped on PRs.
+  deploy-production:
+    name: deploy-production # rollback (step 06 H) looks the job up by this name
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    # Only main may use this environment (deployment branch rule), and only this environment's
+    # token can assume the AWS deploy role (trust policy in infra/main/github-oidc.tf).
+    environment:
+      name: production
+      url: https://lumineglyph.com/
+    permissions:
+      id-token: write # request the OIDC token that AWS swaps for credentials; nothing else
+    # One deploy at a time. A deploy in progress is never cancelled; a newer one waits.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    env:
+      SITE_BUCKET: ${{ vars.SITE_BUCKET }}
+      SITE_DISTRIBUTION_ID: ${{ vars.SITE_DISTRIBUTION_ID }}
+    steps:
+      - name: Download the built site
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: site-dist
+          path: dist
+
+      # The sync below uses --delete. If the artifact's layout were ever wrong, it would delete
+      # the live pages, so check that it looks like the site first.
+      - name: Check the artifact
+        run: |
+          test -f dist/index.html
+          test -f dist/en/index.html
+          test -f dist/404.html
+          test -d dist/_astro
+          echo "$(find dist -type f | wc -l) files"
+
+      - name: Sign in to AWS
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-duration-seconds: 900 # 15 minutes, the shortest AWS allows
+          role-session-name: deploy-${{ github.run_id }} # shows in CloudTrail, traceable to this run
+
+      # Hashed files first, then the pages that reference them, so a visitor never gets
+      # a page pointing at files that aren't there yet. Old hashed files are kept (no --delete)
+      # for visitors who still have an older page open.
+      - name: Upload hashed assets
+        run: >-
+          aws s3 sync dist/_astro "s3://$SITE_BUCKET/_astro"
+          --no-progress
+          --cache-control "public, max-age=31536000, immutable"
+
+      - name: Upload pages
+        run: >-
+          aws s3 sync dist "s3://$SITE_BUCKET"
+          --no-progress
+          --delete
+          --exclude "_astro/*"
+          --cache-control "public, max-age=0, s-maxage=31536000, must-revalidate"
+
+      # CloudFront keeps pages until told otherwise (s-maxage). Clear everything and wait until
+      # every edge location has, so a green job means the new version is live.
+      - name: Clear the CDN cache
+        run: |
+          ID=$(aws cloudfront create-invalidation --distribution-id "$SITE_DISTRIBUTION_ID" \
+            --paths "/*" --query Invalidation.Id --output text)
+          echo "Invalidation $ID"
+          aws cloudfront wait invalidation-completed --distribution-id "$SITE_DISTRIBUTION_ID" --id "$ID"
+          echo "Done"
