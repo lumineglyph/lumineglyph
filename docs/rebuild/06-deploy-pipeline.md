@@ -551,7 +551,12 @@ What's in it and why:
 ```sh
 uvx zizmor .github/workflows/
 ```
-- [ ] `No findings to report.` If it reports something, show Claude.
+- [ ] The last line is `No findings to report. Good job!` If it reports something, show Claude.
+
+It also prints `WARN … zizmor is running in offline mode by default`. That's expected. The online mode adds two checks: that each pinned commit really belongs to that action's repo, and that no pinned version has a known vulnerability. Run it with your GitHub login:
+```sh
+GH_TOKEN=$(gh auth token) uvx zizmor .github/workflows/
+```
 
 **3. Commit:**
 ```sh
