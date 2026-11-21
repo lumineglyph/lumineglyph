@@ -192,22 +192,25 @@ If `sub` is different, stop and show Claude. D uses this exact value.
 
 The repo's normal `Pipeline` also runs on this PR. Ignore it.
 
-**5. Restrict the environment to `main`.** "Selected branches and tags", with one rule for the branch `main`:
+**5. Restrict the environment to `main`.** "Selected branches and tags", with one rule for the branch `main`. The same command turns off "Allow administrators to bypass configured protection rules" (`can_admins_bypass`). It's on by default, and you and Moena are both admins. GitHub's docs don't say whether it covers the branch rule, and with no required reviewers it has nothing else to do, so turning it off makes "only `main` deploys" hold for everyone:
 ```sh
 gh api -X PUT repos/lumineglyph/lumineglyph/environments/production --input - <<'EOF'
-{"deployment_branch_policy": {"protected_branches": false, "custom_branch_policies": true}}
+{"can_admins_bypass": false, "deployment_branch_policy": {"protected_branches": false, "custom_branch_policies": true}}
 EOF
 
 gh api -X POST repos/lumineglyph/lumineglyph/environments/production/deployment-branch-policies \
   -f name=main -f type=branch
 
-gh api repos/lumineglyph/lumineglyph/environments/production --jq '.deployment_branch_policy'
+gh api repos/lumineglyph/lumineglyph/environments/production \
+  --jq '{can_admins_bypass, deployment_branch_policy}'
 gh api repos/lumineglyph/lumineglyph/environments/production/deployment-branch-policies \
   --jq '.branch_policies[] | {name, type}'
 ```
-- [ ] `{"custom_branch_policies":true,"protected_branches":false}` and `{"name":"main","type":"branch"}`.
+- [ ] `{"can_admins_bypass":false,"deployment_branch_policy":{"custom_branch_policies":true,"protected_branches":false}}` and `{"name":"main","type":"branch"}`.
 
-In the browser: **Settings → Environments → production → Deployment branches and tags** shows "Selected branches and tags" with `main`.
+In the browser: **Settings → Environments → production**. "Deployment branches and tags" shows "Selected branches and tags" with `main`, and "Allow administrators to bypass configured protection rules" is unticked.
+
+GitHub matches the rule against the run's ref. For a pull request that's `refs/pull/<N>/merge`, never `main`, so PR runs can't use this environment.
 
 **6. Negative test.** Re-run the same job. It's no longer on an allowed branch, so GitHub should refuse to start it:
 ```sh
@@ -645,6 +648,7 @@ gh run watch "$RUN_ID" --exit-status
 **Claude reviews:**
 - The permission policy has exactly the five actions in D's table, on the site bucket and distribution only. `aws iam list-attached-role-policies` is empty.
 - The trust policy uses `StringEquals` on both `aud` and `sub`, and `sub` is the value from C.
+- The `production` environment: branch rule `main` only, `can_admins_bypass: false`, no required reviewers.
 - `id-token: write` appears only in `deploy-production` (and, from step 07, the preview jobs).
 - No `aws_iam_access_key` in `infra/`, no AWS secrets in GitHub (`gh secret list`, also with `--env production`), and no IAM users in the account.
 - zizmor: no findings.
