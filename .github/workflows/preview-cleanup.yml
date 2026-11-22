@@ -1,0 +1,42 @@
+name: Preview cleanup
+
+# When a pull request closes (merged or not), delete its preview from the previews bucket.
+# The bucket's 30-day expiry rule (infra/main/previews.tf) catches anything this misses.
+on:
+  pull_request:
+    types: [closed]
+
+permissions: {}
+
+jobs:
+  remove-preview:
+    name: remove-preview
+    # The same PRs deploy-preview runs for (pipeline.yml).
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository
+      && github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment:
+      name: preview
+      deployment: false # use the environment's role and variables without recording a deployment
+    permissions:
+      id-token: write # request the OIDC token that AWS swaps for credentials
+    # Shares the PR's group with deploy-preview, so closing a PR stops a preview deploy in progress.
+    concurrency:
+      group: preview-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    env:
+      PREVIEW_BUCKET: ${{ vars.PREVIEW_BUCKET }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Sign in to AWS
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-duration-seconds: 900
+          role-session-name: preview-cleanup-${{ github.event.pull_request.number }}
+
+      - name: Delete the preview
+        run: aws s3 rm "s3://$PREVIEW_BUCKET/pr-$PR_NUMBER/" --recursive --only-show-errors

@@ -145,3 +145,86 @@ jobs:
           echo "Invalidation $ID"
           aws cloudfront wait invalidation-completed --distribution-id "$SITE_DISTRIBUTION_ID" --id "$ID"
           echo "Done"
+
+  # Deploys each pull request to https://pr-<N>.preview.lumineglyph.com/ and comments the link on it.
+  # Skipped for PRs from forks (GitHub gives them no OIDC token) and from Dependabot (see ADR-004).
+  deploy-preview:
+    name: deploy-preview
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && github.event.pull_request.user.login != 'dependabot[bot]'
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    # Only this environment's token can assume the preview role, which can write to the previews
+    # bucket and nothing else (infra/main/github-oidc.tf).
+    environment:
+      name: preview
+      url: https://pr-${{ github.event.pull_request.number }}.preview.lumineglyph.com/
+    permissions:
+      id-token: write # request the OIDC token that AWS swaps for credentials
+      pull-requests: write # comment the preview link on the PR
+    # A newer push to the same PR, or closing it (preview-cleanup.yml), stops a deploy in progress.
+    concurrency:
+      group: preview-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    env:
+      PREVIEW_BUCKET: ${{ vars.PREVIEW_BUCKET }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Download the built site
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: site-dist
+          path: dist
+
+      - name: Check the artifact
+        run: |
+          test -f dist/index.html
+          test -f dist/en/index.html
+          test -f dist/404.html
+          test -d dist/_astro
+          echo "$(find dist -type f | wc -l) files"
+
+      - name: Sign in to AWS
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-duration-seconds: 900 # 15 minutes, the shortest AWS allows
+          role-session-name: preview-${{ github.event.pull_request.number }}-${{ github.run_id }}
+
+      # Same order as production: hashed files first, then the pages. Pages get no-cache, so the
+      # browser checks for a newer version every time; the preview CDN doesn't cache at all.
+      - name: Upload hashed assets
+        run: >-
+          aws s3 sync dist/_astro "s3://$PREVIEW_BUCKET/pr-$PR_NUMBER/_astro"
+          --no-progress
+          --cache-control "public, max-age=31536000, immutable"
+
+      - name: Upload pages
+        run: >-
+          aws s3 sync dist "s3://$PREVIEW_BUCKET/pr-$PR_NUMBER"
+          --no-progress
+          --delete
+          --exclude "_astro/*"
+          --cache-control "no-cache"
+
+      # CloudFront's error page is one fixed path for the whole distribution, so a copy of the
+      # 404 page lives at the bucket root. Every preview deploy refreshes it.
+      - name: Upload the shared 404 page
+        run: >-
+          aws s3 cp dist/404.html "s3://$PREVIEW_BUCKET/404.html"
+          --no-progress
+          --cache-control "no-cache"
+
+      # One comment per PR, edited on every push, in both languages for Moena.
+      - name: Comment the preview link
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          URL="https://pr-$PR_NUMBER.preview.lumineglyph.com/"
+          BODY=$(printf '**Preview / プレビュー:** %s\n\nCommit / コミット: %s' "$URL" "${HEAD_SHA:0:7}")
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --edit-last --create-if-none --body "$BODY"
