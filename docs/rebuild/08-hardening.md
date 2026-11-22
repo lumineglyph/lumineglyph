@@ -109,6 +109,7 @@ terraform -chdir=infra/main plan                            # expect: No changes
 2. In the domain's **Aliases**, ImprovMX starts with a catch-all alias `*`. **Delete it.** You chose no catch-all, so mail to random names bounces.
 3. Add the alias `hello`, forwarding to **both** addresses (yours and Moena's), separated by a comma.
 4. In the domain's **DNS settings**, compare the values with A.2. If the SPF value isn't exactly `v=spf1 include:spf.improvmx.com ~all`, or the MX hosts differ, stop and tell Claude.
+   - For now the page says "Incorrect DNS records" and "No MX records found" / "No SPF record found", with a red ✗ on each row. That's expected: ImprovMX checks the live DNS, and the records only exist after A.3. Compare just the values.
 
 The two Gmail addresses live only in ImprovMX. They must never go in the repo, which is public.
 
