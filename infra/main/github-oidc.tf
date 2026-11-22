@@ -10,10 +10,11 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 
 locals {
-  # The token's `sub` claim for jobs in the GitHub `production` environment, checked in step 06 C.
-  # GitHub's immutable format includes the owner and repo IDs, so a deleted and re-created
-  # repo with the same name can't produce it. Only `main` may use the environment (step 06 C.5).
+  # The token's `sub` claim for jobs in each GitHub environment, checked in step 06 C (production) and
+  # step 07 I (preview). GitHub's immutable format includes the owner and repo IDs, so a deleted and
+  # re-created repo with the same name can't produce it. Only `main` may use production (step 06 C.5).
   github_sub_production = "repo:lumineglyph@356493958/lumineglyph@1460696603:environment:production"
+  github_sub_preview    = "repo:lumineglyph@356493958/lumineglyph@1460696603:environment:preview"
 }
 
 # Who may use the role: only a GitHub token meant for AWS, from this repo's production environment.
@@ -81,4 +82,64 @@ resource "aws_iam_role_policy" "deploy_production" {
 
 output "deploy_production_role_arn" {
   value = aws_iam_role.deploy_production.arn
+}
+
+# Preview deploys (step 07): any same-repo pull request, through the `preview` environment.
+# Same trust pattern as production, but the role can only write to the previews bucket.
+data "aws_iam_policy_document" "deploy_preview_trust" {
+  statement {
+    sid     = "GitHubPreviewEnvironment"
+    effect  = "Allow"
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    principals {
+      type        = "Federated"
+      identifiers = [aws_iam_openid_connect_provider.github.arn]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:sub"
+      values   = [local.github_sub_preview]
+    }
+  }
+}
+
+resource "aws_iam_role" "deploy_preview" {
+  name                 = "lumineglyph-deploy-preview"
+  description          = "GitHub Actions deploys and cleanup of PR previews (preview environment only)"
+  assume_role_policy   = data.aws_iam_policy_document.deploy_preview_trust.json
+  max_session_duration = 3600 # the lowest maximum AWS allows; the jobs ask for 15 minutes
+}
+
+# Sync files into the previews bucket and delete them on cleanup. Nothing on the site bucket,
+# and no CloudFront permissions: the previews distribution doesn't cache, so there's nothing to clear.
+data "aws_iam_policy_document" "deploy_preview" {
+  statement {
+    sid       = "ListPreviewsBucket"
+    actions   = ["s3:ListBucket"]
+    resources = [aws_s3_bucket.previews.arn]
+  }
+
+  statement {
+    sid       = "WritePreviewObjects"
+    actions   = ["s3:PutObject", "s3:DeleteObject"]
+    resources = ["${aws_s3_bucket.previews.arn}/*"]
+  }
+}
+
+resource "aws_iam_role_policy" "deploy_preview" {
+  name   = "deploy-previews"
+  role   = aws_iam_role.deploy_preview.id
+  policy = data.aws_iam_policy_document.deploy_preview.json
+}
+
+output "deploy_preview_role_arn" {
+  value = aws_iam_role.deploy_preview.arn
 }
