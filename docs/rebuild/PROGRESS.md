@@ -3,7 +3,7 @@
 Claude keeps this file up to date as checkpoints pass. If it disagrees with the repo, the repo wins; fix this file.
 
 - **Last updated:** 2026-11-21
-- **Current step:** 07 — Previews (not started; its step file still needs rewriting as exact steps before Matthew starts). Step 06 done 2026-11-21 (PR #7): **merging to `main` now deploys production automatically** through GitHub OIDC, and the manual sync from 05 D.2 is no longer needed. Rollback: revert and merge, or re-run an older `deploy-production` job within 30 days (06 H). Step 05 done 2026-11-21 (PR #5): site live on CloudFront, both grades A+. Step 04 merged (PR #4, `d14efc7`). The stuck `.github/dependabot.yml` check on the merge (also on `74ba8e7`) is Dependabot's own and not required; ignore it. **Step 04 G (move the domain into `lumineglyph`) from 2026-12-03 22:12 JST.**
+- **Current step:** 07 — Previews (not started; step file rewritten as exact steps 2026-11-21, start at "Before you start"). Step 06 done 2026-11-21 (PR #7): **merging to `main` now deploys production automatically** through GitHub OIDC, and the manual sync from 05 D.2 is no longer needed. Rollback: revert and merge, or re-run an older `deploy-production` job within 30 days (06 H). Step 05 done 2026-11-21 (PR #5): site live on CloudFront, both grades A+. Step 04 merged (PR #4, `d14efc7`). The stuck `.github/dependabot.yml` check on the merge (also on `74ba8e7`) is Dependabot's own and not required; ignore it. **Step 04 G (move the domain into `lumineglyph`) from 2026-12-03 22:12 JST.**
 
 ## Steps
 
@@ -85,6 +85,15 @@ Log anything done differently from the step files, and why.
   - The repo settings only allow GitHub's own actions plus `lycheeverse/lychee-action`, and require SHA pinning.
   - The runner is `ubuntu-24.04` rather than `ubuntu-latest`.
   - A.2 adds a history rewrite (author emails to noreply, Matthew's name to "Ged Miner") pushed to a fresh repo, because a force push can't clean GitHub's read-only `refs/pull/*`. Commit hashes change: `9233aa2` → `a1be813`.
+- 2026-11-21, 07 (rewritten as exact steps, changes from the original step file):
+  - Terraform split into four applies (A bucket, B function + headers, C distribution + DNS, D role), with the distribution in its own `previews-cdn.tf`, mirroring `site.tf`/`cdn.tf`. The function, headers policy and role go in the existing `functions.tf`, `headers.tf` and `github-oidc.tf`.
+  - The function also rejects every host that isn't `pr-<N>.preview.lumineglyph.com` (including the distribution's `*.cloudfront.net` name) and lowercases the host. It has 7 committed test events under `functions/test-events/preview/`; Claude ran them in Node.
+  - Previews get the 404 page: a 403→404 error response pointing at a shared `/404.html` at the bucket root, which every preview deploy refreshes.
+  - Preview pages are uploaded with `Cache-Control: no-cache` (none was set before, so browsers would have guessed a cache time and could show an old preview). Hashed files stay `immutable`.
+  - `deploy-preview` and the cleanup also skip Dependabot PRs, because GitHub's docs disagree on whether they get OIDC tokens. The cleanup uses `deployment: false`, with a fallback in J if the token then lacks the environment.
+  - The cleanup shares the PR's concurrency group with `deploy-preview`, so closing a PR stops a deploy in progress.
+  - The preview `sub` isn't checked with a throwaway PR. The format is the one confirmed in 06 C, and the first preview deploy plus CloudTrail confirm it.
+  - `CONTRIBUTING.md` and ADR-004 are drafted by Claude at Matthew's request (writing, not DevOps), with a fixed list of what each must cover.
 - 2026-11-21, 06: the throwaway PR from C (#6) left two `production` deployments from `tmp/oidc-sub` (one succeeded, one refused) in the environment's history. Left in place; they're harmless.
 - 2026-11-21, 06 (rewritten as exact steps, changes from the original step file):
   - New section A: the repo's Actions allowlist gets `aws-actions/configure-aws-credentials@*`. Without it, the deploy job would be refused.
