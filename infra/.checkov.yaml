@@ -1,0 +1,33 @@
+# checkov settings for infra/, used by the `security` job in .github/workflows/pipeline.yml (step 08 E).
+#
+# Each check skipped here is a decision for the whole project, with its reason. A skip that only
+# applies to one resource is written inline in that resource instead (#checkov:skip=ID:reason).
+# Before adding a skip here, ask whether it's really true for every resource the check covers.
+framework:
+  - terraform
+compact: true
+quiet: true
+skip-download: true
+skip-check:
+  # S3 access logs (CKV_AWS_18) and CloudFront access logs (CKV_AWS_86): a log bucket and storage
+  # for logs nobody reviews. CloudFront's built-in metrics and the alarms in alarms.tf cover what matters.
+  - CKV_AWS_18
+  - CKV_AWS_86
+  # Cross-region replication of S3 (CKV_AWS_144): the site and previews are rebuilt from git in minutes,
+  # and the state bucket is versioned. A second copy in another region isn't worth the cost.
+  - CKV_AWS_144
+  # S3 encryption with a KMS key (CKV_AWS_145): every bucket uses SSE-S3 (AES-256, AWS-managed keys).
+  # A customer KMS key costs $1/month each and needs extra policy for CloudFront to read through it.
+  - CKV_AWS_145
+  # S3 event notifications (CKV2_AWS_62): nothing would consume them.
+  - CKV2_AWS_62
+  # AWS WAF on CloudFront (CKV_AWS_68, CKV2_AWS_47): a web ACL costs at least $5/month plus rules,
+  # the whole budget. The site is static files with no forms, logins or server code to protect.
+  - CKV_AWS_68
+  - CKV2_AWS_47
+  # CloudFront origin failover (CKV_AWS_310): one S3 origin; S3's own durability is enough here.
+  - CKV_AWS_310
+  # CloudFront geo restriction (CKV_AWS_374): the site is for visitors anywhere.
+  - CKV_AWS_374
+  # Route 53 query logging (CKV2_AWS_39): a CloudWatch log group billed per query, with nobody to read it.
+  - CKV2_AWS_39
