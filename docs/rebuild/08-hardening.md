@@ -872,9 +872,9 @@ gh pr checks --watch
 ```sh
 RUN_ID=$(gh run list --workflow pipeline.yml --branch rebuild/08-hardening --limit 1 --json databaseId --jq '.[0].databaseId')
 gh run view "$RUN_ID" --log --job "$(gh run view "$RUN_ID" --json jobs --jq '.jobs[] | select(.name == "security") | .databaseId')" \
-  | grep -E 'Success!|Passed checks|No findings'
+  | grep -E 'Success!|Passed checks|completed \.github'
 ```
-- [ ] Two `Success! The configuration is valid.` lines, `Failed checks: 0`, and `No findings to report.`
+- [ ] Two `Success! The configuration is valid.` lines, `Failed checks: 0`, and two zizmor `completed .github/workflows/…` lines. In CI, zizmor reports findings as annotations on the PR (`--format=github`), so it doesn't print `No findings to report.` A finding would fail the job.
 
 Tell Claude. Claude reviews the PR.
 
