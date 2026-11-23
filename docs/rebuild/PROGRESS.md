@@ -156,7 +156,7 @@ Log anything done differently from the step files, and why.
   - The first SVGs (PNG wrapped in SVG) were replaced on 2026-11-14 with real path-based SVGs made by Matthew. They pass the vector check, are about a third of the PNG size, and look the same as the PNGs at display size.
   - They're traced from the PNGs, not exported from original artwork. Evidence: black and white versions have different geometry, `logo-symboltype-white.svg` has 2 stray grey (`#D2D3D4`) speck paths, and zoomed in the sun rays have wobbly tips and small specks.
   - Done in step 02 A: one traced (black) version per logo, `currentColor`, SVGO. Still ask Moena whether an original vector file exists; if so, swap it into `site/src/assets/logo-*.svg`.
-- [ ] Matthew's profile photo, 4:5, about 800×1000 (step 01/02)
+- [x] Matthew's profile photo (added 2026-11-23): `site/src/assets/photo-matthew.jpg`, 800×1000, no Exif/XMP/GPS, the same `<Picture>` setup as Moena's
 - [ ] Social share (OG) image, 1200×630 (step 02)
 - [ ] Design for the theme switch: a working icon version is in place (step 01 C). Moena can restyle it, and should decide whether she wants it in the mobile header rather than the menu.
 - [ ] Review the new Japanese copy for the theme switch: 表示テーマ / OSの設定に合わせる / ライト / ダーク (`site/src/i18n/ja.json`, `theme`)

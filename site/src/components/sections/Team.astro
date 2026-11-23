@@ -1,5 +1,6 @@
 ---
 import { Picture } from "astro:assets";
+import photoMatthew from "../../assets/photo-matthew.jpg";
 import photoMoena from "../../assets/photo-moena.jpg";
 import { copy, type Lang } from "../../i18n";
 
@@ -39,8 +40,14 @@ const t = copy[Astro.props.lang].team;
     </article>
 
     <article class="profile">
-      <!-- Placeholder until Matthew's photo (4:5, about 800×1000) is ready -->
-      <div class="ph"><span class="ph-label">Photo</span></div>
+      <Picture
+        class="photo"
+        src={photoMatthew}
+        formats={["avif", "webp"]}
+        widths={[180, 240, 360, 480]}
+        sizes="(max-width: 640px) 240px, 180px"
+        alt={t.matthew.name}
+      />
       <div>
         <p class="role">{t.matthew.role}</p>
         <h3 class="pname"><span>{t.matthew.name}</span><span class="pname-en">Matthew Ged Miner</span></h3>
