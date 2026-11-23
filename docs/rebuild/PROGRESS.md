@@ -160,7 +160,7 @@ Log anything done differently from the step files, and why.
 - [ ] Social share (OG) image, 1200×630 (step 02)
 - [ ] Design for the theme switch: a working icon version is in place (step 01 C). Moena can restyle it, and should decide whether she wants it in the mobile header rather than the menu.
 - [ ] Review the new Japanese copy for the theme switch: 表示テーマ / OSの設定に合わせる / ライト / ダーク (`site/src/i18n/ja.json`, `theme`)
-- [ ] **Light-mode orange text contrast.** It was 2.1:1 and needs 4.5:1. Step 02 E uses `#B54708` (4.8–5.0:1) as `--accent-text` in light mode. Moena confirms or picks another orange that passes. Also tell her the light muted grey went from 66% to 70% opacity to pass.
+- [x] **Light-mode orange** (decided 2026-11-23): one orange per theme, one `--accent` token: `#FF8A45` in dark, `#B54708` in light (4.8–5.0:1), for text, lines, fills and focus rings alike. `--accent-text` and `--accent-hover` are gone. No single orange works in both themes: the best possible is 3.98:1 on both, below 4.5:1. The light-mode filled buttons now have light text (`--on-accent` `#F7F6F3`, 5.0:1); `#2B2B2B` would be 2.6:1 on the deeper orange. Still tell her the light muted grey went from 66% to 70% opacity to pass.
 - [ ] Design for the pause/play button (WCAG 2.2.2): a working version is at the top right of the left column (step 02 E). Moena can restyle it.
 - [ ] Review the new Japanese copy from step 02: 本文へ移動, アニメーションを一時停止, the landmark labels (言語 / ナビゲーション / セクション / メニュー) and the 404 text (`site/src/i18n/ja.json`, `a11y` and `notFound`)
 - [x] Japanese mobile performance: system font for body text, Shippori subset to the headings (see Decisions, 2026-11-16). Mobile `/` is now 98.
