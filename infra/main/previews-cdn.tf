@@ -14,6 +14,7 @@ data "aws_cloudfront_cache_policy" "caching_disabled" {
 }
 
 resource "aws_cloudfront_distribution" "previews" {
+  #checkov:skip=CKV_AWS_305:The viewer-request function maps every path, "/" included, to a pr-<N>/…/index.html key.
   enabled         = true
   comment         = "PR previews (*.preview.${var.domain})"
   aliases         = ["*.preview.${var.domain}"] # covered by the certificate's *.preview SAN (cert.tf)

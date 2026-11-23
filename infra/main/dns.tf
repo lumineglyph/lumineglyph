@@ -16,3 +16,19 @@ output "name_servers" {
   description = "The zone's name servers. The domain registration must list exactly these."
   value       = aws_route53_zone.main.name_servers
 }
+
+# CAA: only Amazon's certificate authorities (ACM) may issue certificates for the domain and every
+# subdomain. With no `issuewild` record, the same list covers wildcards (*.preview). These are the four
+# names ACM documents.
+resource "aws_route53_record" "caa" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = var.domain
+  type    = "CAA"
+  ttl     = 3600
+  records = [
+    "0 issue \"amazon.com\"",
+    "0 issue \"amazontrust.com\"",
+    "0 issue \"awstrust.com\"",
+    "0 issue \"amazonaws.com\"",
+  ]
+}

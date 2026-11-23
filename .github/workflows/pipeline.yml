@@ -64,6 +64,11 @@ jobs:
       - name: Lighthouse
         run: npx lhci autorun
 
+      # Lighthouse only sees the light theme. This loads every page in both themes, at desktop and
+      # phone widths, and fails on any WCAG 2.2 A/AA violation axe-core finds (step 08 E).
+      - name: Accessibility in both themes
+        run: npm run test:a11y
+
       - name: Upload the built site
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -228,3 +233,48 @@ jobs:
           URL="https://pr-$PR_NUMBER.preview.lumineglyph.com/"
           BODY=$(printf '**Preview / プレビュー:** %s\n\nCommit / コミット: %s' "$URL" "${HEAD_SHA:0:7}")
           gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --edit-last --create-if-none --body "$BODY"
+
+  # Static checks of the infrastructure code and the workflows (step 08 E). No AWS access:
+  # Terraform only formats and validates, and the scanners read files.
+  security:
+    name: security # required by the main ruleset, like build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.17.2
+          terraform_wrapper: false # plain terraform output, no wrapper script
+
+      - name: Terraform format
+        run: terraform fmt -check -recursive -diff infra
+
+      # -backend=false: no state, no AWS credentials. Providers are checked against the lock files.
+      - name: Terraform validate
+        run: |
+          for stack in infra/bootstrap infra/main; do
+            terraform -chdir="$stack" init -backend=false -input=false
+            terraform -chdir="$stack" validate
+          done
+
+      # Versions pinned in .github/scanners/requirements.txt; Dependabot proposes updates.
+      - name: Install the scanners
+        run: |
+          python3 -m venv "$RUNNER_TEMP/scanners"
+          "$RUNNER_TEMP/scanners/bin/pip" install --quiet --disable-pip-version-check -r .github/scanners/requirements.txt
+          echo "$RUNNER_TEMP/scanners/bin" >> "$GITHUB_PATH"
+
+      # Accepted findings are listed with reasons in infra/.checkov.yaml, or inline in the .tf files.
+      - name: Scan Terraform (checkov)
+        run: checkov --config-file infra/.checkov.yaml -d infra
+
+      - name: Scan workflows (zizmor)
+        env:
+          GH_TOKEN: ${{ github.token }} # online checks: pinned commits and known-vulnerable actions
+        run: zizmor --format=github .github/workflows

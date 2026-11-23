@@ -1,6 +1,7 @@
 # PR preview sites. https://pr-<N>.preview.lumineglyph.com/ serves the folder pr-<N>/ of a private bucket.
 # A separate bucket and distribution from the live site, so the preview deploy role can't touch it (ADR-004).
 resource "aws_s3_bucket" "previews" {
+  #checkov:skip=CKV_AWS_21:Previews are throwaway copies of a build; every push re-uploads them, so versioning would only keep junk.
   bucket = "lumineglyph-previews-8d346f"
 }
 

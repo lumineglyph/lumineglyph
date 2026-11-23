@@ -4,6 +4,7 @@
 # It must NOT contain default-src, script-src or style-src: the browser enforces both policies,
 # and these would block the inline scripts the meta tag allows. See docs/adr/002-csp-strategy.md.
 resource "aws_cloudfront_response_headers_policy" "site" {
+  #checkov:skip=CKV_AWS_259:HSTS preload is left off on purpose: it is hard to undo (step 08 G decides it).
   name    = "lumineglyph-site"
   comment = "Security headers for lumineglyph.com"
 
@@ -48,6 +49,7 @@ resource "aws_cloudfront_response_headers_policy" "site" {
 # The same security headers as the live site (keep the two in step), plus X-Robots-Tag so search
 # engines never index a preview.
 resource "aws_cloudfront_response_headers_policy" "previews" {
+  #checkov:skip=CKV_AWS_259:HSTS preload is left off on purpose: it is hard to undo (step 08 G decides it).
   name    = "lumineglyph-previews"
   comment = "Security headers and noindex for *.preview.lumineglyph.com"
 
