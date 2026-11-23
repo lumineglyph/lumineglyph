@@ -42,3 +42,12 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+  # scanners used by the security job
+  - package-ecosystem: pip
+    directory: /.github/scanners
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ci
