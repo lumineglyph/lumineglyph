@@ -1,0 +1,1683 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>にこにこルーム｜東京都渋谷区の児童発達支援（ポートフォリオ用架空サイト）</title>
+<meta name="description" content="Lumineglyphのポートフォリオ用架空サイト。児童発達支援事業所「にこにこルーム」のモバイルファースト・ワイヤーフレーム。">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- フォント：本文 Zen Maru Gothic / アクセント Zen Old Mincho / 手書き風 Klee One
+     読み込めない場合は、下の --font-* で指定した端末内フォントで表示されます -->
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Maru+Gothic:wght@400;500;700&family=Zen+Old+Mincho:wght@600&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   デザイントークン（色・フォント）
+   ========================================================= */
+:root{
+  --font-base: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "BIZ UDPGothic", "Hiragino Sans", "Meiryo", sans-serif;
+  --font-mincho: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-hand: "Klee One", "Hiragino Maru Gothic ProN", "BIZ UDPGothic", "Meiryo", sans-serif;
+
+  --bg: #FFFCF4;          /* 淡いクリーム */
+  --paper: #FFFFFF;
+  --ink: #2F3140;         /* 本文（濃い色） */
+  --ink-sub: #555869;
+  --line: #E7E1D3;
+
+  --mint: #D3F1E5;   --mint-deep: #1F6E5B;
+  --sky: #D8EEFB;    --sky-deep: #23628A;
+  --peach: #FFE2D4;  --peach-deep: #A84A2A;
+  --lemon: #FFF2B3;  --lemon-deep: #7A5F00;
+  --lav: #E7E0F7;    --lav-deep: #5A4791;
+
+  --cta: #1F6E5B;         /* 問い合わせボタン（白文字でコントラスト確保） */
+  --cta-hover: #175848;
+
+  --radius: 18px;
+  --header-h: 60px;
+  --shadow: 0 2px 0 rgba(47,49,64,.06), 0 8px 24px rgba(47,49,64,.06);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{
+  margin:0;
+  font-family:var(--font-base);
+  color:var(--ink);
+  background:var(--bg);
+  line-height:1.8;
+  font-size:16px;
+  overflow-x:hidden;
+}
+/* 水彩のにじみ（背景） */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(38vmax 30vmax at 0% 8%, rgba(211,241,229,.75), transparent 70%),
+    radial-gradient(30vmax 26vmax at 100% 22%, rgba(216,238,251,.8), transparent 70%),
+    radial-gradient(34vmax 28vmax at 92% 92%, rgba(255,226,212,.7), transparent 70%),
+    radial-gradient(28vmax 24vmax at 6% 86%, rgba(231,224,247,.7), transparent 70%),
+    radial-gradient(22vmax 18vmax at 50% 55%, rgba(255,242,179,.45), transparent 70%);
+  filter:blur(6px);
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:3px solid var(--sky-deep);outline-offset:3px;border-radius:8px}
+
+.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* =========================================================
+   架空サイト表記
+   ========================================================= */
+.demo-strip{
+  background:var(--ink);color:#fff;font-size:12px;line-height:1.5;
+  padding:6px 16px;text-align:center;
+}
+.demo-strip strong{color:var(--lemon)}
+
+/* =========================================================
+   ヘッダー
+   ========================================================= */
+.site-header{
+  position:sticky;top:0;z-index:50;
+  height:var(--header-h);
+  background:rgba(255,252,244,.94);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.site-header__inner{
+  height:100%;max-width:1440px;margin:0 auto;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
+.logo__mark{flex:none}
+.logo__text{display:flex;flex-direction:column;line-height:1.2}
+.logo__sub{font-size:10.5px;color:var(--ink-sub);letter-spacing:.04em}
+.logo__name{font-size:20px;font-weight:700;letter-spacing:.06em}
+
+.menu-btn{
+  flex:none;display:inline-flex;align-items:center;gap:6px;
+  font:inherit;font-size:14px;font-weight:700;color:var(--ink);
+  background:var(--paper);border:2px solid var(--ink);border-radius:999px;
+  padding:6px 14px;cursor:pointer;
+}
+.menu-btn__bars{width:16px;height:12px;position:relative}
+.menu-btn__bars::before,.menu-btn__bars::after,.menu-btn__bars span{
+  content:"";position:absolute;left:0;width:100%;height:2px;background:currentColor;border-radius:2px;transition:transform .2s,opacity .2s
+}
+.menu-btn__bars::before{top:0}.menu-btn__bars span{top:5px}.menu-btn__bars::after{top:10px}
+.menu-btn[aria-expanded="true"] .menu-btn__bars::before{transform:translateY(5px) rotate(45deg)}
+.menu-btn[aria-expanded="true"] .menu-btn__bars span{opacity:0}
+.menu-btn[aria-expanded="true"] .menu-btn__bars::after{transform:translateY(-5px) rotate(-45deg)}
+
+.global-nav{
+  position:fixed;left:0;right:0;top:var(--header-h);
+  background:var(--bg);border-bottom:1px solid var(--line);
+  box-shadow:0 16px 24px rgba(47,49,64,.08);
+  padding:8px 16px 20px;
+  display:none;
+  max-height:calc(100vh - var(--header-h));overflow:auto;
+}
+.global-nav.is-open{display:block}
+.global-nav ul{list-style:none;margin:0;padding:0}
+.global-nav li + li{border-top:1px dashed var(--line)}
+.global-nav a{
+  display:flex;align-items:center;gap:12px;padding:12px 4px;text-decoration:none;font-weight:500
+}
+.nav-dot{width:12px;height:12px;border-radius:50%;flex:none}
+.global-nav .nav-cta{
+  margin-top:12px;justify-content:center;border-radius:999px;background:var(--cta);color:#fff;font-weight:700
+}
+
+/* =========================================================
+   レイアウト（スマホ：1カラム）
+   ========================================================= */
+.layout{max-width:720px;margin:0 auto;padding:0 16px}
+.side-left,.side-right{display:none}
+main{container-type:inline-size;container-name:main}
+
+.section{padding:56px 0 8px;scroll-margin-top:calc(var(--header-h) + 12px)}
+.section-head{margin-bottom:20px}
+.section-head__en{
+  font-family:var(--font-hand);font-size:14px;color:var(--ink-sub);letter-spacing:.08em;display:block
+}
+.section-head h2{
+  font-size:24px;line-height:1.4;font-weight:700;letter-spacing:.04em;
+  display:inline;
+  background:linear-gradient(transparent 62%, var(--hl, var(--lemon)) 62%, var(--hl, var(--lemon)) 92%, transparent 92%);
+}
+.lead{margin-top:12px;color:var(--ink-sub)}
+.tag-temp{
+  display:inline-block;font-size:11px;line-height:1.4;font-weight:700;
+  padding:1px 8px;border-radius:999px;border:1px solid currentColor;color:var(--peach-deep);
+  vertical-align:middle;white-space:nowrap
+}
+
+/* 仮の写真枠（後から <img> に差し替え） */
+.ph{
+  position:relative;margin:0;border-radius:var(--radius);overflow:hidden;
+  background:
+    linear-gradient(to top right, transparent calc(50% - 1px), rgba(47,49,64,.12) 50%, transparent calc(50% + 1px)),
+    linear-gradient(to top left, transparent calc(50% - 1px), rgba(47,49,64,.12) 50%, transparent calc(50% + 1px)),
+    var(--ph-bg, #F3EFE6);
+  border:2px dashed rgba(47,49,64,.25);
+  aspect-ratio:4/3;
+  display:grid;place-items:center;text-align:center;
+}
+.ph > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ph--img{border:0;background:#EEE}
+.ph figcaption{
+  background:rgba(255,255,255,.9);border-radius:12px;padding:8px 12px;margin:12px;
+  font-size:13px;line-height:1.5;color:var(--ink-sub)
+}
+.ph figcaption b{display:block;color:var(--ink);font-size:14px}
+
+/* マスキングテープ */
+.tape{position:relative}
+.tape::before{
+  content:"";position:absolute;z-index:2;top:-12px;left:50%;width:104px;height:26px;
+  transform:translateX(-50%) rotate(-3deg);
+  background:repeating-linear-gradient(45deg, rgba(255,255,255,.35) 0 6px, transparent 6px 12px), var(--tape, rgba(255,193,170,.8));
+  box-shadow:0 1px 2px rgba(0,0,0,.06);
+  clip-path:polygon(3% 0,97% 4%,100% 50%,97% 100%,2% 96%,0 50%);
+}
+
+/* ボタン */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:52px;padding:12px 24px;border-radius:999px;
+  font:inherit;font-weight:700;font-size:16px;text-decoration:none;cursor:pointer;
+  border:2px solid transparent;transition:transform .15s, background .15s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn--cta{background:var(--cta);color:#fff;box-shadow:0 4px 0 #13493c}
+.btn--cta:hover{background:var(--cta-hover)}
+.btn--ghost{background:var(--paper);color:var(--ink);border-color:var(--ink)}
+.btn--block{width:100%}
+.btn svg{flex:none}
+
+/* =========================================================
+   ファーストビュー
+   ========================================================= */
+.hero{padding:28px 0 8px;scroll-margin-top:var(--header-h)}
+.hero__area{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:14px;font-weight:700;color:var(--mint-deep);
+  background:var(--paper);border:2px solid var(--mint);border-radius:999px;padding:4px 14px
+}
+.hero__title{
+  margin-top:14px;font-size:clamp(34px, 11.5vw, 48px);line-height:1.2;font-weight:700;letter-spacing:.08em;
+  white-space:nowrap;
+}
+.hero__title span{display:inline-block}
+.hero__title .c1{color:#4FAA8E}.hero__title .c2{color:#5B9BCF}.hero__title .c3{color:#E8845F}
+.hero__title .c4{color:#C99A22}.hero__title .c5{color:#8C78CB}
+.hero__catch{
+  margin-top:14px;font-family:var(--font-mincho);font-weight:600;
+  font-size:22px;line-height:1.6;letter-spacing:.06em
+}
+.hero__photo{margin-top:32px;--tape:rgba(170,220,205,.85)}
+.hero__photo .ph{aspect-ratio:4/3;--ph-bg:#EEF7F2}
+.hero__photo .ph > img{object-position:72% 40%}
+.hero__actions{margin-top:22px;display:grid;gap:12px}
+.hero__note{margin-top:10px;font-size:13px;color:var(--ink-sub);text-align:center}
+
+/* =========================================================
+   にこにこルームについて
+   ========================================================= */
+.about-card{
+  background:var(--paper);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow);
+}
+.about-card p + p{margin-top:12px}
+.about-points{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:10px}
+.about-points li{
+  display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--pt-bg)
+}
+.about-points .num{
+  flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+  background:var(--paper);font-family:var(--font-hand);font-weight:600;color:var(--pt-ink)
+}
+.about-points b{display:block;line-height:1.5}
+.about-points small{display:block;font-size:14px;color:var(--ink-sub);line-height:1.6}
+
+/* =========================================================
+   支援内容（色分けカード）
+   ========================================================= */
+.support-grid{display:grid;gap:16px}
+@container main (min-width: 560px){ .support-grid{grid-template-columns:1fr 1fr} }
+.support-card{
+  position:relative;border-radius:var(--radius);padding:22px 20px 20px;
+  background:
+    radial-gradient(60% 50% at 85% 10%, rgba(255,255,255,.65), transparent 70%),
+    radial-gradient(70% 60% at 0% 100%, rgba(255,255,255,.45), transparent 70%),
+    var(--c-bg);
+  overflow:hidden;
+}
+.support-card__photo{
+  margin:-22px -20px 18px;aspect-ratio:3/2;overflow:hidden;background:rgba(255,255,255,.5)
+}
+.support-card__photo img{width:100%;height:100%;object-fit:cover}
+.support-card__head{display:flex;align-items:center;gap:12px}
+.support-card__icon{
+  flex:none;width:52px;height:52px;border-radius:50%;background:var(--paper);display:grid;place-items:center;color:var(--c-ink)
+}
+.support-card h3{font-size:19px;line-height:1.4}
+.support-card p{margin-top:10px;font-size:15px}
+.examples{margin-top:14px;padding-top:12px;border-top:2px dotted rgba(47,49,64,.18)}
+.examples__label{font-size:12px;font-weight:700;color:var(--c-ink);letter-spacing:.06em}
+.examples ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.examples li{
+  font-family:var(--font-hand);font-weight:600;font-size:15px;line-height:1.4;
+  background:rgba(255,255,255,.85);border-radius:999px;padding:5px 12px
+}
+
+/* =========================================================
+   1日のスケジュール（ノートの時間割）
+   ========================================================= */
+.schedule{scroll-margin-top:calc(var(--header-h) + 12px)}
+.notebook{
+  position:relative;margin-top:8px;
+  background:var(--paper);
+  border:1px solid var(--line);border-radius:12px;
+  padding:20px 18px 16px;
+}
+.notebook__title{
+  display:flex;align-items:center;gap:8px;
+  font-weight:700;font-size:17px;line-height:1.4
+}
+.notebook__sub{font-size:12.5px;color:var(--ink-sub);margin-top:2px}
+.timetable{list-style:none;margin:12px 0 0;padding:0}
+.timetable li{
+  display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px;align-items:baseline;
+  padding:12px 0;border-top:1px solid var(--line);
+}
+.timetable time{
+  font-weight:700;font-size:15px;color:var(--ink-sub);
+  font-variant-numeric:tabular-nums;
+}
+.timetable .act{min-width:0}
+.timetable .act b{display:block;font-weight:700;font-size:15.5px;line-height:1.5}
+.timetable .act small{display:block;font-size:13px;line-height:1.6;color:var(--ink-sub);margin-top:2px}
+.notebook__note{margin-top:4px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-sub)}
+
+/* =========================================================
+   ご利用までの流れ
+   ========================================================= */
+.flow{list-style:none;margin:0;padding:0;display:grid;gap:28px;counter-reset:step}
+.flow li{
+  position:relative;background:var(--paper);border-radius:var(--radius);padding:18px 18px 18px 72px;box-shadow:var(--shadow);
+  counter-increment:step;
+}
+.flow li::before{
+  content:"STEP\A" counter(step);white-space:pre;
+  position:absolute;left:14px;top:18px;width:46px;height:46px;border-radius:50%;
+  display:grid;place-items:center;text-align:center;line-height:1.05;
+  font-size:10px;font-weight:700;background:var(--f-bg);color:var(--ink);
+}
+.flow li:not(:last-child)::after{
+  content:"";position:absolute;left:50%;bottom:-22px;width:16px;height:16px;transform:translateX(-50%);
+  border-right:3px solid var(--line);border-bottom:3px solid var(--line);rotate:45deg;
+}
+.flow h3{font-size:17px;line-height:1.5}
+.flow p{margin-top:4px;font-size:14.5px;color:var(--ink-sub)}
+.flow-note{margin-top:16px;font-size:13px;color:var(--ink-sub)}
+
+/* =========================================================
+   教室案内
+   ========================================================= */
+.room-list{display:grid;gap:24px}
+.room-card{
+  position:relative;background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);
+  border-top:10px solid var(--r-bg);
+  padding:18px;scroll-margin-top:calc(var(--header-h) + 16px);
+  transition:box-shadow .3s;
+}
+.room-card.is-focus{box-shadow:0 0 0 4px var(--r-ink), var(--shadow)}
+.room-card__head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.room-card__label{
+  font-family:var(--font-hand);font-weight:600;font-size:13px;color:var(--r-ink);
+  background:var(--r-bg);padding:2px 10px;border-radius:999px
+}
+.room-card h3{font-size:21px;line-height:1.4}
+.room-card .ph{margin-top:14px;aspect-ratio:16/9;--ph-bg:var(--r-bg)}
+.room-card .ph > img{object-position:50% 60%}
+.room-info{margin:14px 0 0;display:grid;gap:0;font-size:14.5px}
+.room-info > div{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:8px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.room-info dt{font-weight:700;color:var(--ink-sub)}
+.room-info dd{margin:0;min-width:0}
+.room-info__sub{font-size:13px;color:var(--ink-sub)}
+.room-card .btn{margin-top:16px}
+
+/* =========================================================
+   よくある質問
+   ========================================================= */
+.faq{display:grid;gap:12px}
+.faq details{background:var(--paper);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.faq summary{
+  list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;
+  padding:16px 48px 16px 16px;position:relative;font-weight:700;line-height:1.6
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{
+  content:"";position:absolute;right:20px;top:24px;width:10px;height:10px;
+  border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);transform:rotate(45deg);transition:transform .2s
+}
+.faq details[open] summary::after{transform:translateY(4px) rotate(-135deg)}
+.qa-mark{
+  flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--font-hand);font-weight:600;font-size:15px;line-height:1
+}
+.qa-mark--q{background:var(--sky);color:var(--sky-deep)}
+.qa-mark--a{background:var(--peach);color:var(--peach-deep)}
+.faq .answer{display:flex;gap:12px;padding:0 16px 18px;font-size:15px}
+
+/* =========================================================
+   見学・発達相談フォーム（デモ）
+   ========================================================= */
+.contact-box{
+  background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 18px;
+  border:3px solid var(--mint);
+}
+.demo-note{
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;justify-content:space-between;
+  background:var(--lemon);border-radius:14px;padding:12px 14px;margin-bottom:22px;font-size:14px;line-height:1.6
+}
+.demo-note p{flex:1 1 220px;font-weight:500}
+.demo-badge{
+  display:inline-block;font-size:11.5px;font-weight:700;background:var(--paper);color:var(--lemon-deep);
+  padding:1px 8px;border-radius:999px;margin-right:6px;vertical-align:1px
+}
+.btn-sample{
+  flex:none;font:inherit;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;
+  background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:6px 16px;min-height:44px
+}
+.btn-sample:hover{background:#FFFDF2}
+.contact-box fieldset{border:0;margin:0 0 22px;padding:0;min-width:0}
+.contact-box legend,.field__label{display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:10px;padding:0;line-height:1.5}
+.req,.opt{flex:none;font-size:11px;font-weight:700;line-height:1.4;padding:1px 7px;border-radius:6px}
+.req{background:var(--peach-deep);color:#fff}
+.opt{background:#EFEBE1;color:var(--ink-sub)}
+.field{margin:0 0 22px}
+.field__hint{font-size:13px;color:var(--ink-sub);margin:-4px 0 10px;line-height:1.6}
+.input{
+  display:block;width:100%;min-width:0;min-height:52px;font:inherit;font-size:16px;color:var(--ink);
+  padding:10px 14px;border:2px solid var(--line);border-radius:14px;background:#FFFDF8;
+  transition:border-color .15s, background .15s
+}
+.input:focus{outline:none;border-color:var(--sky-deep);background:#fff}
+.input:focus-visible{outline:3px solid var(--sky-deep);outline-offset:2px}
+input[type="date"].input{-webkit-appearance:none;appearance:none}
+input[type="date"].input::-webkit-date-and-time-value{text-align:left}
+.input[aria-invalid="true"]{border-color:var(--peach-deep);background:#FFF6F2}
+.choice-grid{display:grid;gap:10px}
+.choice-grid--2{grid-template-columns:1fr 1fr}
+@container main (min-width: 560px){ .choice-grid--rooms{grid-template-columns:repeat(3,1fr)} .choice-grid--4{grid-template-columns:repeat(4,1fr)} }
+.choice{position:relative;display:block}
+.choice input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.choice > span{
+  display:flex;align-items:center;gap:10px;min-height:52px;padding:10px 14px;border-radius:14px;
+  border:2px solid var(--line);background:#FFFDF8;font-weight:500;line-height:1.4;transition:border-color .15s, background .15s
+}
+.choice > span::before{
+  content:"";flex:none;width:20px;height:20px;border-radius:50%;border:2px solid #B9B3A4;background:#fff;
+}
+.choice input:checked + span{border-color:var(--ch-ink, var(--cta));background:var(--ch-bg, var(--mint));font-weight:700}
+.choice input:checked + span::before{border-color:var(--ch-ink, var(--cta));box-shadow:inset 0 0 0 4px #fff;background:var(--ch-ink, var(--cta))}
+.choice input:focus-visible + span{outline:3px solid var(--sky-deep);outline-offset:2px}
+.is-invalid .choice > span{border-color:#E8B9A6}
+.date-grid{display:grid;gap:14px}
+@container main (min-width: 560px){ .date-grid{grid-template-columns:repeat(3,minmax(0,1fr))} }
+.date-grid .field{margin:0}
+.date-grid .field__label{font-size:14.5px;margin-bottom:6px}
+.field-error{
+  display:flex;gap:6px;align-items:flex-start;margin-top:8px;
+  font-size:13.5px;line-height:1.55;font-weight:700;color:var(--peach-deep)
+}
+.field-error::before{
+  content:"!";flex:none;width:18px;height:18px;margin-top:1px;border-radius:50%;
+  background:var(--peach-deep);color:#fff;font-size:12px;line-height:18px;text-align:center
+}
+.field-error[hidden]{display:none}
+.form-errors{
+  margin:0 0 20px;padding:14px 16px;border-radius:14px;background:#FFF1EA;border:2px solid #F0C3B0;font-size:14.5px
+}
+.form-errors[hidden]{display:none}
+.form-errors b{display:block;color:var(--peach-deep)}
+.form-errors ul{margin:6px 0 0;padding-left:1.2em}
+.form-errors a{color:var(--peach-deep);font-weight:700}
+.preset-msg{
+  display:none;margin:-8px 0 18px;font-size:14px;background:var(--mint);border-radius:10px;padding:8px 12px
+}
+.preset-msg.is-show{display:block}
+.contact-box .btn{margin-top:6px}
+.contact-note{margin-top:12px;font-size:12.5px;color:var(--ink-sub)}
+
+/* 完了画面 */
+.contact-done{
+  background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 18px;
+  border:3px solid var(--mint);
+}
+.contact-done:focus{outline:none}
+.contact-done[hidden]{display:none}
+.done-status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13.5px;color:var(--ink-sub)}
+.status-badge{
+  display:inline-block;white-space:nowrap;font-size:12px;font-weight:700;line-height:1.5;padding:1px 10px;border-radius:999px;
+  border:1.5px solid var(--mint-deep);color:var(--mint-deep);background:var(--paper)
+}
+.contact-done h3{font-size:21px;line-height:1.5;margin-top:10px}
+.done-dup{margin-top:10px;font-size:14px;background:var(--lemon);border-radius:10px;padding:8px 12px}
+.done-dup[hidden]{display:none}
+.done-list{margin:16px 0 0;border-top:1px dashed var(--line)}
+.done-list > div{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:8px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:15px}
+.done-list dt{font-weight:700;color:var(--ink-sub)}
+.done-list dd{margin:0}
+.done-list ol{margin:0;padding:0;list-style:none}
+.done-list ol small{color:var(--ink-sub);margin-right:6px}
+.done-call{
+  margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--mint);font-weight:500;
+  display:flex;gap:10px;align-items:flex-start
+}
+.done-call svg{flex:none;margin-top:3px;color:var(--mint-deep)}
+.done-actions{margin-top:18px;display:grid;gap:10px}
+@container main (min-width: 560px){ .done-actions{grid-template-columns:auto auto;justify-content:start} }
+
+/* =========================================================
+   デモ操作バー（保護者ページ／スタッフ閲覧）
+   ========================================================= */
+.demo-bar{background:#F3F0E8;border-bottom:1px dashed #BDB6A6;font-size:13px}
+.demo-bar__inner{max-width:1440px;margin:0 auto;padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.demo-bar__label{flex:none;font-weight:700;font-size:12px;letter-spacing:.06em;background:var(--ink);color:#fff;border-radius:6px;padding:2px 8px}
+.demo-seg{display:inline-flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:var(--paper)}
+.demo-seg button{
+  font:inherit;font-size:13.5px;font-weight:700;border:0;background:transparent;color:var(--ink);
+  padding:6px 14px;min-height:40px;cursor:pointer;display:inline-flex;align-items:center;gap:6px
+}
+.demo-seg button + button{border-left:2px solid var(--ink)}
+.demo-seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.demo-seg__count{font-size:11.5px;min-width:20px;padding:0 6px;border-radius:999px;background:var(--peach);color:var(--peach-deep);line-height:1.6;text-align:center}
+.demo-reset{
+  font:inherit;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;
+  border:1.5px dashed var(--ink-sub);background:var(--paper);border-radius:999px;padding:6px 14px;min-height:40px
+}
+.demo-bar__hint{flex-basis:100%;font-size:12px;color:var(--ink-sub);line-height:1.5}
+@media (min-width: 1000px){ .demo-bar__hint{flex-basis:auto;flex:1 1 0} }
+
+body[data-view="staff"] .site-header,
+body[data-view="staff"] .layout,
+body[data-view="staff"] .site-footer,
+body[data-view="staff"] .float-cta{display:none}
+
+.toast{
+  position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:60;
+  background:var(--ink);color:#fff;font-size:14px;line-height:1.5;padding:10px 18px;border-radius:999px;
+  max-width:calc(100% - 32px);box-shadow:0 8px 24px rgba(47,49,64,.2)
+}
+.toast[hidden]{display:none}
+@media (min-width: 1280px){ .toast{bottom:28px} }
+
+/* =========================================================
+   スタッフ閲覧（デモ）
+   ========================================================= */
+.staff{padding:28px 16px 80px}
+.staff[hidden]{display:none}
+.staff__inner{max-width:1200px;margin:0 auto}
+.staff-head__sub{font-size:13px;font-weight:700;color:var(--ink-sub);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.staff-head h1{font-size:24px;line-height:1.4;margin-top:4px;letter-spacing:.04em}
+.staff-head h1:focus{outline:none}
+.staff-head__note{font-size:13.5px;color:var(--ink-sub);margin-top:6px}
+.staff-filter{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.staff-filter__label{flex-basis:100%;font-size:13px;font-weight:700;color:var(--ink-sub)}
+.staff-filter button{
+  font:inherit;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;
+  min-height:44px;padding:6px 14px;border-radius:999px;border:2px solid var(--line);background:var(--paper);
+  display:inline-flex;align-items:center;gap:6px
+}
+.staff-filter button::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--f-dot, var(--line))}
+.staff-filter button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:#fff}
+.staff-filter .num{font-size:12px;font-weight:500;opacity:.85}
+.staff-count{margin-top:14px;font-size:13.5px;color:var(--ink-sub)}
+.staff-body{margin-top:8px;display:grid;gap:20px;align-items:start}
+.staff-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.staff-list-head{display:none}
+.staff-empty{background:var(--paper);border-radius:16px;padding:24px 16px;text-align:center;color:var(--ink-sub);box-shadow:var(--shadow)}
+
+.app-row{
+  width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;
+  background:var(--paper);border:2px solid transparent;border-left:6px solid var(--r-bg);border-radius:16px;box-shadow:var(--shadow);
+  padding:14px 16px;
+  display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;
+  grid-template-areas:"time time time status" "type room . ." "name name name name" "date date date date";
+  gap:6px 8px;align-items:center;transition:border-color .15s, transform .15s
+}
+.app-row:hover{transform:translateY(-1px)}
+.app-row[aria-current="true"]{border-color:var(--ink);border-left-color:var(--r-ink)}
+.app-row__time{grid-area:time;font-size:13px;color:var(--ink-sub);font-variant-numeric:tabular-nums}
+.app-row__type{grid-area:type}
+.app-row__room{grid-area:room}
+.app-row__name{grid-area:name;font-weight:700;font-size:17px;line-height:1.5;min-width:0}
+.app-row__date{grid-area:date;font-size:14.5px;font-variant-numeric:tabular-nums}
+.app-row__date small{font-size:12.5px;color:var(--ink-sub);margin-right:6px}
+.app-row__status{grid-area:status;display:flex;gap:6px;justify-content:flex-end;align-items:center}
+.chip{display:inline-block;font-size:12.5px;font-weight:700;line-height:1.5;padding:1px 10px;border-radius:999px;background:var(--chip-bg);color:var(--chip-ink);white-space:nowrap}
+.new-badge{display:inline-block;vertical-align:2px;margin-left:4px;white-space:nowrap;font-size:11px;font-weight:700;line-height:1.5;background:var(--peach-deep);color:#fff;padding:1px 8px;border-radius:999px}
+
+.staff-detail{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 18px}
+.staff-detail:focus{outline:none}
+.staff-detail__back{
+  font:inherit;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;background:none;border:0;
+  padding:6px 0;min-height:44px;margin:-8px 0 6px;display:inline-flex;align-items:center;gap:6px
+}
+.staff-detail__top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--ink-sub)}
+.staff-detail h2{font-size:22px;line-height:1.4;margin-top:8px}
+.staff-detail h2:focus{outline:none}
+.staff-detail h2 small{font-size:14px;font-weight:500;margin-left:4px}
+.staff-detail__chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.staff-detail h3{font-size:13px;font-weight:700;color:var(--ink-sub);letter-spacing:.06em;margin-top:20px}
+.detail-list{margin:6px 0 0;border-top:1px solid var(--line)}
+.detail-list > div{display:grid;grid-template-columns:8.5em minmax(0,1fr);gap:8px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:15px}
+.detail-list dt{font-weight:700;color:var(--ink-sub);font-size:14px}
+.detail-list dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.detail-list a{font-weight:700;font-variant-numeric:tabular-nums}
+.detail-list .empty{color:var(--ink-sub)}
+.staff-detail__note{margin-top:14px;font-size:12.5px;color:var(--ink-sub)}
+.staff-placeholder{color:var(--ink-sub);font-size:14px;text-align:center;padding:24px 8px}
+
+/* スマホ・タブレット：一覧と詳細を切り替え */
+.staff-body:not(.is-detail) .staff-detail{display:none}
+.staff-body.is-detail .staff-list-wrap{display:none}
+
+@media (min-width: 760px){
+  .staff{padding:36px 32px 80px}
+  .staff-head h1{font-size:28px}
+  .staff-filter__label{flex-basis:auto;align-self:center;margin-right:4px}
+  .staff-list-head,.app-row{
+    grid-template-columns:112px 80px 96px minmax(0,1fr) 104px 56px;
+    grid-template-areas:"time type room name date status";
+    gap:10px;
+  }
+  .staff-list-head{
+    display:grid;padding:0 18px 6px 22px;font-size:12px;font-weight:700;color:var(--ink-sub)
+  }
+  .app-row{padding:12px 16px}
+  .app-row__name{font-size:15.5px}
+  .app-row__date small{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+@media (min-width: 1100px){
+  .staff-body{grid-template-columns:minmax(0,1fr) 360px}
+  .staff-body .staff-list-wrap,.staff-body .staff-detail{display:block!important}
+  .staff-detail{position:sticky;top:20px}
+  .staff-detail__back{display:none}
+}
+
+/* =========================================================
+   フッター
+   ========================================================= */
+.site-footer{
+  margin-top:72px;padding:40px 16px 110px;text-align:center;
+  background:
+    radial-gradient(60% 80% at 20% 0%, rgba(211,241,229,.9), transparent 70%),
+    radial-gradient(60% 80% at 80% 20%, rgba(216,238,251,.9), transparent 70%),
+    #F4FAF6;
+}
+.site-footer__name{font-size:22px;font-weight:700;letter-spacing:.06em}
+.site-footer__area{font-size:13px;color:var(--ink-sub)}
+.site-footer nav ul{list-style:none;padding:0;margin:20px auto 0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;font-size:14px;max-width:560px}
+.site-footer__notice{
+  margin:24px auto 0;max-width:560px;font-size:12.5px;background:rgba(255,255,255,.8);border-radius:12px;padding:12px 14px;text-align:left
+}
+.site-footer small{display:block;margin-top:16px;font-size:12px;color:var(--ink-sub)}
+
+/* スマホ下部の固定ボタン */
+.float-cta{
+  position:fixed;left:16px;right:16px;bottom:max(12px, env(safe-area-inset-bottom));z-index:40;
+  transition:transform .25s, opacity .25s;
+}
+.float-cta .btn{width:100%;box-shadow:0 4px 0 #13493c, 0 10px 24px rgba(31,110,91,.3)}
+.float-cta.is-hidden{transform:translateY(140%);opacity:0;pointer-events:none}
+
+/* =========================================================
+   タブレット以上（1カラムのまま余白調整）
+   ========================================================= */
+@media (min-width: 600px){
+  .hero__title{font-size:64px}
+  .hero__catch{font-size:26px}
+  .hero__actions{grid-template-columns:auto auto;justify-content:start}
+  .hero__note{text-align:left}
+  .section-head h2{font-size:28px}
+  .room-card{padding:22px}
+}
+
+/* =========================================================
+   PC幅：3カラム（左：時間割／中央：本文／右：教室リスト）
+   ========================================================= */
+@media (min-width: 1280px){
+  :root{--header-h:68px}
+  .menu-btn{display:none}
+  .global-nav{
+    position:static;display:block;background:none;border:0;box-shadow:none;padding:0;max-height:none;overflow:visible
+  }
+  .global-nav ul{display:flex;align-items:center;gap:2px}
+  .global-nav li + li{border-top:0}
+  .global-nav a{padding:8px 10px;font-size:14px;border-radius:999px;gap:6px}
+  .global-nav a:hover{background:var(--paper)}
+  .nav-dot{width:8px;height:8px}
+  .global-nav .nav-cta{margin:0 0 0 8px;padding:8px 18px}
+  .logo__name{font-size:22px}
+
+  .layout{
+    max-width:1440px;padding:0 32px;
+    display:grid;
+    grid-template-columns:minmax(280px,320px) minmax(0,1fr) minmax(220px,260px);
+    gap:32px;align-items:start;
+  }
+  .side-left,.side-right{
+    display:block;position:sticky;top:calc(var(--header-h) + 20px);
+    max-height:calc(100vh - var(--header-h) - 36px);overflow:auto;
+    padding:12px 4px 20px;margin-top:28px;
+    scrollbar-width:thin;
+  }
+  .side-left .schedule{padding:0}
+  .side-left .section-head{margin-bottom:12px}
+  .side-left .section-head h2{font-size:20px}
+  .side-left .lead{font-size:13px;margin-top:6px}
+  .side-left .notebook{padding:18px 16px 14px}
+  .side-left .timetable li{grid-template-columns:48px minmax(0,1fr)}
+  .side-left .timetable time{font-size:14px}
+  .side-left .timetable .act b{font-size:14.5px}
+  .side-left .timetable .act small{font-size:12.5px}
+  .hero__photo .ph{aspect-ratio:16/9}
+  main{max-width:760px;width:100%;justify-self:center}
+  .float-cta{display:none}
+  .site-footer{padding-bottom:40px}
+  .hero{padding-top:36px}
+}
+/* 右カラム */
+.side-card{
+  background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 16px;
+  --tape:rgba(200,186,240,.85)
+}
+.side-card__title{font-family:var(--font-hand);font-weight:600;font-size:20px;text-align:center}
+.side-card__sub{font-size:12.5px;color:var(--ink-sub);text-align:center;margin-top:2px}
+.side-rooms{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.side-rooms a{
+  display:flex;align-items:center;gap:10px;padding:12px 12px;border-radius:14px;text-decoration:none;
+  background:var(--r-bg);font-weight:700;transition:transform .15s, box-shadow .15s;
+  border:2px solid transparent;
+}
+.side-rooms a:hover{transform:translateX(3px)}
+.side-rooms a.is-current{border-color:var(--r-ink)}
+.side-rooms .pin{flex:none;width:30px;height:30px;border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--r-ink)}
+.side-rooms .arrow{margin-left:auto;color:var(--r-ink)}
+.side-cta{margin-top:16px}
+.side-cta .btn{width:100%;padding:12px 14px;font-size:15px}
+.side-cta p{font-size:12px;color:var(--ink-sub);margin-top:10px;text-align:center;line-height:1.6}
+.side-deco{margin:18px auto 0;display:block}
+</style>
+</head>
+<body>
+
+<div class="demo-strip" role="note">
+  <strong>ポートフォリオ用の架空サイト</strong>です（Lumineglyph制作のワイヤーフレーム）。実在の事業所とは関係ありません。
+</div>
+
+<!-- デモ操作：保護者ページ／スタッフ閲覧の切り替え（ポートフォリオ用） -->
+<div class="demo-bar" role="region" aria-label="デモ操作">
+  <div class="demo-bar__inner">
+    <span class="demo-bar__label">デモ操作</span>
+    <div class="demo-seg" role="group" aria-label="表示する画面">
+      <button type="button" data-view="parent" aria-pressed="true">保護者ページ</button>
+      <button type="button" data-view="staff" aria-pressed="false">スタッフ閲覧<span class="demo-seg__count" id="staff-badge"></span></button>
+    </div>
+    <button type="button" class="demo-reset" id="demo-reset">サンプルデータを初期化</button>
+    <p class="demo-bar__hint" id="demo-hint"></p>
+  </div>
+</div>
+
+<!-- =====================================================
+     ヘッダー
+     ===================================================== -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="logo" href="#top" aria-label="にこにこルーム トップへ">
+      <!-- [差し替え] ロゴ画像が決まったら、この svg を <img src="images/logo.svg" alt="にこにこルーム"> に置き換え -->
+      <svg class="logo__mark" width="38" height="38" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="18" fill="#FFF2B3"/>
+        <circle cx="20" cy="20" r="18" fill="none" stroke="#2F3140" stroke-width="2"/>
+        <path d="M12 17q2-3 4 0M24 17q2-3 4 0" fill="none" stroke="#2F3140" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M13 23q7 7 14 0" fill="none" stroke="#2F3140" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="11" cy="24" r="2.5" fill="#FFC1AA"/><circle cx="29" cy="24" r="2.5" fill="#FFC1AA"/>
+      </svg>
+      <span class="logo__text">
+        <span class="logo__sub">東京都渋谷区の児童発達支援</span>
+        <span class="logo__name">にこにこルーム</span>
+      </span>
+    </a>
+
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="global-nav">
+      <span class="menu-btn__bars" aria-hidden="true"><span></span></span>メニュー
+    </button>
+
+    <nav class="global-nav" id="global-nav" aria-label="メインメニュー">
+      <ul>
+        <li><a href="#about"><span class="nav-dot" style="background:var(--mint)"></span>にこにこルームについて</a></li>
+        <li><a href="#support"><span class="nav-dot" style="background:var(--sky)"></span>支援内容</a></li>
+        <li><a href="#schedule"><span class="nav-dot" style="background:var(--lemon)"></span>1日のスケジュール</a></li>
+        <li><a href="#flow"><span class="nav-dot" style="background:var(--peach)"></span>ご利用までの流れ</a></li>
+        <li><a href="#rooms"><span class="nav-dot" style="background:var(--lav)"></span>教室案内</a></li>
+        <li><a href="#faq"><span class="nav-dot" style="background:var(--mint)"></span>よくある質問</a></li>
+        <li><a class="nav-cta" href="#contact">教室見学・発達相談</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="layout" id="top">
+
+  <!-- =====================================================
+       左カラム（PC幅のみ）：1日のスケジュールがJSでここへ移動します
+       ===================================================== -->
+  <aside class="side-left" id="side-left" aria-label="1日のスケジュール"></aside>
+
+  <!-- =====================================================
+       中央：メインコンテンツ
+       ===================================================== -->
+  <main>
+
+    <!-- ファーストビュー -->
+    <section class="hero" aria-labelledby="hero-title">
+      <p class="hero__area">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg>
+        東京都渋谷区の児童発達支援
+      </p>
+      <h1 class="hero__title" id="hero-title" aria-label="にこにこルーム">
+        <span class="c1">に</span><span class="c2">こ</span><span class="c3">に</span><span class="c4">こ</span><span class="c5">ルーム</span>
+      </h1>
+      <!-- [差し替え] キャッチコピー（仮） -->
+      <p class="hero__catch">その子のペースで、<br>できることをひとつずつ。</p>
+
+      <div class="hero__actions">
+        <a class="btn btn--cta" href="#contact">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg>
+          教室見学・発達相談
+        </a>
+        <a class="btn btn--ghost" href="#rooms">3つの教室を見る</a>
+      </div>
+      <p class="hero__note">フォームから見学・相談の希望日を送れます</p>
+      <div class="hero__photo tape">
+        <figure class="ph ph--img" data-slot="hero-photo">
+          <img src="images/niconico_fv.jpg" alt="スタッフと向き合って笑顔を見せる女の子" width="600" height="400" fetchpriority="high">
+        </figure>
+      </div>
+
+    </section>
+
+    <!-- にこにこルームについて -->
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="section-head" style="--hl:var(--mint)">
+        <span class="section-head__en">about</span>
+        <h2 id="about-title">にこにこルームについて</h2>
+      </div>
+      <div class="about-card">
+        <p>にこにこルームは、渋谷区内に3つの教室がある児童発達支援の教室です。</p>
+        <p>好きなこと、得意なこと、ちょっと苦手なこと。お子さま一人ひとりの興味や特性をよく見て、その日の活動を組み立てます。「できた！」を少しずつ重ねながら、毎日を楽しく過ごせるようにお手伝いします。</p>
+        <ul class="about-points">
+          <li style="--pt-bg:var(--mint);--pt-ink:var(--mint-deep)"><span class="num">1</span><span><b>「好き」から始めます</b><small>興味のあるものを入り口に、活動に誘います。</small></span></li>
+          <li style="--pt-bg:var(--sky);--pt-ink:var(--sky-deep)"><span class="num">2</span><span><b>特性に合わせて組み立てます</b><small>得意・苦手に合わせて、内容や進め方を調整します。</small></span></li>
+          <li style="--pt-bg:var(--peach);--pt-ink:var(--peach-deep)"><span class="num">3</span><span><b>保護者さまと一緒に振り返ります</b><small>その日の様子をお迎えの時間にお伝えします。</small></span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 支援内容 -->
+    <section class="section" id="support" aria-labelledby="support-title">
+      <div class="section-head" style="--hl:var(--sky)">
+        <span class="section-head__en">support</span>
+        <h2 id="support-title">支援内容</h2>
+        <p class="lead">教室で行う4つの支援です。活動例は一例で、お子さまに合わせて変わります。</p>
+      </div>
+      <div class="support-grid">
+        <article class="support-card" style="--c-bg:var(--mint);--c-ink:var(--mint-deep)">
+          <figure class="support-card__photo"><img src="images/niconico_pic01.jpg" alt="トングでポンポンをつまみ、手作りの台に乗せる手先の活動" width="700" height="700" loading="lazy" style="object-position:50% 45%"></figure>
+          <div class="support-card__head">
+            <span class="support-card__icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 32 32"><path d="M6 24c4-1 6-6 9-10s7-6 11-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="9" cy="21" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="13" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="9" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            </span>
+            <h3>個別指導</h3>
+          </div>
+          <p>スタッフとじっくり向き合い、手先を使う活動や机に向かう活動に取り組みます。</p>
+          <div class="examples"><p class="examples__label">活動例</p><ul><li>シール貼り</li><li>ひも通し</li></ul></div>
+        </article>
+
+        <article class="support-card" style="--c-bg:var(--sky);--c-ink:var(--sky-deep)">
+          <figure class="support-card__photo"><img src="images/niconico_pic02.jpg" alt="スタッフのまねをして体を動かす子どもたち" width="640" height="426" loading="lazy"></figure>
+          <div class="support-card__head">
+            <span class="support-card__icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 32 32"><rect x="3" y="22" width="26" height="4" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 22v-6h16v6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            </span>
+            <h3>全体活動</h3>
+          </div>
+          <p>お友だちと一緒に、体を大きく動かす活動をします。順番や待つことも、遊びの中で練習します。</p>
+          <div class="examples"><p class="examples__label">活動例</p><ul><li>マットのサーキット</li><li>平均台のサーキット</li></ul></div>
+        </article>
+
+        <article class="support-card" style="--c-bg:var(--peach);--c-ink:var(--peach-deep)">
+          <figure class="support-card__photo"><img src="images/niconico_pic03.jpg" alt="ひらがなを書いたカード" width="600" height="400" loading="lazy"></figure>
+          <div class="support-card__head">
+            <span class="support-card__icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 32 32"><path d="M5 7h15a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-8l-5 4v-4H5a0 0 0 0 1 0 0V7Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M26 13h1a2 2 0 0 1 2 2v7h-3v3l-4-3h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+            </span>
+            <h3>ことば・人との関わり</h3>
+          </div>
+          <p>「ちょうだい」「どうぞ」など、気持ちを伝えたり受け取ったりするやりとりを、遊びの中で育てます。</p>
+          <div class="examples"><p class="examples__label">活動例</p><ul><li>絵カードでのやりとり</li><li>順番のある遊び</li></ul></div>
+        </article>
+
+        <article class="support-card" style="--c-bg:var(--lemon);--c-ink:var(--lemon-deep)">
+          <figure class="support-card__photo"><img src="images/niconico_pic04.jpg" alt="お子さまを抱いて保護者さまにお渡しするスタッフ" width="1024" height="683" loading="lazy"></figure>
+          <div class="support-card__head">
+            <span class="support-card__icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 32 32"><rect x="7" y="4" width="18" height="24" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11h10M11 16h10M11 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <h3>保護者への振り返り</h3>
+          </div>
+          <p>お迎えの時間に、その日に取り組んだことやお子さまの様子をお伝えします。ご家庭での様子もお聞かせください。</p>
+          <div class="examples"><p class="examples__label">活動例</p><ul><li>その日の様子の共有</li><li>おうちでの関わり方のご相談</li></ul></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 1日のスケジュール（スマホでは本文のここに表示／PC幅では左カラムへ移動） -->
+    <div id="schedule-slot">
+      <section class="section schedule" id="schedule" aria-labelledby="schedule-title">
+        <div class="section-head" style="--hl:var(--lemon)">
+          <span class="section-head__en">schedule</span>
+          <h2 id="schedule-title">1日のスケジュール</h2>
+          <p class="lead">ある日の過ごし方の例です。</p>
+        </div>
+
+        <div class="notebook">
+          <p class="notebook__title">
+            <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 9v7l5 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+            ある日のスケジュール
+          </p>
+          <p class="notebook__sub">時間・内容は仮です</p>
+
+          <ol class="timetable">
+            <li>
+              <time datetime="15:00">15:00</time>
+              <div class="act"><b>ごあいさつ・はじまりの会</b><small>名前を呼んで、今日の予定を確認します。</small></div>
+            </li>
+            <li>
+              <time datetime="15:05">15:05</time>
+              <div class="act"><b>個別指導開始</b><small>お子さまの特性に合わせた、手先を使う活動や机上での活動。</small></div>
+            </li>
+            <li>
+              <time datetime="15:35">15:35</time>
+              <div class="act"><b>全体活動</b><small>サーキットなど、体を大きく動かす活動。</small></div>
+            </li>
+            <li>
+              <time datetime="15:40">15:40</time>
+              <div class="act"><b>ごあいさつ</b><small>今日がんばったことを、みんなで振り返ります。</small></div>
+            </li>
+            <li>
+              <time datetime="15:45">15:45</time>
+              <div class="act"><b>お片付け・保護者さまへのフィードバック</b><small>その日の様子をお迎えの際にお伝えします。</small></div>
+            </li>
+          </ol>
+          <p class="notebook__note">※ 教室・曜日によって変わる場合があります（掲載予定）。</p>
+
+        </div>
+      </section>
+    </div>
+
+    <!-- ご利用までの流れ -->
+    <section class="section" id="flow" aria-labelledby="flow-title">
+      <div class="section-head" style="--hl:var(--peach)">
+        <span class="section-head__en">flow</span>
+        <h2 id="flow-title">ご利用までの流れ</h2>
+      </div>
+      <ol class="flow">
+        <li style="--f-bg:var(--mint)"><h3>お問い合わせ</h3><p>「教室見学」か「発達相談」を選んで、フォームからご希望の教室と日にちをお送りください。</p></li>
+        <li style="--f-bg:var(--sky)"><h3>お電話で日程調整</h3><p>スタッフからお電話して、日程を決めます。</p></li>
+        <li style="--f-bg:var(--lemon)"><h3>教室見学・ご相談</h3><p>教室の雰囲気をご覧いただきながら、お子さまのご様子やご心配なことをお聞きします。</p></li>
+        <li style="--f-bg:var(--lav)"><h3>ご利用に向けたご案内</h3><p>ご利用に必要な手続きや通う曜日などをご案内します。詳細は<span class="tag-temp">掲載予定</span></p></li>
+      </ol>
+      <p class="flow-note">※ 架空サイトのための案内例です。実際の手続きや料金は掲載していません。</p>
+    </section>
+
+    <!-- 教室案内 -->
+    <section class="section" id="rooms" aria-labelledby="rooms-title">
+      <div class="section-head" style="--hl:var(--lav)">
+        <span class="section-head__en">classrooms</span>
+        <h2 id="rooms-title">教室案内</h2>
+        <p class="lead">渋谷区内の3つの教室です。教室を選んで、見学・相談に進めます。</p>
+      </div>
+
+      <div class="room-list">
+        <!-- [差し替え] 教室カード：渋谷教室 -->
+        <article class="room-card" id="room-shibuya" style="--r-bg:var(--mint);--r-ink:var(--mint-deep)">
+          <div class="room-card__head"><span class="room-card__label">教室 1</span><h3>渋谷教室</h3><span class="tag-temp">名称は仮</span></div>
+          <figure class="ph ph--img" data-slot="room-shibuya-photo"><img src="images/niconico_shibuya.webp" alt="渋谷教室の室内" width="1448" height="1086" loading="lazy"></figure>
+          <dl class="room-info">
+            <div><dt>所在地</dt><dd>東京都渋谷区 <span class="tag-temp">掲載予定</span></dd></div>
+            <div><dt>最寄り駅</dt><dd>渋谷駅</dd></div>
+            <div><dt>開所日</dt><dd>月曜日〜金曜日・隔週土曜日（祝日も開所）<br><small class="room-info__sub">お盆・年末年始は休所</small></dd></div>
+          </dl>
+          <button class="btn btn--cta btn--block" type="button" data-room="shibuya">渋谷教室に見学・相談する</button>
+        </article>
+
+        <!-- [差し替え] 教室カード：恵比寿教室 -->
+        <article class="room-card" id="room-ebisu" style="--r-bg:var(--peach);--r-ink:var(--peach-deep)">
+          <div class="room-card__head"><span class="room-card__label">教室 2</span><h3>恵比寿教室</h3><span class="tag-temp">名称は仮</span></div>
+          <figure class="ph ph--img" data-slot="room-ebisu-photo"><img src="images/niconico_ebisu.webp" alt="恵比寿教室の室内" width="1448" height="1086" loading="lazy"></figure>
+          <dl class="room-info">
+            <div><dt>所在地</dt><dd>東京都渋谷区 <span class="tag-temp">掲載予定</span></dd></div>
+            <div><dt>最寄り駅</dt><dd>恵比寿駅</dd></div>
+            <div><dt>開所日</dt><dd>月曜日〜金曜日・隔週土曜日（祝日も開所）<br><small class="room-info__sub">お盆・年末年始は休所</small></dd></div>
+          </dl>
+          <button class="btn btn--cta btn--block" type="button" data-room="ebisu">恵比寿教室に見学・相談する</button>
+        </article>
+
+        <!-- [差し替え] 教室カード：代々木教室 -->
+        <article class="room-card" id="room-yoyogi" style="--r-bg:var(--lav);--r-ink:var(--lav-deep)">
+          <div class="room-card__head"><span class="room-card__label">教室 3</span><h3>代々木教室</h3><span class="tag-temp">名称は仮</span></div>
+          <figure class="ph ph--img" data-slot="room-yoyogi-photo"><img src="images/niconico_yoyogi.webp" alt="代々木教室の室内" width="1448" height="1086" loading="lazy"></figure>
+          <dl class="room-info">
+            <div><dt>所在地</dt><dd>東京都渋谷区 <span class="tag-temp">掲載予定</span></dd></div>
+            <div><dt>最寄り駅</dt><dd>代々木駅</dd></div>
+            <div><dt>開所日</dt><dd>月曜日〜金曜日・隔週土曜日（祝日も開所）<br><small class="room-info__sub">お盆・年末年始は休所</small></dd></div>
+          </dl>
+          <button class="btn btn--cta btn--block" type="button" data-room="yoyogi">代々木教室に見学・相談する</button>
+        </article>
+      </div>
+    </section>
+
+    <!-- よくある質問 -->
+    <section class="section" id="faq" aria-labelledby="faq-title">
+      <div class="section-head" style="--hl:var(--mint)">
+        <span class="section-head__en">Q&amp;A</span>
+        <h2 id="faq-title">よくある質問</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary><span class="qa-mark qa-mark--q" aria-hidden="true">Q</span>見学できますか？</summary>
+          <div class="answer"><span class="qa-mark qa-mark--a" aria-hidden="true">A</span><p>はい、見学していただけます。お子さまとご一緒でも、保護者さまだけでも大丈夫です。フォームからご希望日をお送りいただければ、スタッフがお電話で日程を調整します。</p></div>
+        </details>
+        <details>
+          <summary><span class="qa-mark qa-mark--q" aria-hidden="true">Q</span>どんな活動をしますか？</summary>
+          <div class="answer"><span class="qa-mark qa-mark--a" aria-hidden="true">A</span><p>シール貼りやひも通しなどの個別指導、マットや平均台を使ったサーキットなどの全体活動、絵カードでのやりとりや順番のある遊びなどを行います。<a href="#support">支援内容</a>と<a href="#schedule">1日のスケジュール</a>もご覧ください。</p></div>
+        </details>
+        <details>
+          <summary><span class="qa-mark qa-mark--q" aria-hidden="true">Q</span>どの教室に相談すればよいですか？</summary>
+          <div class="answer"><span class="qa-mark qa-mark--a" aria-hidden="true">A</span><p>通いやすい教室を選んでください。迷われている場合は、いずれかの教室でお申し込みいただき、日程調整のお電話の際にご相談ください。</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 教室見学・発達相談フォーム（デモ：入力内容はページ内のメモリにだけ保持） -->
+    <section class="section" id="contact" aria-labelledby="contact-title">
+      <div class="section-head" style="--hl:var(--peach)">
+        <span class="section-head__en">contact</span>
+        <h2 id="contact-title">教室見学・発達相談</h2>
+        <p class="lead">ご希望の内容・教室・日にちをお送りください。スタッフからお電話で日程を調整します。</p>
+      </div>
+
+      <form class="contact-box" id="contact-form" novalidate>
+        <div class="demo-note">
+          <p><span class="demo-badge">デモ</span>ポートフォリオ用デモです。サンプル情報でお試しください</p>
+          <button class="btn-sample" type="button" id="fill-sample">サンプル入力</button>
+        </div>
+        <p class="preset-msg" id="preset-msg" role="status" aria-live="polite"></p>
+        <div class="form-errors" id="form-errors" role="alert" tabindex="-1" hidden></div>
+
+        <fieldset id="f-type" aria-describedby="err-type">
+          <legend>お申し込みの種類<span class="req">必須</span></legend>
+          <div class="choice-grid choice-grid--2">
+            <label class="choice"><input type="radio" name="type" value="教室見学" id="type-visit" checked><span>教室見学</span></label>
+            <label class="choice"><input type="radio" name="type" value="発達相談"><span>発達相談</span></label>
+          </div>
+          <p class="field-error" id="err-type" hidden></p>
+        </fieldset>
+
+        <fieldset id="f-room" aria-describedby="err-room">
+          <legend>ご希望の教室<span class="req">必須</span></legend>
+          <div class="choice-grid choice-grid--rooms">
+            <label class="choice" style="--ch-bg:var(--mint);--ch-ink:var(--mint-deep)"><input type="radio" name="room" value="shibuya" id="room-first"><span>渋谷教室</span></label>
+            <label class="choice" style="--ch-bg:var(--peach);--ch-ink:var(--peach-deep)"><input type="radio" name="room" value="ebisu"><span>恵比寿教室</span></label>
+            <label class="choice" style="--ch-bg:var(--lav);--ch-ink:var(--lav-deep)"><input type="radio" name="room" value="yoyogi"><span>代々木教室</span></label>
+          </div>
+          <p class="field-error" id="err-room" hidden></p>
+        </fieldset>
+
+        <div class="field" id="f-name">
+          <label class="field__label" for="in-name">保護者さまのお名前<span class="req">必須</span></label>
+          <input class="input" type="text" id="in-name" name="name" autocomplete="name" aria-describedby="err-name">
+          <p class="field-error" id="err-name" hidden></p>
+        </div>
+
+        <div class="field" id="f-tel">
+          <label class="field__label" for="in-tel">電話番号<span class="req">必須</span></label>
+          <p class="field__hint" id="hint-tel">ハイフンはあってもなくても大丈夫です（例：090-0000-0000）</p>
+          <input class="input" type="tel" id="in-tel" name="tel" inputmode="tel" autocomplete="tel" aria-describedby="hint-tel err-tel">
+          <p class="field-error" id="err-tel" hidden></p>
+        </div>
+
+        <fieldset id="f-callTime" aria-describedby="err-callTime">
+          <legend>お電話がつながりやすい時間帯<span class="req">必須</span></legend>
+          <div class="choice-grid choice-grid--2 choice-grid--4">
+            <label class="choice"><input type="radio" name="callTime" value="午前" id="call-first"><span>午前</span></label>
+            <label class="choice"><input type="radio" name="callTime" value="午後"><span>午後</span></label>
+            <label class="choice"><input type="radio" name="callTime" value="夕方"><span>夕方</span></label>
+            <label class="choice"><input type="radio" name="callTime" value="いつでも可"><span>いつでも可</span></label>
+          </div>
+          <p class="field-error" id="err-callTime" hidden></p>
+        </fieldset>
+
+        <fieldset>
+          <legend><span id="date-legend">見学希望日</span></legend>
+          <p class="field__hint">第1希望は必須です。日曜日・お盆・年末年始は休所です。</p>
+          <div class="date-grid">
+            <div class="field" id="f-date1">
+              <label class="field__label" for="in-date1">第1希望<span class="req">必須</span></label>
+              <input class="input" type="date" id="in-date1" name="date1" aria-describedby="err-date1">
+              <p class="field-error" id="err-date1" hidden></p>
+            </div>
+            <div class="field" id="f-date2">
+              <label class="field__label" for="in-date2">第2希望<span class="opt">任意</span></label>
+              <input class="input" type="date" id="in-date2" name="date2" aria-describedby="err-date2">
+              <p class="field-error" id="err-date2" hidden></p>
+            </div>
+            <div class="field" id="f-date3">
+              <label class="field__label" for="in-date3">第3希望<span class="opt">任意</span></label>
+              <input class="input" type="date" id="in-date3" name="date3" aria-describedby="err-date3">
+              <p class="field-error" id="err-date3" hidden></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <button class="btn btn--cta btn--block" type="submit" id="submit-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12 20 4l-4 16-4-6-8-2Zm8 2 8-10"/></svg>
+          希望日を送る
+        </button>
+        <p class="contact-note">※ ポートフォリオ用のデモです。入力内容はこのページの中だけに保持され、外部には送信されません。再読み込みすると消えます。</p>
+      </form>
+
+      <!-- 完了画面 -->
+      <div class="contact-done" id="contact-done" tabindex="-1" role="region" aria-labelledby="done-title" hidden>
+        <p class="done-status"><span class="status-badge">受付</span><span>受付番号 <b id="done-id"></b></span></p>
+        <h3 id="done-title">受付が完了しました</h3>
+        <p class="done-dup" id="done-dup" hidden>同じ内容はすでに受付済みです。二重には登録していません。</p>
+        <dl class="done-list">
+          <div><dt>申込種別</dt><dd id="done-type"></dd></div>
+          <div><dt>ご希望の教室</dt><dd id="done-room"></dd></div>
+          <div><dt id="done-date-label">見学希望日</dt><dd><ol id="done-dates"></ol></dd></div>
+        </dl>
+        <p class="done-call">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+          <span>実際の運用では、スタッフがお電話で日程を調整します。</span>
+        </p>
+        <div class="done-actions">
+          <button class="btn btn--cta" type="button" id="done-staff">スタッフ閲覧で確認する（デモ）</button>
+          <button class="btn btn--ghost" type="button" id="done-again">別の内容で試す</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =====================================================
+       右カラム（PC幅のみ）：3つの教室 ＋ 問い合わせ
+       ===================================================== -->
+  <aside class="side-right" aria-label="3つの教室">
+    <div class="side-card tape">
+      <p class="side-card__title">3つの教室</p>
+      <p class="side-card__sub">東京都渋谷区</p>
+      <ul class="side-rooms">
+        <li><a href="#room-shibuya" data-room-link="shibuya" style="--r-bg:var(--mint);--r-ink:var(--mint-deep)"><span class="pin" aria-hidden="true">1</span>渋谷教室<span class="arrow" aria-hidden="true">→</span></a></li>
+        <li><a href="#room-ebisu" data-room-link="ebisu" style="--r-bg:var(--peach);--r-ink:var(--peach-deep)"><span class="pin" aria-hidden="true">2</span>恵比寿教室<span class="arrow" aria-hidden="true">→</span></a></li>
+        <li><a href="#room-yoyogi" data-room-link="yoyogi" style="--r-bg:var(--lav);--r-ink:var(--lav-deep)"><span class="pin" aria-hidden="true">3</span>代々木教室<span class="arrow" aria-hidden="true">→</span></a></li>
+      </ul>
+      <div class="side-cta">
+        <a class="btn btn--cta" href="#contact">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg>
+          教室見学・発達相談
+        </a>
+        <p>教室名をクリックすると、<br>各教室の案内へ移動します。</p>
+      </div>
+    </div>
+    <!-- 色鉛筆のあしらい -->
+    <svg class="side-deco" width="150" height="54" viewBox="0 0 150 54" aria-hidden="true">
+      <g transform="rotate(-8 75 27)">
+        <rect x="22" y="8" width="100" height="9" rx="2" fill="#FFC1AA"/><path d="M22 8 8 12.5 22 17z" fill="#F4DDB4"/><path d="M12 11.3 8 12.5l4 1.2z" fill="#C2603A"/>
+        <rect x="26" y="24" width="100" height="9" rx="2" fill="#B9D9F4"/><path d="M26 24 12 28.5 26 33z" fill="#F4DDB4"/><path d="M16 27.3 12 28.5l4 1.2z" fill="#2B7AAE"/>
+        <rect x="30" y="40" width="100" height="9" rx="2" fill="#D6CCF2"/><path d="M30 40 16 44.5 30 49z" fill="#F4DDB4"/><path d="M20 43.3 16 44.5l4 1.2z" fill="#6E58A8"/>
+      </g>
+    </svg>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <p class="site-footer__name">にこにこルーム</p>
+  <p class="site-footer__area">東京都渋谷区の児童発達支援（渋谷教室・恵比寿教室・代々木教室）</p>
+  <nav aria-label="フッターメニュー">
+    <ul>
+      <li><a href="#about">にこにこルームについて</a></li>
+      <li><a href="#support">支援内容</a></li>
+      <li><a href="#schedule">1日のスケジュール</a></li>
+      <li><a href="#flow">ご利用までの流れ</a></li>
+      <li><a href="#rooms">教室案内</a></li>
+      <li><a href="#faq">よくある質問</a></li>
+      <li><a href="#contact">教室見学・発達相談</a></li>
+    </ul>
+  </nav>
+  <p class="site-footer__notice">このサイトは、Lumineglyphのポートフォリオ用に制作した<strong>架空サイト</strong>です。事業所・教室名・写真・文章はすべて仮のもので、実在の事業所、住所、電話番号、利用料金とは関係ありません。</p>
+  <small>© にこにこルーム（架空） / Wireframe by Lumineglyph</small>
+</footer>
+
+<!-- =====================================================
+     スタッフ閲覧（デモ）：申込一覧・詳細
+     ===================================================== -->
+<div class="staff" id="staff-view" hidden>
+  <div class="staff__inner">
+    <header class="staff-head">
+      <p class="staff-head__sub">にこにこルーム スタッフ閲覧<span class="tag-temp">デモ</span></p>
+      <h1 id="staff-title" tabindex="-1">見学・相談の申込一覧</h1>
+      <p class="staff-head__note">受付日時の新しい順に表示しています。ログイン機能は今回のデモの範囲外です。</p>
+    </header>
+
+    <div class="staff-filter" role="group" aria-labelledby="filter-label">
+      <span class="staff-filter__label" id="filter-label">教室で絞り込み</span>
+      <button type="button" data-filter="all" aria-pressed="true">すべて<span class="num" data-num="all"></span></button>
+      <button type="button" data-filter="shibuya" aria-pressed="false" style="--f-dot:var(--mint)">渋谷教室<span class="num" data-num="shibuya"></span></button>
+      <button type="button" data-filter="ebisu" aria-pressed="false" style="--f-dot:var(--peach)">恵比寿教室<span class="num" data-num="ebisu"></span></button>
+      <button type="button" data-filter="yoyogi" aria-pressed="false" style="--f-dot:var(--lav)">代々木教室<span class="num" data-num="yoyogi"></span></button>
+    </div>
+    <p class="staff-count" id="staff-count" aria-live="polite"></p>
+
+    <div class="staff-body" id="staff-body">
+      <div class="staff-list-wrap">
+        <div class="staff-list-head" aria-hidden="true">
+          <span>受付日時</span><span>申込種別</span><span>希望教室</span><span>保護者名</span><span>第1希望日</span><span>状態</span>
+        </div>
+        <ul class="staff-list" id="staff-list"></ul>
+      </div>
+      <section class="staff-detail" id="staff-detail" aria-label="申込の詳細" tabindex="-1"></section>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<!-- スマホ用：画面下の固定ボタン -->
+<div class="float-cta" id="float-cta">
+  <a class="btn btn--cta" href="#contact">教室見学・発達相談</a>
+</div>
+
+<script>
+(function(){
+    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function scrollToEl(el){ el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block:"start" }); }
+
+  /* ---- メニュー開閉（スマホ） ---- */
+  var menuBtn = document.querySelector(".menu-btn");
+  var nav = document.getElementById("global-nav");
+  function closeMenu(){ nav.classList.remove("is-open"); menuBtn.setAttribute("aria-expanded","false"); }
+  menuBtn.addEventListener("click", function(){
+    var open = !nav.classList.contains("is-open");
+    nav.classList.toggle("is-open", open);
+    menuBtn.setAttribute("aria-expanded", String(open));
+  });
+  nav.addEventListener("click", function(e){ if (e.target.closest("a")) closeMenu(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeMenu(); });
+
+  /* ---- 時間割の配置：PC幅（1280px以上）は左カラム、それ以外は本文の支援内容の後 ---- */
+  var wide = window.matchMedia("(min-width: 1280px)");
+  var schedule = document.getElementById("schedule");
+  var slot = document.getElementById("schedule-slot");
+  var sideLeft = document.getElementById("side-left");
+  function placeSchedule(){
+    if (wide.matches){ sideLeft.appendChild(schedule); closeMenu(); }
+    else { slot.appendChild(schedule); }
+  }
+  placeSchedule();
+  if (wide.addEventListener) wide.addEventListener("change", placeSchedule); else wide.addListener(placeSchedule);
+
+  /* ---- 右カラムの教室リスト → 中央の教室カードへ移動 ---- */
+  function focusRoom(id){
+    var card = document.getElementById("room-" + id);
+    if (!card) return;
+    scrollToEl(card);
+    card.classList.remove("is-focus"); void card.offsetWidth; card.classList.add("is-focus");
+    setTimeout(function(){ card.classList.remove("is-focus"); }, 1800);
+  }
+  document.querySelectorAll("[data-room-link]").forEach(function(a){
+    a.addEventListener("click", function(e){
+      e.preventDefault();
+      focusRoom(a.getAttribute("data-room-link"));
+      history.replaceState(null, "", a.getAttribute("href"));
+    });
+  });
+
+  /* 表示中の教室を右カラムで強調 */
+  if ("IntersectionObserver" in window){
+    var links = {};
+    document.querySelectorAll("[data-room-link]").forEach(function(a){ links[a.getAttribute("data-room-link")] = a; });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        var key = en.target.id.replace("room-","");
+        if (links[key]) links[key].classList.toggle("is-current", en.isIntersecting);
+      });
+    }, { rootMargin: "-40% 0px -45% 0px" });
+    document.querySelectorAll(".room-card").forEach(function(c){ io.observe(c); });
+  }
+
+  /* =====================================================
+     見学・相談の申込データ（デモ）
+     ページ内のメモリにだけ保持します。再読み込みで初期状態に戻ります。
+     ===================================================== */
+  var ROOMS = {
+    shibuya:{ name:"渋谷教室",   bg:"var(--mint)",  ink:"var(--mint-deep)" },
+    ebisu:  { name:"恵比寿教室", bg:"var(--peach)", ink:"var(--peach-deep)" },
+    yoyogi: { name:"代々木教室", bg:"var(--lav)",   ink:"var(--lav-deep)" }
+  };
+  var TYPES = {
+    "教室見学":{ bg:"var(--sky)",   ink:"var(--sky-deep)",   dateLabel:"見学希望日" },
+    "発達相談":{ bg:"var(--lemon)", ink:"var(--lemon-deep)", dateLabel:"相談希望日" }
+  };
+  var STATUS = "受付";
+  var WEEK = ["日","月","火","水","木","金","土"];
+
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function pad(n){ return (n < 10 ? "0" : "") + n; }
+  function ymd(d){ return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+  function todayYmd(){ return ymd(new Date()); }
+  function parseYmd(s){ var p = s.split("-"); return new Date(+p[0], +p[1]-1, +p[2]); }
+  function fmtDate(s){ var d = parseYmd(s); return d.getFullYear() + "年" + (d.getMonth()+1) + "月" + d.getDate() + "日（" + WEEK[d.getDay()] + "）"; }
+  function fmtDateShort(s){ var d = parseYmd(s); return (d.getMonth()+1) + "/" + d.getDate() + "（" + WEEK[d.getDay()] + "）"; }
+  function fmtTime(d){ return (d.getMonth()+1) + "/" + d.getDate() + "（" + WEEK[d.getDay()] + "）" + pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+  function fmtTimeLong(d){ return d.getFullYear() + "年" + (d.getMonth()+1) + "月" + d.getDate() + "日（" + WEEK[d.getDay()] + "）" + pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+  /* 全角数字→半角、ハイフン・空白・かっこを除いた数字だけ */
+  function telDigits(s){
+    return String(s).replace(/[０-９]/g, function(c){ return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+                    .replace(/[\s\-‐－―ー−()（）]/g, "");
+  }
+  /* base から add 日後。日曜（休所）なら月曜にずらす */
+  function shiftOpen(base, add){
+    var d = parseYmd(base); d.setDate(d.getDate() + add);
+    while (d.getDay() === 0) d.setDate(d.getDate() + 1);
+    return ymd(d);
+  }
+  function openDays(start, gaps){
+    var out = [shiftOpen(todayYmd(), start)];
+    gaps.forEach(function(g){ out.push(shiftOpen(out[out.length-1], g)); });
+    return out;
+  }
+  function signature(v){
+    return [v.type, v.room, v.name.replace(/\s+/g,""), telDigits(v.tel), v.callTime, v.date1, v.date2, v.date3].join("|");
+  }
+
+  var apps = [], seq = 0;
+  function addApp(v, receivedAt, isNew){
+    seq += 1;
+    var app = {
+      id: "A-" + (1000 + seq), receivedAt: receivedAt, status: STATUS, isNew: !!isNew,
+      type: v.type, room: v.room, name: v.name, tel: v.tel, callTime: v.callTime,
+      date1: v.date1 || "", date2: v.date2 || "", date3: v.date3 || ""
+    };
+    app.sig = signature(app);
+    apps.push(app);
+    return app;
+  }
+  /* 初期のサンプル申込（架空の名前・電話番号） */
+  function seedData(){
+    apps = []; seq = 0;
+    var H = 3600 * 1000, now = Date.now();
+    [
+      { h:122, type:"教室見学", room:"ebisu",   name:"山本 なお",   tel:"090-0000-5555", callTime:"午後",       dates:openDays(2,[2]) },
+      { h:75,  type:"発達相談", room:"shibuya", name:"小林 ゆう",   tel:"070-0000-4444", callTime:"午後",       dates:openDays(8,[1,1]) },
+      { h:46,  type:"教室見学", room:"yoyogi",  name:"鈴木 あや",   tel:"08000003333",   callTime:"いつでも可", dates:openDays(4,[3]) },
+      { h:20,  type:"教室見学", room:"shibuya", name:"田中 みき",   tel:"03-0000-2222",  callTime:"夕方",       dates:openDays(3,[]) },
+      { h:2,   type:"発達相談", room:"ebisu",   name:"佐藤 はるか", tel:"090-0000-1111", callTime:"午前",       dates:openDays(5,[1,2]) }
+    ].forEach(function(s){
+      addApp({ type:s.type, room:s.room, name:s.name, tel:s.tel, callTime:s.callTime,
+               date1:s.dates[0], date2:s.dates[1], date3:s.dates[2] }, new Date(now - s.h * H - 17 * 60 * 1000), false);
+    });
+  }
+
+  function chip(label, bg, ink){ return '<span class="chip" style="--chip-bg:' + bg + ';--chip-ink:' + ink + '">' + esc(label) + '</span>'; }
+  function typeChip(t){ return chip(t, TYPES[t].bg, TYPES[t].ink); }
+  function roomChip(r){ return chip(ROOMS[r].name, ROOMS[r].bg, ROOMS[r].ink); }
+
+  var toastEl = document.getElementById("toast"), toastTimer;
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function(){ toastEl.hidden = true; }, 2600);
+  }
+
+  /* =====================================================
+     保護者向けフォーム
+     ===================================================== */
+  var form = document.getElementById("contact-form");
+  var presetMsg = document.getElementById("preset-msg");
+  var errorsBox = document.getElementById("form-errors");
+  var submitBtn = document.getElementById("submit-btn");
+  var done = document.getElementById("contact-done");
+  var dateLegend = document.getElementById("date-legend");
+  var FIELDS = [
+    { key:"type",     focus:"type-visit", label:"お申し込みの種類" },
+    { key:"room",     focus:"room-first", label:"ご希望の教室" },
+    { key:"name",     focus:"in-name",    label:"お名前" },
+    { key:"tel",      focus:"in-tel",     label:"電話番号" },
+    { key:"callTime", focus:"call-first", label:"つながりやすい時間帯" },
+    { key:"date1",    focus:"in-date1",   label:"第1希望日" },
+    { key:"date2",    focus:"in-date2",   label:"第2希望日" },
+    { key:"date3",    focus:"in-date3",   label:"第3希望日" }
+  ];
+  var tried = false, submitting = false, lastApp = null;
+
+  function setDateMin(){
+    var t = todayYmd();
+    ["in-date1","in-date2","in-date3"].forEach(function(id){ document.getElementById(id).min = t; });
+  }
+  function readForm(){
+    var el = form.elements;
+    return {
+      type: el.type.value, room: el.room.value,
+      name: el.name.value.trim(), tel: el.tel.value.trim(), callTime: el.callTime.value,
+      date1: el.date1.value, date2: el.date2.value, date3: el.date3.value
+    };
+  }
+  function dateLabel(){ var t = form.elements.type.value; return (TYPES[t] || TYPES["教室見学"]).dateLabel; }
+  function syncDateLabel(){ dateLegend.textContent = dateLabel(); }
+
+  function validate(){
+    var v = readForm(), e = {}, today = todayYmd();
+    if (!v.type) e.type = "お申し込みの種類を選んでください。";
+    if (!v.room) e.room = "ご希望の教室を選んでください。";
+    if (!v.name) e.name = "保護者さまのお名前を入力してください。";
+    if (!v.tel) e.tel = "電話番号を入力してください。";
+    else if (!/^0\d{9,10}$/.test(telDigits(v.tel))) e.tel = "電話番号は、0から始まる10〜11桁の数字で入力してください。";
+    if (!v.callTime) e.callTime = "お電話がつながりやすい時間帯を選んでください。";
+    ["date1","date2","date3"].forEach(function(k, i){
+      var input = form.elements[k], d = v[k];
+      if (input.validity && input.validity.badInput){ e[k] = "日付を最後まで入力してください。"; return; }
+      if (!d){ if (i === 0) e[k] = "第1希望の" + dateLabel() + "を選んでください。"; return; }
+      if (d < today){ e[k] = "過去の日付です。今日以降の日付を選んでください。"; return; }
+      for (var j = 0; j < i; j++){
+        if (v["date" + (j+1)] === d){ e[k] = "第" + (j+1) + "希望と同じ日です。別の日を選ぶか、空欄にしてください。"; return; }
+      }
+    });
+    return { v:v, e:e };
+  }
+  function showErrors(e){
+    var list = [];
+    FIELDS.forEach(function(f){
+      var msg = e[f.key], err = document.getElementById("err-" + f.key), wrap = document.getElementById("f-" + f.key);
+      err.textContent = msg || ""; err.hidden = !msg;
+      wrap.classList.toggle("is-invalid", !!msg);
+      wrap.querySelectorAll("input").forEach(function(inp){
+        if (msg) inp.setAttribute("aria-invalid", "true"); else inp.removeAttribute("aria-invalid");
+      });
+      if (msg) list.push('<li><a href="#' + f.focus + '" data-focus="' + f.focus + '">' + esc(f.label) + '</a>：' + esc(msg) + '</li>');
+    });
+    errorsBox.hidden = !list.length;
+    errorsBox.innerHTML = list.length ? "<b>入力内容を確認してください（" + list.length + "か所）</b><ul>" + list.join("") + "</ul>" : "";
+    return list.length;
+  }
+  errorsBox.addEventListener("click", function(ev){
+    var a = ev.target.closest("[data-focus]"); if (!a) return;
+    ev.preventDefault();
+    var el = document.getElementById(a.getAttribute("data-focus"));
+    el.focus(); el.scrollIntoView({ block:"center", behavior: reduceMotion ? "auto" : "smooth" });
+  });
+  function firstInvalid(e){
+    for (var i = 0; i < FIELDS.length; i++) if (e[FIELDS[i].key]) return document.getElementById(FIELDS[i].focus);
+    return null;
+  }
+
+  form.addEventListener("change", function(ev){
+    if (ev.target.name === "type") syncDateLabel();
+    if (ev.target.name === "room") presetMsg.classList.remove("is-show");
+    if (tried) showErrors(validate().e);
+  });
+  form.addEventListener("input", function(){ if (tried) showErrors(validate().e); });
+
+  /* サンプル入力：架空の名前・電話番号・希望日（種類と教室は選択中のものを残す） */
+  document.getElementById("fill-sample").addEventListener("click", function(){
+    var el = form.elements;
+    if (!el.room.value) el.room.value = "shibuya";
+    el.name.value = "にこにこ はなこ";
+    el.tel.value = "090-0000-1234";
+    el.callTime.value = "午後";
+    var d = openDays(3, [2, 2]);
+    el.date1.value = d[0]; el.date2.value = d[1]; el.date3.value = d[2];
+    syncDateLabel();
+    if (tried) showErrors(validate().e);
+    toast("サンプル情報を入力しました");
+  });
+
+  form.addEventListener("submit", function(ev){
+    ev.preventDefault();
+    if (submitting) return;               /* 連打による二重送信を防ぐ */
+    tried = true;
+    var r = validate();
+    if (showErrors(r.e)){
+      var el = firstInvalid(r.e);
+      if (el){ el.focus({ preventScroll:true }); el.scrollIntoView({ block:"center", behavior: reduceMotion ? "auto" : "smooth" }); }
+      return;
+    }
+    submitting = true; submitBtn.disabled = true;
+    var sig = signature(r.v), existing = null;
+    apps.forEach(function(a){ if (a.sig === sig) existing = a; });
+    var app = existing || addApp(r.v, new Date(), true);
+    updateBadge();
+    showDone(app, !!existing);
+    submitting = false; submitBtn.disabled = false;
+  });
+
+  function showDone(app, dup){
+    lastApp = app;
+    document.getElementById("done-id").textContent = app.id;
+    document.getElementById("done-dup").hidden = !dup;
+    document.getElementById("done-type").textContent = app.type;
+    document.getElementById("done-room").textContent = ROOMS[app.room].name;
+    document.getElementById("done-date-label").textContent = TYPES[app.type].dateLabel;
+    document.getElementById("done-dates").innerHTML = ["date1","date2","date3"].map(function(k, i){
+      return app[k] ? "<li><small>第" + (i+1) + "希望</small>" + esc(fmtDate(app[k])) + "</li>" : "";
+    }).join("");
+    form.hidden = true; done.hidden = false;
+    done.focus({ preventScroll:true });
+    scrollToEl(document.getElementById("contact"));
+  }
+  function resetForm(){
+    form.reset(); tried = false; showErrors({});
+    presetMsg.classList.remove("is-show");
+    syncDateLabel(); setDateMin();
+    form.hidden = false; done.hidden = true; lastApp = null;
+  }
+  document.getElementById("done-again").addEventListener("click", function(){
+    resetForm();
+    scrollToEl(document.getElementById("contact"));
+    document.getElementById("type-visit").focus({ preventScroll:true });
+  });
+  document.getElementById("done-staff").addEventListener("click", function(){
+    if (lastApp){ selectedId = lastApp.id; filter = "all"; }
+    if (view === "staff") renderStaff(); else setView("staff");
+  });
+
+  /* 教室カードのボタン → その教室を選択済みにしてフォームへ */
+  document.querySelectorAll("[data-room]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var id = btn.getAttribute("data-room");
+      if (form.hidden) resetForm();
+      form.elements.room.value = id;
+      presetMsg.textContent = ROOMS[id].name + "を選択した状態で開きました。教室はこのフォームでも変更できます。";
+      presetMsg.classList.add("is-show");
+      if (tried) showErrors(validate().e);
+      scrollToEl(document.getElementById("contact"));
+      var radio = form.querySelector('input[name="room"][value="' + id + '"]');
+      setTimeout(function(){ radio.focus({ preventScroll:true }); }, reduceMotion ? 0 : 600);
+    });
+  });
+
+  /* =====================================================
+     スタッフ閲覧
+     ===================================================== */
+  var staffView = document.getElementById("staff-view");
+  var staffBody = document.getElementById("staff-body");
+  var staffList = document.getElementById("staff-list");
+  var staffDetail = document.getElementById("staff-detail");
+  var filter = "all", selectedId = null, view = null, parentScroll = 0;
+
+  function sorted(){ return apps.slice().sort(function(a, b){ return b.receivedAt - a.receivedAt; }); }
+  function findApp(id){ for (var i = 0; i < apps.length; i++) if (apps[i].id === id) return apps[i]; return null; }
+
+  function renderStaff(){
+    var all = sorted();
+    var shown = filter === "all" ? all : all.filter(function(a){ return a.room === filter; });
+    document.querySelectorAll("[data-filter]").forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-filter") === filter));
+    });
+    document.querySelectorAll("[data-num]").forEach(function(n){
+      var k = n.getAttribute("data-num");
+      n.textContent = (k === "all" ? all : all.filter(function(a){ return a.room === k; })).length + "件";
+    });
+    document.getElementById("staff-count").textContent =
+      (filter === "all" ? "すべての教室" : ROOMS[filter].name) + "：" + shown.length + "件の申込";
+
+    var sel = selectedId ? findApp(selectedId) : null;
+    if (sel && filter !== "all" && sel.room !== filter){ sel = null; selectedId = null; }
+
+    staffList.innerHTML = shown.length ? shown.map(function(a){
+      var r = ROOMS[a.room];
+      return '<li><button type="button" class="app-row" data-id="' + a.id + '" aria-current="' + (sel && sel.id === a.id) + '"' +
+        ' style="--r-bg:' + r.bg + ';--r-ink:' + r.ink + '" aria-label="' + esc(a.name + "さま、" + a.type + "、" + r.name + "、詳細を見る") + '">' +
+        '<span class="app-row__time">' + esc(fmtTime(a.receivedAt)) + '</span>' +
+        '<span class="app-row__type">' + typeChip(a.type) + '</span>' +
+        '<span class="app-row__room">' + roomChip(a.room) + '</span>' +
+        '<span class="app-row__name">' + esc(a.name) + ' さま' + (a.isNew ? ' <span class="new-badge">NEW</span>' : '') + '</span>' +
+        '<span class="app-row__date"><small>第1希望</small>' + esc(fmtDateShort(a.date1)) + '</span>' +
+        '<span class="app-row__status"><span class="status-badge">' + STATUS + '</span></span>' +
+        '</button></li>';
+    }).join("") : '<li class="staff-empty">この教室への申込はまだありません。</li>';
+
+    staffBody.classList.toggle("is-detail", !!sel);
+    staffDetail.innerHTML = sel ? detailHtml(sel)
+      : '<p class="staff-placeholder">一覧から申込を選ぶと、<br>電話番号や希望日などの詳細が表示されます。</p>';
+  }
+
+  function detailHtml(a){
+    function row(dt, dd){ return "<div><dt>" + dt + "</dt><dd>" + dd + "</dd></div>"; }
+    function dateDd(s){ return s ? esc(fmtDate(s)) : '<span class="empty">未入力</span>'; }
+    var digits = telDigits(a.tel);
+    return '<button type="button" class="staff-detail__back" data-back>' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧に戻る</button>' +
+      '<p class="staff-detail__top"><span class="status-badge">' + STATUS + '</span><span>受付番号 ' + esc(a.id) + '</span></p>' +
+      '<h2 id="detail-title" tabindex="-1">' + esc(a.name) + '<small>さま</small></h2>' +
+      '<div class="staff-detail__chips">' + typeChip(a.type) + roomChip(a.room) + '</div>' +
+      '<h3>申込内容</h3><dl class="detail-list">' +
+        row("受付日時", esc(fmtTimeLong(a.receivedAt))) +
+        row("申込種別", esc(a.type)) +
+        row("希望教室", esc(ROOMS[a.room].name)) +
+        row("保護者名", esc(a.name) + " さま") +
+      '</dl>' +
+      '<h3>ご連絡先</h3><dl class="detail-list">' +
+        row("電話番号", '<a href="tel:' + esc(digits) + '">' + esc(a.tel) + '</a>') +
+        row("つながりやすい<br>時間帯", esc(a.callTime)) +
+      '</dl>' +
+      '<h3>' + esc(TYPES[a.type].dateLabel) + '</h3><dl class="detail-list">' +
+        row("第1希望", dateDd(a.date1)) +
+        row("第2希望", dateDd(a.date2)) +
+        row("第3希望", dateDd(a.date3)) +
+      '</dl>' +
+      '<p class="staff-detail__note">※ デモ用の架空データです。実際の運用では、この内容をもとにお電話で日程を調整します。</p>';
+  }
+
+  staffList.addEventListener("click", function(ev){
+    var b = ev.target.closest("[data-id]"); if (!b) return;
+    selectedId = b.getAttribute("data-id");
+    var a = findApp(selectedId); if (a) a.isNew = false;
+    renderStaff(); updateBadge();
+    if (!wideStaff.matches) window.scrollTo(0, staffView.offsetTop);
+    var h = document.getElementById("detail-title"); if (h) h.focus({ preventScroll: wideStaff.matches });
+  });
+  staffDetail.addEventListener("click", function(ev){
+    if (!ev.target.closest("[data-back]")) return;
+    var id = selectedId; selectedId = null; renderStaff();
+    var row = staffList.querySelector('[data-id="' + id + '"]');
+    if (row){ row.focus({ preventScroll:true }); row.scrollIntoView({ block:"center" }); }
+  });
+  document.querySelectorAll("[data-filter]").forEach(function(b){
+    b.addEventListener("click", function(){ filter = b.getAttribute("data-filter"); renderStaff(); });
+  });
+  var wideStaff = window.matchMedia("(min-width: 1100px)");
+
+  /* =====================================================
+     デモ操作：画面切り替え・初期化
+     ===================================================== */
+  var badge = document.getElementById("staff-badge");
+  var hint = document.getElementById("demo-hint");
+  function updateBadge(){
+    var n = apps.filter(function(a){ return a.isNew; }).length;
+    badge.textContent = n ? "NEW " + n : apps.length + "件";
+  }
+  function setView(v){
+    if (v === view) return;
+    var first = view === null;
+    if (view === "parent") parentScroll = window.scrollY;
+    view = v;
+    document.body.setAttribute("data-view", v);
+    staffView.hidden = v !== "staff";
+    document.querySelectorAll("[data-view]").forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-view") === v));
+    });
+    if (v === "staff"){
+      closeMenu();
+      renderStaff();
+      window.scrollTo(0, 0);
+      var h = selectedId && document.getElementById("detail-title");
+      (h || document.getElementById("staff-title")).focus({ preventScroll:true });
+      hint.textContent = "スタッフ閲覧を表示中。保護者ページのフォームから送った申込が、ここにすぐ反映されます。";
+    } else {
+      if (!first) window.scrollTo(0, parentScroll);
+      hint.textContent = "保護者ページを表示中。フォームで「希望日を送る」と、スタッフ閲覧の一覧にすぐ反映されます。";
+    }
+  }
+  document.querySelectorAll("[data-view]").forEach(function(b){
+    b.addEventListener("click", function(){ setView(b.getAttribute("data-view")); });
+  });
+  document.getElementById("demo-reset").addEventListener("click", function(){
+    seedData(); filter = "all"; selectedId = null;
+    resetForm(); updateBadge();
+    if (view === "staff") renderStaff();
+    toast("サンプルデータを初期状態に戻しました");
+  });
+
+  seedData(); setDateMin(); syncDateLabel(); updateBadge(); renderStaff();
+  setView("parent");
+
+  /* ---- スマホ下部の固定ボタン：ファーストビューと問い合わせ欄では隠す ---- */
+  var floatCta = document.getElementById("float-cta");
+  if ("IntersectionObserver" in window){
+    var hide = { hero:true, contact:false, footer:false };
+    function sync(){ floatCta.classList.toggle("is-hidden", hide.hero || hide.contact || hide.footer); }
+    var io2 = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.target.classList.contains("hero__actions")) hide.hero = en.isIntersecting || en.boundingClientRect.top > 0;
+        else if (en.target.id === "contact") hide.contact = en.isIntersecting;
+        else hide.footer = en.isIntersecting;
+      });
+      sync();
+    });
+    io2.observe(document.querySelector(".hero__actions"));
+    io2.observe(document.getElementById("contact"));
+    io2.observe(document.querySelector(".site-footer"));
+  }
+})();
+</script>
+</body>
+</html>

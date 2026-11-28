@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../.astro/collections/works.schema.json",
+  "order": 4,
+  "url": "/demos/art-school/",
+  "image": "./art-school.jpg",
+  "concept": true,
+  "title": { "ja": "Little Palette", "en": "Little Palette" },
+  "category": { "ja": "ホームページ制作 / 予約機能", "en": "Website / Booking" },
+  "desc": {
+    "ja": "子ども向け英語アート教室「リトルパレット英語アート教室」の日英対応サイト。保護者は体験レッスンを予約でき、スタッフは予約の確認と枠の追加ができます。",
+    "en": "Bilingual site for a children's English art studio. Parents book a trial lesson; staff see the bookings and add lesson slots."
+  }
+}
