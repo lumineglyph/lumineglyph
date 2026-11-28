@@ -1,0 +1,4 @@
+# Paths html-validate skips (gitignore syntax, relative to this folder).
+# The demos are Moena's standalone mock sites, copied in as they are from public/demos/.
+# They aren't built by Astro and don't follow this site's markup rules (e.g. inline style="").
+dist/demos/

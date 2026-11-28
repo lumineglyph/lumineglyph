@@ -1,5 +1,6 @@
 ---
 // One work: screenshot, category, title, description and a link to the live site (new tab).
+// A concept work (a mock site in public/demos/) gets a small label after its category.
 import { Picture } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import { copy, type Lang } from "../i18n";
@@ -30,7 +31,7 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
       alt={title + t.imageAltSuffix}
     />
   </a>
-  <p class="work-cat">{w.category[lang]}</p>
+  <p class="work-cat">{w.category[lang]}{w.concept && <>{" "}<span class="work-tag">{t.concept}</span></>}</p>
   <Heading class="work-title">{title}</Heading>
   <p class="work-desc">{w.desc[lang]}</p>
   <a class="work-link" href={w.url} target="_blank" rel="noopener">

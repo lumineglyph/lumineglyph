@@ -1,0 +1,1338 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>リトルパレット英語アート教室</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --text: #333;
+    --muted: #666;
+    --line: #dcdcdc;
+    --paper: #fff;
+    --page: #f3f0f2;
+    --accent: #b0416a;
+    --error: #b0283c;
+    --pink: rgba(242, 160, 190, .75);
+    --aqua: rgba(150, 225, 220, .7);
+    --orchid: rgba(232, 165, 222, .5);
+    --butter: rgba(248, 226, 150, .55);
+    --serif-en: "Cormorant Garamond", "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --mincho: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --sans: "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; font-variant-numeric: lining-nums; }
+  body {
+    margin: 0; background: var(--page); color: var(--text);
+    font-family: var(--sans); font-size: 15px; line-height: 1.9; letter-spacing: .04em;
+  }
+  button, input, select { font: inherit; color: inherit; letter-spacing: inherit; }
+  button { cursor: pointer; }
+  h1, h2, h3 { margin: 0; font-family: var(--mincho); font-weight: 500; color: var(--ink); line-height: 1.5; letter-spacing: .08em; }
+  p { margin: 0; }
+  ul, ol { margin: 0; padding: 0; }
+
+  /* ---------- Portfolio demo strip (not part of the designed site) ---------- */
+  .demo {
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2px 14px;
+    padding: 6px 16px; background: #e6e2e4; border-bottom: 1px solid #d3cdd0; color: var(--muted);
+    font-size: 12px; line-height: 1.6; letter-spacing: .04em; text-align: center;
+  }
+  .demo a { color: var(--ink); text-underline-offset: 3px; white-space: nowrap; padding: 4px 0; }
+
+  /* ---------- Device frame ---------- */
+  .frame { max-width: 430px; margin: 0 auto; background: var(--paper); min-height: 100vh; position: relative; overflow: hidden; }
+  .frame.wide { max-width: 720px; }
+  @media (min-width: 480px) {
+    .frame { margin: 24px auto 48px; min-height: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, .08); }
+  }
+
+  /* Watercolor-like gradient wash */
+  .mesh {
+    background:
+      radial-gradient(60% 45% at 12% 88%, var(--pink), transparent 70%),
+      radial-gradient(55% 45% at 92% 72%, var(--aqua), transparent 70%),
+      radial-gradient(45% 35% at 62% 6%, var(--orchid), transparent 70%),
+      radial-gradient(40% 30% at 22% 28%, var(--butter), transparent 70%),
+      var(--paper);
+  }
+
+  /* ---------- Header ---------- */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 14px 20px; position: sticky; top: 0; z-index: 5;
+    background: rgba(255, 255, 255, .82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  .brand { font-family: var(--serif-en); font-weight: 500; font-size: 17px; letter-spacing: .24em; line-height: 1.2; color: var(--ink); }
+  .brand small { display: block; font-family: var(--sans); font-size: 10px; letter-spacing: .12em; color: var(--muted); margin-top: 2px; }
+  .lang { display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0; font-size: 12px; }
+  .lang button { border: 0; background: transparent; padding: 4px 6px; min-height: 36px; color: var(--muted); border-bottom: 1px solid transparent; }
+  .lang button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+  .lang .sep { color: var(--line); }
+
+  /* ---------- Sections ---------- */
+  .section { padding: 56px 24px; position: relative; }
+  .section h2 { font-size: 23px; margin-bottom: 24px; }
+  .eyebrow {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+    font-family: var(--serif-en); font-size: 14px; font-style: italic; letter-spacing: .16em; color: var(--accent);
+  }
+  .eyebrow::before { content: ""; width: 28px; height: 1px; background: currentColor; }
+  .eyebrow .no { font-style: normal; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .small { font-size: 12px; }
+  .stack > * + * { margin-top: 16px; }
+
+  /* Image placeholders */
+  .ph {
+    border: 1px solid var(--line);
+    background: linear-gradient(135deg, #fafafa, #efefef);
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    color: var(--muted); font-size: 11px; padding: 16px; letter-spacing: .06em;
+  }
+  .ph span::before { content: "IMAGE — "; font-family: var(--serif-en); letter-spacing: .2em; }
+
+  /* Buttons */
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; min-height: 58px; padding: 14px 20px; border: 1px solid var(--ink);
+    background: var(--ink); color: #fff; font-family: var(--sans); font-weight: 500; font-size: 15px; letter-spacing: .14em;
+    transition: background .2s, color .2s;
+  }
+  .btn:hover { background: #fff; color: var(--ink); }
+  .btn.secondary { background: transparent; color: var(--ink); }
+  .btn.secondary:hover { background: var(--ink); color: #fff; }
+  .btn[disabled], .btn[disabled]:hover { background: #ececec; border-color: #ececec; color: #999; cursor: not-allowed; }
+  .link { background: none; border: 0; padding: 8px 0; color: var(--muted); font-size: 13px; min-height: 40px; text-decoration: underline; text-underline-offset: 4px; }
+
+  /* Hero */
+  .hero { padding: 32px 24px 0; position: relative; }
+  .hero .vlabel {
+    position: absolute; right: 14px; top: 40px; writing-mode: vertical-rl;
+    font-family: var(--serif-en); font-size: 12px; letter-spacing: .3em; color: var(--ink); text-transform: uppercase;
+  }
+  .hero .kicker { font-family: var(--serif-en); font-size: 15px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink); }
+  .hero h1 { font-size: 30px; line-height: 1.6; margin: 18px 0 20px; padding-right: 24px; }
+  .hero .lead { font-size: 14px; padding-right: 24px; }
+  .hero-ph { aspect-ratio: 4 / 3; margin: 28px -24px 0 48px; border: 1px solid rgba(26,26,26,.18); border-right: 0; background: linear-gradient(160deg, rgba(255,255,255,.92), rgba(255,255,255,.6)); color: var(--text); }
+  .marquee { overflow: hidden; white-space: nowrap; margin: -40px 0 0; position: relative; pointer-events: none; }
+  .marquee span {
+    display: inline-block; padding-right: 40px; font-family: var(--serif-en); font-size: 64px; font-weight: 500; letter-spacing: .08em; line-height: 1.1;
+    color: transparent; -webkit-text-stroke: 1px rgba(26, 26, 26, .35);
+    animation: drift 28s linear infinite;
+  }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+  @media (prefers-reduced-motion: reduce) { .marquee span { animation: none; } }
+  .hero .cta-wrap { padding: 24px 0 48px; }
+  .hero .cta-wrap p { text-align: center; margin-top: 12px; }
+
+  .concept-text { font-family: var(--mincho); font-size: 16px; line-height: 2.2; color: var(--ink); }
+
+  /* Facts */
+  .facts { margin: 0; border-top: 1px solid var(--ink); }
+  .facts div { display: grid; grid-template-columns: 7.5em 1fr; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .facts dt { color: var(--muted); }
+  .facts dd { margin: 0; color: var(--ink); font-weight: 500; }
+
+  /* Support — numbered circles */
+  .support li { list-style: none; display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: start; }
+  .support li + li { margin-top: 24px; }
+  .support .num {
+    width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--ink);
+    display: flex; align-items: center; justify-content: center; font-family: var(--serif-en); font-size: 20px; color: var(--ink);
+  }
+  .support li:first-child .num { background: var(--ink); color: #fff; }
+  .support p { padding-top: 6px; }
+
+  .checklist li { list-style: none; padding: 12px 0 12px 22px; position: relative; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .checklist li::before { content: ""; position: absolute; left: 2px; top: 23px; width: 8px; height: 1px; background: var(--ink); }
+
+  /* Works */
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .works .ph { aspect-ratio: 3 / 4; }
+  .works .ph:nth-child(1) { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+  .hero-img { margin: 28px -24px 0 48px; position: relative; }
+  .hero-img img { display: block; width: 100%; height: auto; }
+  .work { margin: 0; min-width: 0; }
+  .work img { display: block; width: 100%; height: auto; }
+  .works.has-images .work:first-child { grid-column: 1 / -1; }
+  .works-cap { font-family: var(--serif-en); font-style: italic; font-size: 13px; color: var(--muted); margin-top: 12px; }
+
+  /* Flow */
+  .flow li { list-style: none; display: grid; grid-template-columns: 48px 1fr; gap: 12px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .flow li:first-child { border-top: 1px solid var(--ink); }
+  .flow .n { font-family: var(--serif-en); font-size: 28px; line-height: 1.1; color: var(--ink); }
+  .flow strong { display: block; font-family: var(--mincho); font-weight: 500; color: var(--ink); }
+
+  /* Regular lessons */
+  .course { border-top: 1px solid var(--ink); padding-top: 18px; }
+  .course + .course { margin-top: 36px; }
+  .courses + .facts { margin-top: 36px; }
+  .course-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .course h3 { font-size: 17px; }
+  .course .price { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .course .price b { font-family: var(--serif-en); font-size: 30px; font-weight: 500; color: var(--ink); letter-spacing: .02em; margin: 0 2px; }
+  .course .times { margin: 10px 0 0; }
+  .course .times div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .course .times dt { font-size: 13px; color: var(--muted); }
+  .course .times dd { margin: 0; font-family: var(--serif-en); font-size: 21px; font-weight: 500; color: var(--ink); letter-spacing: .04em; }
+
+  /* Booking card */
+  .card { background: rgba(255, 255, 255, .92); padding: 28px 22px; }
+
+  /* FAQ */
+  details.faq { border-bottom: 1px solid var(--line); }
+  details.faq:first-of-type { border-top: 1px solid var(--ink); }
+  details.faq summary { padding: 18px 36px 18px 30px; cursor: pointer; list-style: none; position: relative; font-size: 14px; color: var(--ink); }
+  details.faq summary::-webkit-details-marker { display: none; }
+  details.faq summary::before { content: "Q."; position: absolute; left: 0; top: 15px; font-family: var(--serif-en); font-size: 19px; color: var(--accent); }
+  details.faq summary::after { content: ""; position: absolute; right: 6px; top: 50%; width: 12px; height: 1px; background: var(--ink); box-shadow: none; }
+  details.faq:not([open]) summary::before { }
+  details.faq summary .pm { position: absolute; right: 11px; top: 50%; width: 1px; height: 12px; margin-top: -6px; background: var(--ink); }
+  details.faq[open] summary .pm { display: none; }
+  details.faq p { padding: 0 0 18px 30px; color: var(--muted); font-size: 13px; }
+
+  .footer { padding: 48px 24px 40px; text-align: center; font-size: 11px; color: var(--muted); border-top: 1px solid var(--line); }
+  .footer .brand { margin-bottom: 18px; }
+  .footer .ig { display: inline-block; font-family: var(--serif-en); letter-spacing: .24em; font-size: 13px; color: var(--ink); border-bottom: 1px solid var(--ink); margin-bottom: 20px; }
+
+  /* Steps */
+  .steps { display: flex; padding: 28px 24px 22px; counter-reset: st; }
+  .steps li { list-style: none; flex: 1; text-align: center; font-size: 11px; color: var(--muted); position: relative; }
+  .steps li::before {
+    counter-increment: st; content: "0" counter(st); display: flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; margin: 0 auto 6px; border-radius: 50%; border: 1px solid #bbb; background: rgba(255,255,255,.85);
+    font-family: var(--serif-en); font-size: 15px; color: var(--muted); position: relative; z-index: 1;
+  }
+  .steps li:not(:last-child)::after { content: ""; position: absolute; top: 19px; left: calc(50% + 19px); right: calc(-50% + 19px); height: 1px; background: #bbb; }
+  .steps li.on { color: var(--ink); font-weight: 500; }
+  .steps li.on::before { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .steps li.past::before { border-color: var(--ink); color: var(--ink); }
+
+  /* Slots */
+  .day + .day { margin-top: 32px; }
+  .day h3 { font-size: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--ink); }
+  .slot {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    width: 100%; text-align: left; min-height: 64px; padding: 10px 4px; background: transparent;
+    border: 0; border-bottom: 1px solid var(--line); transition: background .15s, padding .15s;
+  }
+  .slot .time { font-family: var(--serif-en); font-size: 24px; font-weight: 500; color: var(--ink); letter-spacing: .04em; }
+  .slot .status { font-size: 12px; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+  .slot:not(.full) .status::after { content: "→"; font-family: var(--serif-en); font-size: 16px; }
+  .slot[aria-pressed="true"] { background: var(--ink); padding-left: 16px; padding-right: 16px; }
+  .slot[aria-pressed="true"] .time, .slot[aria-pressed="true"] .status { color: #fff; }
+  .slot[aria-pressed="true"] .status::after { content: ""; }
+  .slot.full { cursor: not-allowed; }
+  .slot.full .time { color: #b5b5b5; text-decoration: line-through; text-decoration-thickness: 1px; }
+  .slot.full .status { color: #999; border: 1px solid #ccc; padding: 0 8px; }
+  .legend { display: flex; gap: 20px; font-size: 11px; color: var(--muted); }
+  .legend span::before { content: ""; display: inline-block; width: 18px; height: 1px; background: var(--ink); margin-right: 6px; vertical-align: 4px; }
+  .legend span.l-full::before { background: #c5c5c5; }
+  .sticky-cta { position: sticky; bottom: 0; background: rgba(255,255,255,.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--line); padding: 12px 24px calc(14px + env(safe-area-inset-bottom)); z-index: 4; }
+  .sticky-cta .picked { font-size: 12px; margin-bottom: 8px; text-align: center; color: var(--muted); }
+
+  .notice { border-left: 2px solid var(--ink); padding: 8px 14px; font-size: 13px; background: #f6f6f6; }
+  .notice.error { border-left-color: var(--error); color: var(--error); background: #fbf1f3; }
+
+  /* Form */
+  .summary-card { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 6px 0; }
+  .summary-card .row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 10px 0; }
+  .summary-card .row + .row { border-top: 1px solid var(--line); }
+  .summary-card .row span { color: var(--muted); }
+  .summary-card .row b { text-align: right; font-weight: 500; color: var(--ink); }
+  .field { margin-top: 28px; }
+  .field label { display: block; font-size: 13px; color: var(--ink); margin-bottom: 4px; }
+  .req { font-size: 10px; color: var(--accent); margin-left: 8px; letter-spacing: .1em; }
+  .field input, .field select {
+    width: 100%; min-height: 50px; padding: 10px 2px; border: 0; border-bottom: 1px solid #999; border-radius: 0; background: transparent; font-size: 16px;
+    -webkit-appearance: none; appearance: none;
+  }
+  .field select { background: linear-gradient(45deg, transparent 50%, var(--ink) 50%) right 8px center / 6px 6px no-repeat, linear-gradient(-45deg, transparent 50%, var(--ink) 50%) right 2px center / 6px 6px no-repeat; }
+  .field input:focus, .field select:focus { outline: none; border-bottom: 2px solid var(--ink); }
+  .field .hint { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .field .err { display: none; font-size: 12px; margin-top: 6px; color: var(--error); }
+  .field .err::before { content: "— "; }
+  .field.invalid input, .field.invalid select { border-bottom: 2px solid var(--error); background-color: #fbf1f3; }
+  .field.invalid .err { display: block; }
+
+  /* Done */
+  .done-mark {
+    width: 64px; height: 64px; border-radius: 50%; border: 1px solid var(--ink);
+    display: flex; align-items: center; justify-content: center; font-family: var(--serif-en); font-size: 13px; letter-spacing: .14em; color: var(--ink); background: rgba(255,255,255,.8);
+  }
+
+  /* Staff */
+  .staff-head { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; gap: 8px; background: var(--ink); color: #fff; }
+  .staff-head .brand { color: #fff; font-family: var(--sans); letter-spacing: .1em; font-size: 15px; }
+  .staff-head .brand small { color: #bbb; }
+  .tabs { display: flex; border-bottom: 1px solid var(--line); }
+  .tabs button { flex: 1; background: #fff; border: 0; border-bottom: 2px solid transparent; padding: 12px 8px; min-height: 50px; color: var(--muted); }
+  .tabs button[aria-selected="true"] { border-bottom-color: var(--ink); color: var(--ink); font-weight: 500; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+  .stats div { padding: 12px 6px; text-align: center; }
+  .stats div + div { border-left: 1px solid var(--line); }
+  .stats b { display: block; font-family: var(--serif-en); font-size: 30px; font-weight: 500; color: var(--ink); line-height: 1.2; }
+  .stats span { font-size: 11px; color: var(--muted); }
+  .bk-group h3 { font-family: var(--sans); font-size: 13px; color: var(--muted); margin: 24px 0 6px; letter-spacing: .04em; }
+  .bk-row {
+    width: 100%; display: grid; grid-template-columns: 4.2em 1fr auto; gap: 8px; align-items: center; text-align: left;
+    padding: 12px 8px; border: 0; border-bottom: 1px solid var(--line); background: #fff; min-height: 58px;
+  }
+  .bk-row[aria-expanded="true"] { background: #f6f6f6; border-bottom-color: transparent; }
+  .bk-row .t { font-family: var(--serif-en); font-size: 19px; color: var(--ink); }
+  .bk-row .n { color: var(--ink); }
+  .bk-row .n small { display: block; color: var(--muted); font-size: 11px; }
+  .badge { font-size: 10px; border: 1px solid var(--ink); padding: 1px 8px; white-space: nowrap; }
+  .badge.solid { background: var(--ink); color: #fff; }
+  .chev { font-size: 10px; color: var(--muted); }
+  .bk-detail { background: #f6f6f6; padding: 4px 14px 16px; font-size: 13px; border-bottom: 1px solid var(--ink); }
+  .bk-detail dl { margin: 0; display: grid; grid-template-columns: 7.5em 1fr; gap: 6px 8px; }
+  .bk-detail dt { color: var(--muted); }
+  .bk-detail dd { margin: 0; word-break: break-all; color: var(--ink); }
+  .slot-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .slot-table th, .slot-table td { border-bottom: 1px solid var(--line); padding: 10px 4px; text-align: left; }
+  .slot-table th { font-size: 11px; color: var(--muted); font-weight: 400; border-bottom: 1px solid var(--ink); }
+  .slot-table tr.new td { background: #f6f6f6; color: var(--ink); font-weight: 500; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+    background: var(--ink); color: #fff; padding: 10px 18px; font-size: 13px; z-index: 50; max-width: calc(100% - 32px);
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* Screen tops on booking pages get a light wash */
+  .steps { background:
+      radial-gradient(70% 120% at 0% 100%, var(--pink), transparent 70%),
+      radial-gradient(60% 120% at 100% 80%, var(--aqua), transparent 70%),
+      radial-gradient(50% 100% at 55% 0%, var(--butter), transparent 70%), #fff; }
+
+  /* ---------- Desktop (parent view): photos / content / page menu ---------- */
+  .desk-left, .desk-right { display: none; }
+  [tabindex="-1"]:focus { outline: none; }
+
+  @media (min-width: 1200px) {
+    .frame.parent {
+      display: grid; grid-template-columns: minmax(280px, 1fr) minmax(0, 600px) minmax(280px, 1fr);
+      max-width: none; min-height: 100vh; margin: 0; box-shadow: none; overflow: visible; background: transparent;
+    }
+    .desk-main { min-width: 0; background: var(--paper); box-shadow: 0 20px 60px rgba(0, 0, 0, .08); }
+    .desk-main .topbar { display: none; }
+    .desk-left, .desk-right {
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: sticky; top: 0; height: 100vh; padding: 36px clamp(32px, 3.4vw, 64px) 44px;
+    }
+
+    /* Left: brand + photo slideshow */
+    .desk-left { align-items: center; }
+    .desk-left .brand { align-self: flex-start; }
+    .desk-visual { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .desk-photo {
+      position: relative; margin: 0; width: min(72%, 270px); aspect-ratio: 4 / 5; overflow: hidden; background: var(--paper);
+      border-radius: 999px 999px 18px 18px; border: 1px solid rgba(26, 26, 26, .16);
+      box-shadow: 12px 12px 0 rgba(150, 225, 220, .55);
+    }
+    .desk-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
+    .desk-photo img.on { opacity: 1; }
+    .slide-ctrl { display: flex; align-items: center; justify-content: center; margin-top: 30px; }
+    .slide-ctrl .dot-btn { width: 26px; height: 32px; padding: 0; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; }
+    .slide-ctrl .dot-btn::before { content: ""; width: 6px; height: 6px; border-radius: 3px; background: #c6bec2; transition: width .3s, background .3s; }
+    .slide-ctrl .dot-btn[aria-current="true"]::before { width: 18px; background: var(--accent); }
+    .slide-ctrl .pause { margin-left: 10px; min-height: 32px; padding: 0 4px; border: 0; background: transparent; font-family: var(--serif-en); font-style: italic; font-size: 13px; color: var(--muted); }
+    .desk-tag { font-family: var(--serif-en); font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink); }
+
+    /* Right: language + page menu + booking button */
+    .desk-right { overflow-y: auto; }
+    .desk-right .lang { align-self: flex-end; }
+    .desk-nav ol { list-style: none; }
+    .desk-nav a { display: grid; grid-template-columns: 28px 1.4em 1fr; align-items: center; gap: 0 12px; padding: 7px 0; text-decoration: none; }
+    .desk-nav .bar { height: 1px; background: var(--line); transition: background .2s; }
+    .desk-nav .no { font-family: var(--serif-en); font-size: 14px; color: var(--muted); }
+    .desk-nav .en { display: block; font-family: var(--serif-en); font-style: italic; font-size: 16px; letter-spacing: .12em; line-height: 1.4; color: var(--ink); }
+    .desk-nav .sub { display: block; font-size: 11px; line-height: 1.5; color: var(--muted); }
+    .desk-nav a:hover .en, .desk-nav a.on .en, .desk-nav a.on .no { color: var(--accent); }
+    .desk-nav a.on .bar { background: var(--accent); }
+    .desk-book .btn { font-size: 14px; letter-spacing: .1em; }
+    .desk-book p { margin-top: 10px; text-align: center; }
+  }
+  @media (min-width: 1200px) and (prefers-reduced-motion: reduce) {
+    .desk-photo img { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="demo" class="demo"></div>
+<main id="app" class="frame"></main>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ================= Studio conditions ================= */
+  var DURATION_MIN = 60;           // 体験の所要時間
+  var FEE_YEN = 2000;              // 体験料金（税込）
+  var DEFAULT_CAPACITY = 4;        // 1枠の定員
+  var AGE_MIN = 4, AGE_MAX = 9;    // 対象年齢
+  var BOOK_DAYS_BEFORE = 2;        // 体験予約はレッスンの2日前まで
+  var JOIN_MATERIALS_YEN = 10000;  // 入会時の材料費
+  var STORE_KEY = 'artSchoolDesign2.v1';
+
+  /* Regular lessons. day: 0 = Sunday … 6 = Saturday. Course names are in T[lang].courses, same order. */
+  var LESSON_MIN = 60, FEEDBACK_MIN = 10;
+  var COURSES = [
+    { fee: 12000, times: [{ day: 1, s: '15:30', e: '16:30' }, { day: 6, s: '9:00', e: '10:00' }] },
+    { fee: 14000, times: [{ day: 4, s: '16:00', e: '17:00' }, { day: 6, s: '13:00', e: '14:00' }] }
+  ];
+
+  /* Desktop page menu. id = the section's id in renderIntro(); key = the section title in T. */
+  var NAV = [
+    { id: 'top', label: 'Top' },
+    { id: 'concept', label: 'Concept', key: 'conceptTitle' },
+    { id: 'support', label: 'Support', key: 'supportTitle' },
+    { id: 'trial', label: 'Trial Lesson', key: 'factsTitle' },
+    { id: 'gallery', label: 'Gallery', key: 'worksTitle' },
+    { id: 'flow', label: 'Flow', key: 'flowTitle' },
+    { id: 'lessons', label: 'Regular Lessons', key: 'regularTitle' },
+    { id: 'booking', label: 'Booking', key: 'trialTitle' },
+    { id: 'faq', label: 'FAQ', key: 'faqTitle' }
+  ];
+
+  /* Photos (paths relative to this HTML file). Leave an entry null to keep the placeholder. */
+  var IMAGES = {
+    hero: { src: 'first_view.jpg', w: 1600, h: 1200,
+      alt: { ja: '子どもが筆で粘土のメダルに虹色を塗っているところ', en: 'A child painting rainbow stripes on a clay disc' } },
+    works: [
+      { src: 'art_image_01.jpg', w: 1600, h: 1200,
+        alt: { ja: 'カメレオンの型紙と、紙に写したカラフルなスタンプ作品', en: 'A chameleon cut-out stamp and its colorful print on paper' } },
+      { src: 'art_image_02.jpeg', w: 447, h: 447,
+        alt: { ja: '紙コップで作った3匹のタコ', en: 'Three octopuses made from paper cups' } },
+      { src: 'art_image_03.jpeg', w: 1600, h: 1210,
+        alt: { ja: 'フェルトやビーズ、モールを貼ったコラージュ', en: 'A collage of felt, beads, and pipe cleaners' } }
+    ]
+  };
+
+  /* Desktop slideshow in the arched frame. Swap in photos of smiles, student work, and lessons here. */
+  var SLIDES = [IMAGES.hero].concat(IMAGES.works).filter(Boolean);
+  var SLIDE_MS = 5000;
+
+  /* ================= Copy (ja / en) ================= */
+  var T = {
+    ja: {
+      brand: 'リトルパレット英語アート教室',
+      langLabel: '表示言語',
+      heroImg: '画像：レッスン風景（子どもが絵の具で描いている写真）',
+      heroTitle: '英語で、自由に描こう。',
+      heroLead: '{min}〜{max}歳の子どもたちが、英語にふれながら絵の具や工作で自由に表現するアート教室です。',
+      ctaSlots: '体験の空き枠を見る',
+      ctaSub: '空き枠を選んで、その場で予約できます',
+      factsTitle: '体験レッスンの概要',
+      fAge: '対象年齢', vAge: '{min}〜{max}歳',
+      fLang: 'レッスンの言語', vLang: '英語（日本語サポートあり）',
+      fDur: '所要時間', vDur: '{n}分',
+      fFee: '体験料金', vFee: '{fee}円（税込・材料費込み）',
+      fDeadline: '予約の締切', vDeadline: 'レッスンの{n}日前まで',
+      fCap: '定員', vCap: '1枠 最大{n}名',
+      fParent: '保護者の同伴', vParent: '同伴できます（教室内の見学席から見学）',
+      conceptTitle: '教室のコンセプト',
+      conceptBody: '上手に描くことより、「やってみたい」を大切にします。色や形について英語で話しながら、つくる楽しさと英語で伝える楽しさを一緒に育てます。',
+      supportTitle: '英語が初めてでも大丈夫',
+      support: [
+        '「Red」「Big」など短い単語から。ジェスチャーや実物を見せながら進めます。',
+        '日本語がわかる講師がそばにいるので、困ったときは日本語で聞けます。',
+        '英語で答えられなくても大丈夫。作品づくりを通して、自然に英語を耳にします。'
+      ],
+      worksTitle: '作品例',
+      works: ['画像：作品例1（絵の具で描いたカラフルな動物）', '画像：作品例2（紙コップ工作）', '画像：作品例3（コラージュ）'],
+      flowTitle: '体験の流れ',
+      flow: [
+        ['あいさつ（5分）', '英語で自分の名前を言ってみよう'],
+        ['今日のテーマ（10分）', '絵本で色や形の英単語にふれる'],
+        ['制作（35分）', '絵の具や工作で自由につくる'],
+        ['発表（10分）', '作品を見せ合って「Thank you!」']
+      ],
+      regularTitle: '通常レッスンのご案内',
+      courses: ['幼児レッスン', '小学生レッスン'],
+      coursePrice: '月額<b>{fee}</b>円（税込）',
+      days: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'],
+      fLesson: 'レッスン時間', vLesson: '各{min}分＋保護者へのフィードバック{fb}分',
+      fJoin: '入会時の費用', vJoin: '材料費 {fee}円（月謝とは別に、入会時に1回のみ）',
+      fFreq: '通う頻度', vFreq: '週1回（2つの曜日から、ご都合のよい日をお選びいただけます）',
+      navLabel: 'ページ内メニュー',
+      slideLabel: '写真{n}', slidePause: '一時停止', slidePlay: '再生',
+      trialTitle: '体験レッスンのご案内',
+      trialBody: '空き枠からご都合のよい日時を選んでください。予約はその場で確定します。',
+      faqTitle: 'よくある質問',
+      faq: [
+        ['英語をまったく話せなくても参加できますか？', 'はい。英語が初めてのお子さまがほとんどです。日本語がわかる講師がサポートします。'],
+        ['どんな服装で行けばいいですか？', 'エプロンは教室で用意していますが、絵の具がついてもよい服装でお越しください。'],
+        ['きょうだいで参加できますか？', 'お子さまごとに1件ずつご予約ください。'],
+        ['予約の変更やキャンセルはどうすればいいですか？', 'お電話、またはInstagramのDMでご連絡ください。']
+      ],
+      footer: '© Little Palette English Art Studio',
+      stepSlot: '日時を選ぶ', stepForm: '情報を入力', stepDone: '予約完了',
+      slotsTitle: '体験の空き枠',
+      slotsLead: 'ご希望の日時を選んでください。お名前などの入力は次の画面です。予約はレッスンの{n}日前まで受け付けています。',
+      remaining: '予約可能・残り{n}席',
+      full: '満席',
+      selected: '選択中',
+      legendOpen: '予約可能', legendFull: '満席',
+      continueBtn: 'この日時で入力へ進む',
+      chooseFirst: '日時を選んでください',
+      picked: '選択中：{slot}',
+      backIntro: '← 教室紹介に戻る',
+      noSlots: '現在、受付中の枠はありません。',
+      slotTakenMsg: '選んだ枠が満席になりました。別の日時をお選びください。',
+      formTitle: '予約情報の入力',
+      selectedSlot: '日時', fee: '体験料金', feeVal: '{fee}円（税込）',
+      changeSlot: '← 空き枠選択に戻る',
+      lName: '保護者のお名前', lEmail: 'メールアドレス', lAge: 'お子さまの年齢',
+      required: '必須',
+      emailHint: '予約内容のご連絡に使います',
+      agePlaceholder: '選択してください',
+      ageOpt: '{n}歳',
+      errName: '保護者のお名前を入力してください',
+      errEmail: 'メールアドレスを入力してください',
+      errEmailFormat: 'メールアドレスの形式で入力してください（例：name@example.com）',
+      errAge: 'お子さまの年齢を選択してください',
+      errSummary: '入力内容を確認してください（{n}件）',
+      submit: 'この内容で予約を確定する',
+      submitNote: 'ボタンを押すと予約が確定します。お支払いは当日教室で。',
+      doneTitle: '予約が確定しました',
+      doneLead: '{name}さま、ご予約ありがとうございます。当日お会いできるのを楽しみにしています。',
+      bookingNo: '予約番号', dateTime: '日時', child: 'お子さま', childAge: '{n}歳', contact: 'メール',
+      prepTitle: '当日に向けて',
+      prep: [
+        '開始10分前までに教室へお越しください。',
+        '絵の具がついてもよい服装でお越しください（エプロンは貸し出します）。',
+        '持ち物は不要です。体験料金は当日教室でお支払いください。',
+        '英語の準備は必要ありません。「Hello!」が言えたら十分です。',
+        '変更・キャンセルは、お電話またはInstagramのDMでご連絡ください。'
+      ],
+      backHome: '教室紹介に戻る',
+      timeRange: '{s}〜{e}',
+      demoNote: 'これは架空の教室のデザインコンセプトです。予約はどこにも送信されません。',
+      demoStaff: 'スタッフ画面を見る →',
+      demoParent: '← 保護者向けサイトに戻る'
+    },
+    en: {
+      brand: 'Little Palette English Art Studio',
+      langLabel: 'Language',
+      heroImg: 'Image: a lesson in progress (children painting)',
+      heroTitle: 'Create freely, in English.',
+      heroLead: 'An art studio where children aged {min}–{max} paint, build, and express themselves while hearing and using English.',
+      ctaSlots: 'See available trial lessons',
+      ctaSub: 'Pick an open time and book on the spot',
+      factsTitle: 'Trial lesson at a glance',
+      fAge: 'Ages', vAge: '{min}–{max}',
+      fLang: 'Lesson language', vLang: 'English (Japanese support available)',
+      fDur: 'Length', vDur: '{n} minutes',
+      fFee: 'Fee', vFee: '¥{fee} (tax and materials included)',
+      fDeadline: 'Booking deadline', vDeadline: 'Up to {n} days before the lesson',
+      fCap: 'Class size', vCap: 'Up to {n} children',
+      fParent: 'Parents', vParent: 'Welcome to stay and watch from the viewing seats',
+      conceptTitle: 'Our approach',
+      conceptBody: 'We care more about curiosity than about drawing “well.” Children talk about colors and shapes in English as they work, so the joy of making things and the joy of expressing themselves in English grow together.',
+      supportTitle: 'New to English? No problem.',
+      support: [
+        'We start with short words like “red” and “big,” using gestures and real objects.',
+        'A Japanese-speaking teacher is always nearby, so children can ask questions in Japanese.',
+        'Children don’t need to answer in English. They pick it up naturally while they create.'
+      ],
+      worksTitle: 'Student work',
+      works: ['Image: student work 1 (colorful painted animals)', 'Image: student work 2 (paper cup craft)', 'Image: student work 3 (collage)'],
+      flowTitle: 'How the trial lesson works',
+      flow: [
+        ['Hello (5 min)', 'Say your name in English'],
+        ['Today’s theme (10 min)', 'Learn color and shape words from a picture book'],
+        ['Make (35 min)', 'Paint and build freely'],
+        ['Show and tell (10 min)', 'Share your work and say “Thank you!”']
+      ],
+      regularTitle: 'Regular lessons',
+      courses: ['Preschool', 'Elementary school'],
+      coursePrice: '<b>¥{fee}</b> / month, tax incl.',
+      days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      fLesson: 'Length', vLesson: '{min} minutes, plus {fb} minutes of feedback for parents',
+      fJoin: 'When you join', vJoin: 'A one-time materials fee of ¥{fee}, separate from the monthly fee',
+      fFreq: 'Frequency', vFreq: 'Once a week, on whichever of the two days suits you',
+      navLabel: 'On this page',
+      slideLabel: 'Photo {n}', slidePause: 'Pause', slidePlay: 'Play',
+      trialTitle: 'Book a trial lesson',
+      trialBody: 'Choose a time that works for you. Your booking is confirmed right away.',
+      faqTitle: 'FAQ',
+      faq: [
+        ['Can my child join without speaking any English?', 'Yes. Most of our trial students are new to English, and a Japanese-speaking teacher is there to help.'],
+        ['What should my child wear?', 'We provide aprons, but please dress your child in clothes that can get paint on them.'],
+        ['Can siblings join together?', 'Yes. Please make a separate booking for each child.'],
+        ['How do I change or cancel a booking?', 'Call us or send us a direct message on Instagram.']
+      ],
+      footer: '© Little Palette English Art Studio',
+      stepSlot: 'Choose a time', stepForm: 'Your details', stepDone: 'Confirmed',
+      slotsTitle: 'Available trial lessons',
+      slotsLead: 'Choose a date and time. You’ll enter your details on the next screen. Bookings close {n} days before each lesson.',
+      remaining: 'Open · {n} left',
+      full: 'Full',
+      selected: 'Selected',
+      legendOpen: 'Open', legendFull: 'Full',
+      continueBtn: 'Continue with this time',
+      chooseFirst: 'Choose a time',
+      picked: 'Selected: {slot}',
+      backIntro: '← Back to studio overview',
+      noSlots: 'There are no open trial lessons right now.',
+      slotTakenMsg: 'The time you chose is now full. Please choose another time.',
+      formTitle: 'Your details',
+      selectedSlot: 'Date and time', fee: 'Trial fee', feeVal: '¥{fee} (tax included)',
+      changeSlot: '← Back to available times',
+      lName: 'Parent or guardian name', lEmail: 'Email address', lAge: 'Child’s age',
+      required: 'Required',
+      emailHint: 'We’ll use this to contact you about your booking',
+      agePlaceholder: 'Select an age',
+      ageOpt: '{n} years old',
+      errName: 'Enter the parent or guardian’s name.',
+      errEmail: 'Enter your email address.',
+      errEmailFormat: 'Enter an email address in the format name@example.com.',
+      errAge: 'Select your child’s age.',
+      errSummary: 'Please check the highlighted fields ({n}).',
+      submit: 'Confirm booking',
+      submitNote: 'Your booking is confirmed when you tap the button. Pay at the studio on the day.',
+      doneTitle: 'Your booking is confirmed',
+      doneLead: 'Thank you, {name}. We look forward to seeing you!',
+      bookingNo: 'Booking number', dateTime: 'Date and time', child: 'Child', childAge: '{n} years old', contact: 'Email',
+      prepTitle: 'Before your lesson',
+      prep: [
+        'Please arrive at least 10 minutes before the start time.',
+        'Dress your child in clothes that can get paint on them. We provide aprons.',
+        'There’s nothing to bring. Pay the trial fee at the studio.',
+        'No English preparation is needed. “Hello!” is plenty.',
+        'To change or cancel, call us or send us a direct message on Instagram.'
+      ],
+      backHome: 'Back to studio overview',
+      timeRange: '{s}–{e}',
+      demoNote: 'Design concept for a fictional school. Bookings aren’t sent anywhere.',
+      demoStaff: 'View the staff dashboard →',
+      demoParent: '← Back to the parent site'
+    }
+  };
+
+  var WD_JA = ['日', '月', '火', '水', '木', '金', '土'];
+  var WD_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var MON_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  /* ================= Helpers ================= */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function fill(str, vars) {
+    return String(str).replace(/\{(\w+)\}/g, function (_, k) { return vars && vars[k] != null ? vars[k] : ''; });
+  }
+  function t(key, vars) { return fill(T[state.lang][key], vars); }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function todayIso() { return iso(new Date()); }
+  function addDays(n) { var d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + n); return iso(d); }
+  function parseIso(s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function fmtDate(s, lang) {
+    var d = parseIso(s);
+    if (lang === 'en') return WD_EN[d.getDay()] + ', ' + MON_EN[d.getMonth()] + ' ' + d.getDate();
+    return (d.getMonth() + 1) + '月' + d.getDate() + '日（' + WD_JA[d.getDay()] + '）';
+  }
+  function endTime(start) {
+    var p = start.split(':'); var m = +p[0] * 60 + +p[1] + DURATION_MIN;
+    return pad(Math.floor(m / 60) % 24) + ':' + pad(m % 60);
+  }
+  function timeRange(slot, lang) { return fill(T[lang].timeRange, { s: slot.time, e: endTime(slot.time) }); }
+  function slotLabel(slot, lang) { return fmtDate(slot.date, lang) + ' ' + timeRange(slot, lang); }
+  function yen(n) { return n.toLocaleString('ja-JP'); }
+  function bookedCount(slotId) { return state.bookings.filter(function (b) { return b.slotId === slotId; }).length; }
+  function remaining(slot) { return Math.max(0, slot.capacity - bookedCount(slot.id)); }
+  function findSlot(id) { return state.slots.filter(function (s) { return s.id === id; })[0]; }
+  function findBooking(id) { return state.bookings.filter(function (b) { return b.id === id; })[0]; }
+  function sortKey(slot) { return slot.date + ' ' + slot.time; }
+  function bySlot(a, b) { return sortKey(a) < sortKey(b) ? -1 : sortKey(a) > sortKey(b) ? 1 : 0; }
+  function bookable(slot) { return slot.date >= addDays(BOOK_DAYS_BEFORE); }
+  function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+  /* ================= State ================= */
+  function seed() {
+    var slots = [
+      { id: 's1', date: addDays(4), time: '10:00', capacity: 4 },
+      { id: 's2', date: addDays(4), time: '13:30', capacity: 4 },
+      { id: 's3', date: addDays(5), time: '10:00', capacity: 4 },
+      { id: 's4', date: addDays(5), time: '13:30', capacity: 4 },
+      { id: 's5', date: addDays(11), time: '10:00', capacity: 3 },
+      { id: 's6', date: addDays(11), time: '13:30', capacity: 4 },
+      { id: 's7', date: addDays(12), time: '10:00', capacity: 4 }
+    ];
+    var people = [
+      ['s2', '佐藤 美咲', 'misaki.sato@example.com', 5, 'ja'],
+      ['s2', '鈴木 健太', 'kenta.suzuki@example.com', 7, 'ja'],
+      ['s2', 'Olivia Brown', 'olivia.b@example.com', 6, 'en'],
+      ['s2', '高橋 由美', 'yumi.t@example.com', 8, 'ja'],
+      ['s3', '田中 彩', 'aya.tanaka@example.com', 4, 'ja'],
+      ['s3', '伊藤 誠', 'makoto.ito@example.com', 6, 'ja'],
+      ['s3', 'Daniel Kim', 'daniel.kim@example.com', 9, 'en'],
+      ['s4', '渡辺 さくら', 'sakura.w@example.com', 5, 'ja'],
+      ['s5', '中村 葵', 'aoi.nakamura@example.com', 7, 'ja'],
+      ['s5', 'Sophie Martin', 'sophie.m@example.com', 5, 'en'],
+      ['s5', '小林 拓也', 'takuya.k@example.com', 6, 'ja'],
+      ['s7', '加藤 まり', 'mari.kato@example.com', 4, 'ja'],
+      ['s7', '吉田 翔', 'sho.yoshida@example.com', 8, 'ja']
+    ];
+    var bookings = people.map(function (p, i) {
+      var created = new Date(); created.setDate(created.getDate() - (people.length - i)); created.setHours(9 + (i % 10), (i * 17) % 60, 0, 0);
+      return { id: 'TR-' + (1001 + i), slotId: p[0], parentName: p[1], email: p[2], childAge: p[3], lang: p[4], createdAt: created.toISOString(), isNew: false };
+    });
+    return {
+      view: 'parent',
+      lang: 'ja',
+      screen: 'intro',
+      selectedSlotId: null,
+      form: { name: '', email: '', age: '' },
+      errors: {},
+      slotTaken: false,
+      lastBookingId: null,
+      staffTab: 'list',
+      openBookingId: null,
+      staffForm: { date: '', time: '10:00', capacity: String(DEFAULT_CAPACITY) },
+      staffErrors: {},
+      staffAdded: null,
+      slots: slots,
+      bookings: bookings,
+      nextNo: 1001 + people.length
+    };
+  }
+
+  var state;
+  try { state = JSON.parse(sessionStorage.getItem(STORE_KEY)); } catch (e) { state = null; }
+  if (!state || !state.slots) state = seed();
+  function save() { try { sessionStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+  /* ================= Parent screens ================= */
+  function steps(current) {
+    var keys = ['stepSlot', 'stepForm', 'stepDone'];
+    return '<ol class="steps">' + keys.map(function (k, i) {
+      var cls = i === current ? 'on' : i < current ? 'past' : '';
+      return '<li class="' + cls + '"' + (i === current ? ' aria-current="step"' : '') + '>' + esc(t(k)) + '</li>';
+    }).join('') + '</ol>';
+  }
+
+  function factsList() {
+    var rows = [
+      [t('fAge'), t('vAge', { min: AGE_MIN, max: AGE_MAX })],
+      [t('fLang'), esc(t('vLang'))],
+      [t('fDur'), t('vDur', { n: DURATION_MIN })],
+      [t('fFee'), esc(t('vFee', { fee: yen(FEE_YEN) }))],
+      [t('fCap'), t('vCap', { n: DEFAULT_CAPACITY })],
+      [t('fDeadline'), t('vDeadline', { n: BOOK_DAYS_BEFORE })],
+      [t('fParent'), esc(t('vParent'))]
+    ];
+    return '<dl class="facts">' + rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + r[1] + '</dd></div>'; }).join('') + '</dl>';
+  }
+
+  function regularLessons(L) {
+    return '<div class="courses">' + COURSES.map(function (c, i) {
+      return '<div class="course"><div class="course-head"><h3>' + esc(L.courses[i]) + '</h3>' +
+        '<p class="price">' + fill(L.coursePrice, { fee: yen(c.fee) }) + '</p></div>' +
+        '<dl class="times">' + c.times.map(function (x) {
+          return '<div><dt>' + esc(L.days[x.day]) + '</dt><dd>' + esc(fill(L.timeRange, x)) + '</dd></div>';
+        }).join('') + '</dl></div>';
+    }).join('') + '</div>' +
+    '<dl class="facts">' +
+      '<div><dt>' + esc(L.fLesson) + '</dt><dd>' + esc(t('vLesson', { min: LESSON_MIN, fb: FEEDBACK_MIN })) + '</dd></div>' +
+      '<div><dt>' + esc(L.fFreq) + '</dt><dd>' + esc(L.vFreq) + '</dd></div>' +
+      '<div><dt>' + esc(L.fJoin) + '</dt><dd>' + esc(t('vJoin', { fee: yen(JOIN_MATERIALS_YEN) })) + '</dd></div>' +
+    '</dl>';
+  }
+
+  function langSwitch() {
+    return '<div class="lang" role="group" aria-label="' + esc(t('langLabel')) + '">' +
+      '<button type="button" lang="ja" data-action="lang" data-lang="ja" aria-pressed="' + (state.lang === 'ja') + '">日本語</button>' +
+      '<span class="sep" aria-hidden="true">/</span>' +
+      '<button type="button" lang="en" data-action="lang" data-lang="en" aria-pressed="' + (state.lang === 'en') + '">English</button>' +
+    '</div>';
+  }
+
+  function header() {
+    return '<header class="topbar">' +
+      '<div class="brand">LITTLE PALETTE<small>' + esc(state.lang === 'ja' ? '英語アート教室' : 'English Art Studio') + '</small></div>' +
+      langSwitch() + '</header>';
+  }
+
+  /* Desktop side panels (hidden below 1200px by CSS) */
+  function deskLeft(L) {
+    return '<aside class="desk-left" aria-label="' + esc(L.brand) + '">' +
+      '<div class="brand">LITTLE PALETTE<small>' + esc(state.lang === 'ja' ? '英語アート教室' : 'English Art Studio') + '</small></div>' +
+      '<div class="desk-visual">' +
+        '<figure class="desk-photo">' + SLIDES.map(function (img, i) {
+          var on = i === slideIdx;
+          return '<img src="' + esc(img.src) + '" alt="' + esc(img.alt[state.lang]) + '" decoding="async"' +
+            (on ? ' class="on"' : ' aria-hidden="true"') + '>';
+        }).join('') + '</figure>' +
+        (SLIDES.length > 1 ? '<div class="slide-ctrl">' + SLIDES.map(function (img, i) {
+          return '<button type="button" class="dot-btn" data-action="slide" data-i="' + i + '" aria-label="' + esc(fill(L.slideLabel, { n: i + 1 })) + '"' +
+            (i === slideIdx ? ' aria-current="true"' : '') + '></button>';
+        }).join('') +
+        '<button type="button" class="pause" data-action="slidepause">' + esc(slidePaused ? L.slidePlay : L.slidePause) + '</button></div>' : '') +
+      '</div>' +
+      '<p class="desk-tag">Art × English for Kids</p>' +
+    '</aside>';
+  }
+
+  function deskRight(L) {
+    return '<aside class="desk-right">' + langSwitch() +
+      '<nav class="desk-nav" aria-label="' + esc(L.navLabel) + '"><ol>' +
+        NAV.map(function (n, i) {
+          return '<li><a href="#' + n.id + '" data-action="jump" data-target="' + n.id + '">' +
+            '<span class="bar" aria-hidden="true"></span><span class="no">0' + i + '</span>' +
+            '<span><span class="en">' + n.label + '</span>' + (n.key ? '<span class="sub">' + esc(L[n.key]) + '</span>' : '') + '</span></a></li>';
+        }).join('') + '</ol></nav>' +
+      (state.screen === 'intro'
+        ? '<div class="desk-book"><button type="button" class="btn" data-action="go" data-screen="slots">' + esc(L.ctaSlots) + ' →</button>' +
+            '<p class="muted small">' + esc(L.ctaSub) + '</p></div>'
+        : '<div></div>') +
+    '</aside>';
+  }
+
+  /* Slideshow: advances without re-rendering, so the rest of the page is untouched. */
+  var slideIdx = 0;
+  var slidePaused = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function showSlide(i) {
+    slideIdx = (i + SLIDES.length) % SLIDES.length;
+    app.querySelectorAll('.desk-photo img').forEach(function (img, k) {
+      img.classList.toggle('on', k === slideIdx);
+      if (k === slideIdx) img.removeAttribute('aria-hidden'); else img.setAttribute('aria-hidden', 'true');
+    });
+    app.querySelectorAll('.slide-ctrl .dot-btn').forEach(function (b, k) {
+      if (k === slideIdx) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    });
+  }
+  setInterval(function () {
+    if (slidePaused || document.hidden || state.view !== 'parent' || SLIDES.length < 2) return;
+    showSlide(slideIdx + 1);
+  }, SLIDE_MS);
+
+  function imgTag(img, lazy) {
+    return '<img src="' + esc(img.src) + '" width="' + img.w + '" height="' + img.h + '" alt="' + esc(img.alt[state.lang]) + '"' +
+      (lazy ? ' loading="lazy"' : '') + ' decoding="async">';
+  }
+
+  function heroMedia(L) {
+    var img = IMAGES.hero;
+    if (!img) return '<div class="ph hero-ph"><span>' + esc(L.heroImg) + '</span></div>';
+    return '<figure class="hero-img">' + imgTag(img, false) + '</figure>';
+  }
+
+  function worksMedia(L) {
+    var imgs = IMAGES.works;
+    var style = '';
+    // Size the two smaller photos by their aspect ratios so they share a row height without cropping.
+    if (imgs[1] && imgs[2]) style = ' style="grid-template-columns:' + (imgs[1].w / imgs[1].h).toFixed(3) + 'fr ' + (imgs[2].w / imgs[2].h).toFixed(3) + 'fr"';
+    return '<div class="works' + (imgs.some(Boolean) ? ' has-images' : '') + '"' + style + '>' +
+      L.works.map(function (w, i) {
+        return imgs[i] ? '<figure class="work">' + imgTag(imgs[i], true) + '</figure>' : '<div class="ph"><span>' + esc(w) + '</span></div>';
+      }).join('') + '</div>';
+  }
+
+  function renderIntro() {
+    var L = T[state.lang];
+    var no = 0;
+    function head(label, title) {
+      no++;
+      return '<span class="eyebrow"><span class="no">0' + no + '</span> ' + label + '</span><h2>' + esc(title) + '</h2>';
+    }
+    var marquee = 'ART &amp; ENGLISH STUDIO';
+    return header() +
+      '<section class="hero mesh" id="top">' +
+        '<span class="vlabel" aria-hidden="true">Art × English for Kids</span>' +
+        '<p class="kicker">Paint · Play · Speak</p>' +
+        '<h1>' + esc(L.heroTitle).replace('、', '、<br>').replace(', ', ',<br>') + '</h1>' +
+        '<p class="lead">' + esc(t('heroLead', { min: AGE_MIN, max: AGE_MAX })) + '</p>' +
+        heroMedia(L) +
+        '<div class="marquee" aria-hidden="true"><span>' + marquee + '</span><span>' + marquee + '</span></div>' +
+        '<div class="cta-wrap">' +
+          '<button type="button" class="btn" data-action="go" data-screen="slots">' + esc(L.ctaSlots) + ' →</button>' +
+          '<p class="muted">' + esc(L.ctaSub) + '</p>' +
+        '</div>' +
+      '</section>' +
+      '<section class="section" id="concept">' + head('Concept', L.conceptTitle) +
+        '<p class="concept-text">' + esc(L.conceptBody) + '</p>' +
+      '</section>' +
+      '<section class="section mesh" id="support">' + head('Support', L.supportTitle) + '<ol class="support">' +
+        L.support.map(function (s, i) { return '<li><span class="num">0' + (i + 1) + '</span><p>' + esc(s) + '</p></li>'; }).join('') + '</ol></section>' +
+      '<section class="section" id="trial">' + head('Trial Lesson', L.factsTitle) + factsList() + '</section>' +
+      '<section class="section" id="gallery">' + head('Gallery', L.worksTitle) + worksMedia(L) +
+        '<p class="works-cap">Works by our students</p></section>' +
+      '<section class="section" id="flow">' + head('Flow', L.flowTitle) + '<ol class="flow">' +
+        L.flow.map(function (f, i) { return '<li><span class="n">0' + (i + 1) + '</span><div><strong>' + esc(f[0]) + '</strong><span class="muted">' + esc(f[1]) + '</span></div></li>'; }).join('') + '</ol></section>' +
+      '<section class="section" id="lessons">' + head('Regular Lessons', L.regularTitle) + regularLessons(L) + '</section>' +
+      '<section class="section mesh" id="booking"><div class="card stack">' + head('Booking', L.trialTitle) +
+        '<p>' + esc(L.trialBody) + '</p>' +
+        '<div class="summary-card">' +
+          '<div class="row"><span>' + esc(L.fDur) + '</span><b>' + t('vDur', { n: DURATION_MIN }) + '</b></div>' +
+          '<div class="row"><span>' + esc(L.fFee) + '</span><b>' + esc(t('feeVal', { fee: yen(FEE_YEN) })) + '</b></div>' +
+          '<div class="row"><span>' + esc(L.fParent) + '</span><b>' + esc(L.vParent) + '</b></div>' +
+        '</div>' +
+        '<button type="button" class="btn" data-action="go" data-screen="slots">' + esc(L.ctaSlots) + ' →</button>' +
+      '</div></section>' +
+      '<section class="section" id="faq">' + head('FAQ', L.faqTitle) +
+        L.faq.map(function (q) { return '<details class="faq"><summary>' + esc(q[0]) + '<span class="pm" aria-hidden="true"></span></summary><p>' + esc(q[1]) + '</p></details>'; }).join('') +
+      '</section>' +
+      '<footer class="footer">' +
+        '<div class="brand">LITTLE PALETTE<small>' + esc(t('brand')) + '</small></div>' +
+        '<span class="ig">INSTAGRAM</span>' +
+        '<p>' + esc(L.footer) + '</p>' +
+      '</footer>';
+  }
+
+  function renderSlots() {
+    var L = T[state.lang];
+    var today = todayIso();
+    var list = state.slots.filter(bookable).sort(bySlot);
+    var groups = {};
+    var order = [];
+    list.forEach(function (s) { if (!groups[s.date]) { groups[s.date] = []; order.push(s.date); } groups[s.date].push(s); });
+    var sel = state.selectedSlotId && findSlot(state.selectedSlotId);
+    if (sel && remaining(sel) === 0) sel = null;
+
+    var body = order.length ? order.map(function (date) {
+      return '<div class="day"><h3>' + esc(fmtDate(date, state.lang)) + '</h3>' +
+        groups[date].map(function (s) {
+          var left = remaining(s);
+          var full = left === 0;
+          var picked = sel && sel.id === s.id;
+          return '<button type="button" class="slot' + (full ? ' full' : '') + '" ' +
+            (full ? 'disabled aria-disabled="true"' : 'data-action="pick" data-id="' + s.id + '" aria-pressed="' + !!picked + '"') + '>' +
+            '<span class="time">' + esc(timeRange(s, state.lang)) + '</span>' +
+            '<span class="status">' + (full ? esc(L.full) : picked ? '✓ ' + esc(L.selected) : esc(t('remaining', { n: left }))) + '</span>' +
+          '</button>';
+        }).join('') + '</div>';
+    }).join('') : '<p class="notice">' + esc(L.noSlots) + '</p>';
+
+    return header() + steps(0) +
+      '<section class="section stack" style="border-bottom:0">' +
+        '<button type="button" class="link" data-action="go" data-screen="intro">' + esc(L.backIntro) + '</button>' +
+        '<h1 style="font-size:22px">' + esc(L.slotsTitle) + '</h1>' +
+        '<p class="muted">' + esc(t('slotsLead', { n: BOOK_DAYS_BEFORE })) + '</p>' +
+        '<p class="small">' + esc(L.fDur) + '：' + t('vDur', { n: DURATION_MIN }) + ' / ' + esc(L.fFee) + '：' + esc(t('feeVal', { fee: yen(FEE_YEN) })) + '</p>' +
+        (state.slotTaken ? '<p class="notice error" role="alert">' + esc(L.slotTakenMsg) + '</p>' : '') +
+        '<div class="legend"><span>' + esc(L.legendOpen) + '</span><span class="l-full">' + esc(L.legendFull) + '</span></div>' +
+        '<div>' + body + '</div>' +
+      '</section>' +
+      '<div class="sticky-cta">' +
+        '<p class="picked" aria-live="polite">' + (sel ? esc(t('picked', { slot: slotLabel(sel, state.lang) })) : esc(L.chooseFirst)) + '</p>' +
+        '<button type="button" class="btn" data-action="go" data-screen="form"' + (sel ? '' : ' disabled') + '>' + esc(L.continueBtn) + ' →</button>' +
+      '</div>';
+  }
+
+  var ERR_KEYS = { name: 'errName', email: 'errEmail', emailFormat: 'errEmailFormat', age: 'errAge' };
+
+  function validateField(field, v) {
+    v = (v || '').trim();
+    if (field === 'name') return v ? null : 'name';
+    if (field === 'email') return !v ? 'email' : isEmail(v) ? null : 'emailFormat';
+    if (field === 'age') return v ? null : 'age';
+    return null;
+  }
+
+  function fieldHtml(field, label, control, hint) {
+    var err = state.errors[field];
+    return '<div class="field' + (err ? ' invalid' : '') + '" data-fieldwrap="' + field + '">' +
+      '<label for="f-' + field + '">' + esc(label) + '<span class="req">' + esc(t('required')) + '</span>' + '</label>' +
+      control +
+      (hint ? '<p class="hint" id="h-' + field + '">' + esc(hint) + '</p>' : '') +
+      '<p class="err" id="e-' + field + '">' + (err ? esc(t(ERR_KEYS[err])) : '') + '</p>' +
+    '</div>';
+  }
+
+  function renderForm() {
+    var L = T[state.lang];
+    var slot = findSlot(state.selectedSlotId);
+    var f = state.form;
+    var nErr = Object.keys(state.errors).length;
+    function aria(field, hint) {
+      var ids = (hint ? 'h-' + field + ' ' : '') + 'e-' + field;
+      return ' aria-describedby="' + ids + '"' + (state.errors[field] ? ' aria-invalid="true"' : '');
+    }
+    var ageOpts = '<option value="">' + esc(L.agePlaceholder) + '</option>';
+    for (var a = AGE_MIN; a <= AGE_MAX; a++) {
+      ageOpts += '<option value="' + a + '"' + (String(a) === f.age ? ' selected' : '') + '>' + esc(t('ageOpt', { n: a })) + '</option>';
+    }
+    return header() + steps(1) +
+      '<section class="section" style="border-bottom:0">' +
+        '<button type="button" class="link" data-action="go" data-screen="slots">' + esc(L.changeSlot) + '</button>' +
+        '<h1 style="font-size:22px;margin:4px 0 12px">' + esc(L.formTitle) + '</h1>' +
+        '<div class="summary-card">' +
+          '<div class="row"><span>' + esc(L.selectedSlot) + '</span><b>' + esc(slotLabel(slot, state.lang)) + '</b></div>' +
+          '<div class="row"><span>' + esc(L.fee) + '</span><b>' + esc(t('feeVal', { fee: yen(FEE_YEN) })) + '</b></div>' +
+        '</div>' +
+        '<form data-form="booking" novalidate>' +
+          (nErr ? '<p class="notice error" role="alert" style="margin-top:16px">' + esc(t('errSummary', { n: nErr })) + '</p>' : '') +
+          fieldHtml('name', L.lName, '<input id="f-name" data-field="name" type="text" autocomplete="name" value="' + esc(f.name) + '"' + aria('name') + '>') +
+          fieldHtml('email', L.lEmail, '<input id="f-email" data-field="email" type="email" inputmode="email" autocomplete="email" value="' + esc(f.email) + '"' + aria('email', true) + '>', L.emailHint) +
+          fieldHtml('age', L.lAge, '<select id="f-age" data-field="age"' + aria('age') + '>' + ageOpts + '</select>') +
+          '<div style="margin-top:24px"><button type="submit" class="btn">' + esc(L.submit) + '</button></div>' +
+          '<p class="muted small" style="margin-top:8px">' + esc(L.submitNote) + '</p>' +
+        '</form>' +
+      '</section>';
+  }
+
+  function renderDone() {
+    var L = T[state.lang];
+    var b = findBooking(state.lastBookingId);
+    if (!b) { state.screen = 'intro'; return renderIntro(); }
+    var slot = findSlot(b.slotId);
+    return header() + steps(2) +
+      '<section class="section stack">' +
+        '<div class="done-mark" aria-hidden="true">✓</div>' +
+        '<h1 style="font-size:24px">' + esc(L.doneTitle) + '</h1>' +
+        '<p>' + esc(t('doneLead', { name: b.parentName })) + '</p>' +
+        '<div class="summary-card">' +
+          '<div class="row"><span>' + esc(L.bookingNo) + '</span><b>' + esc(b.id) + '</b></div>' +
+          '<div class="row"><span>' + esc(L.dateTime) + '</span><b>' + esc(slotLabel(slot, state.lang)) + '</b></div>' +
+          '<div class="row"><span>' + esc(L.child) + '</span><b>' + esc(t('childAge', { n: b.childAge })) + '</b></div>' +
+          '<div class="row"><span>' + esc(L.fee) + '</span><b>' + esc(t('feeVal', { fee: yen(FEE_YEN) })) + '</b></div>' +
+          '<div class="row"><span>' + esc(L.contact) + '</span><b style="word-break:break-all">' + esc(b.email) + '</b></div>' +
+        '</div>' +
+      '</section>' +
+      '<section class="section"><h2>' + esc(L.prepTitle) + '</h2><ul class="checklist">' +
+        L.prep.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ul>' +
+      '</section>' +
+      '<section class="section"><button type="button" class="btn secondary" data-action="go" data-screen="intro">' + esc(L.backHome) + '</button></section>';
+  }
+
+  /* ================= Staff screens (日本語のみ) ================= */
+  function renderStaff() {
+    var today = todayIso();
+    var upcoming = state.bookings.filter(function (b) { var s = findSlot(b.slotId); return s && s.date >= today; });
+    var openSlots = state.slots.filter(function (s) { return s.date >= today && remaining(s) > 0; }).length;
+    var newCount = state.bookings.filter(function (b) { return b.isNew; }).length;
+    return '<header class="staff-head"><div class="brand">スタッフ管理画面<small>' + esc(T.ja.brand) + '</small></div></header>' +
+      '<div class="tabs" role="tablist">' +
+        '<button type="button" role="tab" data-action="tab" data-tab="list" aria-selected="' + (state.staffTab === 'list') + '">予約一覧</button>' +
+        '<button type="button" role="tab" data-action="tab" data-tab="add" aria-selected="' + (state.staffTab === 'add') + '">体験枠の追加</button>' +
+      '</div>' +
+      '<section class="section" style="border-bottom:0">' +
+        '<div class="stats">' +
+          '<div><b>' + upcoming.length + '</b><span>今後の予約</span></div>' +
+          '<div><b>' + newCount + '</b><span>新着の予約</span></div>' +
+          '<div><b>' + openSlots + '</b><span>空きのある枠</span></div>' +
+        '</div>' +
+        (state.staffTab === 'list' ? staffList(upcoming) : staffAdd()) +
+      '</section>';
+  }
+
+  function staffList(upcoming) {
+    if (!upcoming.length) return '<p class="notice" style="margin-top:16px">今後の予約はありません。</p>';
+    upcoming.sort(function (a, b) {
+      var c = bySlot(findSlot(a.slotId), findSlot(b.slotId));
+      return c || (a.createdAt < b.createdAt ? -1 : 1);
+    });
+    var html = '<p class="muted small" style="margin-top:16px">日時の早い順。行を押すと詳細を表示します。</p>';
+    var currentSlot = null;
+    upcoming.forEach(function (b) {
+      var s = findSlot(b.slotId);
+      if (s.id !== currentSlot) {
+        if (currentSlot) html += '</div>';
+        currentSlot = s.id;
+        html += '<div class="bk-group"><h3>' + esc(fmtDate(s.date, 'ja')) + ' ' + esc(timeRange(s, 'ja')) + '　' + bookedCount(s.id) + '/' + s.capacity + '名' + (remaining(s) === 0 ? '（満席）' : '') + '</h3>';
+      }
+      var open = state.openBookingId === b.id;
+      html += '<button type="button" class="bk-row" data-action="openbk" data-id="' + b.id + '" aria-expanded="' + open + '" aria-controls="d-' + b.id + '">' +
+        '<span class="t">' + esc(s.time) + '</span>' +
+        '<span class="n">' + esc(b.parentName) + '<small>お子さま ' + esc(b.childAge) + '歳 ・ ' + (b.lang === 'en' ? '英語で予約' : '日本語で予約') + '</small></span>' +
+        '<span>' + (b.isNew ? '<span class="badge solid">新規</span> ' : '') + '<span class="chev" aria-hidden="true">' + (open ? '▲' : '▼') + '</span></span>' +
+      '</button>';
+      if (open) {
+        var created = new Date(b.createdAt);
+        html += '<div class="bk-detail" id="d-' + b.id + '"><dl>' +
+          '<dt>予約番号</dt><dd>' + esc(b.id) + '</dd>' +
+          '<dt>状態</dt><dd><span class="badge">確定</span></dd>' +
+          '<dt>日時</dt><dd>' + esc(slotLabel(s, 'ja')) + '</dd>' +
+          '<dt>保護者名</dt><dd>' + esc(b.parentName) + '</dd>' +
+          '<dt>メール</dt><dd>' + esc(b.email) + '</dd>' +
+          '<dt>お子さまの年齢</dt><dd>' + esc(b.childAge) + '歳</dd>' +
+          '<dt>予約時の言語</dt><dd>' + (b.lang === 'en' ? 'English' : '日本語') + '</dd>' +
+          '<dt>受付日時</dt><dd>' + (created.getMonth() + 1) + '/' + created.getDate() + ' ' + pad(created.getHours()) + ':' + pad(created.getMinutes()) + '</dd>' +
+          '<dt>同じ枠の人数</dt><dd>' + bookedCount(s.id) + ' / ' + s.capacity + '名</dd>' +
+        '</dl></div>';
+      }
+    });
+    if (currentSlot) html += '</div>';
+    return html;
+  }
+
+  function staffAdd() {
+    var f = state.staffForm, e = state.staffErrors;
+    var today = todayIso();
+    var slots = state.slots.filter(function (s) { return s.date >= today; }).sort(bySlot);
+    function sfield(key, label, control, hint) {
+      return '<div class="field' + (e[key] ? ' invalid' : '') + '"><label for="sf-' + key + '">' + label + '<span class="req">必須</span></label>' + control +
+        (hint ? '<p class="hint">' + hint + '</p>' : '') + '<p class="err" id="se-' + key + '">' + esc(e[key] || '') + '</p></div>';
+    }
+    return '<form data-form="slot" novalidate style="margin-top:8px">' +
+      (state.staffAdded ? '<div class="notice" role="status" style="margin-top:16px">' + esc(state.staffAdded) + ' の枠を追加しました。保護者画面の空き枠に表示されています。' +
+        '<div style="margin-top:8px"><button type="button" class="link" data-action="checkparent">保護者画面の空き枠で確認する →</button></div></div>' : '') +
+      sfield('date', '日付', '<input id="sf-date" type="date" data-sfield="date" min="' + today + '" value="' + esc(f.date) + '" aria-describedby="se-date">') +
+      '<div class="grid2">' +
+        sfield('time', '開始時刻', '<input id="sf-time" type="time" step="900" data-sfield="time" value="' + esc(f.time) + '" aria-describedby="se-time">', '終了は自動で' + DURATION_MIN + '分後') +
+        sfield('capacity', '定員', '<input id="sf-capacity" type="number" inputmode="numeric" min="1" max="12" data-sfield="capacity" value="' + esc(f.capacity) + '" aria-describedby="se-capacity">', '初期値 ' + DEFAULT_CAPACITY + '名') +
+      '</div>' +
+      '<div style="margin-top:20px"><button type="submit" class="btn">枠を追加する</button></div>' +
+    '</form>' +
+    '<h2 style="font-size:16px;margin:28px 0 8px">公開中の枠</h2>' +
+    '<table class="slot-table"><thead><tr><th>日付</th><th>時間</th><th>予約/定員</th><th>状態</th></tr></thead><tbody>' +
+      slots.map(function (s) {
+        var left = remaining(s);
+        return '<tr' + (s.isNew ? ' class="new"' : '') + '><td>' + esc(fmtDate(s.date, 'ja')) + '</td><td>' + esc(timeRange(s, 'ja')) + '</td><td>' + bookedCount(s.id) + '/' + s.capacity + '</td><td>' +
+          (left === 0 ? '満席' : '残り' + left) + (s.isNew ? '（追加）' : '') + '</td></tr>';
+      }).join('') +
+    '</tbody></table>';
+  }
+
+  /* ================= Render ================= */
+  var app = document.getElementById('app');
+
+  /* Portfolio strip above the site: says it's a concept and links between the two views. */
+  var demo = document.getElementById('demo');
+  function renderDemo() {
+    var D = T[state.lang];
+    demo.lang = state.lang;
+    demo.innerHTML = '<span>' + esc(D.demoNote) + '</span>' + (state.view === 'staff'
+      ? '<a href="./" data-action="toparent">' + esc(D.demoParent) + '</a>'
+      : '<a href="#staff">' + esc(D.demoStaff) + '</a>');
+  }
+
+  function render(opts) {
+    opts = opts || {};
+    renderDemo();
+
+    if (state.view === 'staff') {
+      document.documentElement.lang = 'ja';
+      app.classList.add('wide');
+      app.classList.remove('parent');
+      app.innerHTML = renderStaff();
+    } else {
+      document.documentElement.lang = state.lang;
+      app.classList.remove('wide');
+      app.classList.add('parent');
+      if (state.screen === 'form' && !(state.selectedSlotId && findSlot(state.selectedSlotId))) state.screen = 'slots';
+      var main = state.screen === 'slots' ? renderSlots()
+        : state.screen === 'form' ? renderForm()
+        : state.screen === 'done' ? renderDone()
+        : renderIntro();
+      var L = T[state.lang];
+      app.innerHTML = deskLeft(L) + '<div class="desk-main">' + main + '</div>' + deskRight(L);
+    }
+    if (opts.top) window.scrollTo(0, 0);
+    watchSections();
+    save();
+  }
+
+  /* Highlight the desktop menu item for the section in the middle of the screen. */
+  var spy = null;
+  function markNav(id) {
+    app.querySelectorAll('.desk-nav a').forEach(function (a) {
+      var on = a.getAttribute('data-target') === id;
+      a.classList.toggle('on', on);
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+    });
+  }
+  function watchSections() {
+    if (spy) { spy.disconnect(); spy = null; }
+    if (state.view !== 'parent' || state.screen !== 'intro') return;
+    markNav('top');
+    if (!('IntersectionObserver' in window)) return;
+    spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) markNav(en.target.id); });
+    }, { rootMargin: '-25% 0px -70% 0px' });
+    NAV.forEach(function (n) { var s = document.getElementById(n.id); if (s) spy.observe(s); });
+  }
+
+  function toast(msg) {
+    var el = document.getElementById('toast');
+    el.textContent = msg; el.hidden = false;
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { el.hidden = true; }, 2400);
+  }
+
+  /* ================= Events ================= */
+  document.addEventListener('click', function (ev) {
+    var el = ev.target.closest('[data-action]');
+    if (!el) return;
+    var a = el.getAttribute('data-action');
+
+    if (a === 'lang') {
+      // Keep the current screen, selected slot and form values; only the language changes.
+      state.lang = el.getAttribute('data-lang');
+      render();
+      // Two switches exist (mobile header, desktop menu); focus the one that is visible.
+      var btn = [].filter.call(app.querySelectorAll('[data-action="lang"][data-lang="' + state.lang + '"]'), function (b) { return b.offsetParent; })[0];
+      if (btn) btn.focus();
+    } else if (a === 'slide') {
+      showSlide(+el.getAttribute('data-i'));
+    } else if (a === 'slidepause') {
+      slidePaused = !slidePaused;
+      el.textContent = slidePaused ? T[state.lang].slidePlay : T[state.lang].slidePause;
+    } else if (a === 'jump') {
+      ev.preventDefault();
+      if (state.screen !== 'intro') {
+        if (state.screen === 'done') state.lastBookingId = null;
+        state.screen = 'intro';
+        state.errors = {};
+        state.slotTaken = false;
+        render();
+      }
+      var sec = document.getElementById(el.getAttribute('data-target'));
+      if (sec) {
+        sec.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+        sec.setAttribute('tabindex', '-1');
+        sec.focus({ preventScroll: true });
+      }
+    } else if (a === 'go') {
+      var to = el.getAttribute('data-screen');
+      if (to === 'form') {
+        var s = findSlot(state.selectedSlotId);
+        if (!s || remaining(s) === 0 || !bookable(s)) return;
+        state.slotTaken = false;
+      }
+      if (to === 'intro' && state.screen === 'done') state.lastBookingId = null;
+      if (to !== 'slots') state.slotTaken = false;
+      if (to !== 'form') state.errors = {};
+      state.screen = to;
+      render({ top: true });
+    } else if (a === 'pick') {
+      state.selectedSlotId = el.getAttribute('data-id');
+      state.slotTaken = false;
+      render();
+      var picked = app.querySelector('[data-action="pick"][data-id="' + state.selectedSlotId + '"]');
+      if (picked) picked.focus({ preventScroll: true });
+    } else if (a === 'tab') {
+      state.staffTab = el.getAttribute('data-tab');
+      render();
+    } else if (a === 'openbk') {
+      var id = el.getAttribute('data-id');
+      state.openBookingId = state.openBookingId === id ? null : id;
+      render();
+      var row = app.querySelector('[data-action="openbk"][data-id="' + id + '"]');
+      if (row) row.focus({ preventScroll: true });
+    } else if (a === 'toparent') {
+      ev.preventDefault();
+      history.pushState(null, '', location.pathname + location.search);
+      state.view = 'parent';
+      render({ top: true });
+    } else if (a === 'checkparent') {
+      history.replaceState(null, '', location.pathname + location.search);
+      state.view = 'parent';
+      state.screen = 'slots';
+      state.errors = {};
+      render({ top: true });
+    }
+  });
+
+  function onField(ev) {
+    var el = ev.target;
+    var field = el.getAttribute && el.getAttribute('data-field');
+    if (field) {
+      state.form[field] = el.value;
+      // Clear the error as soon as the field becomes valid (no full re-render, so focus stays put).
+      if (state.errors[field] && !validateField(field, el.value)) {
+        delete state.errors[field];
+        var wrap = app.querySelector('[data-fieldwrap="' + field + '"]');
+        if (wrap) wrap.classList.remove('invalid');
+        el.removeAttribute('aria-invalid');
+      }
+      save();
+      return;
+    }
+    var sf = el.getAttribute && el.getAttribute('data-sfield');
+    if (sf) { state.staffForm[sf] = el.value; save(); }
+  }
+  document.addEventListener('input', onField);
+  document.addEventListener('change', onField);
+
+  document.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var form = ev.target;
+    var kind = form.getAttribute('data-form');
+
+    if (kind === 'booking') {
+      var errs = {};
+      ['name', 'email', 'age'].forEach(function (k) { var e = validateField(k, state.form[k]); if (e) errs[k] = e; });
+      state.errors = errs;
+      if (Object.keys(errs).length) {
+        render();
+        var first = app.querySelector('[aria-invalid="true"]');
+        if (first) first.focus();
+        return;
+      }
+      var slot = findSlot(state.selectedSlotId);
+      if (!slot || remaining(slot) === 0 || !bookable(slot)) {
+        state.slotTaken = true;
+        state.selectedSlotId = null;
+        state.screen = 'slots';
+        render({ top: true });
+        return;
+      }
+      var b = {
+        id: 'TR-' + state.nextNo++,
+        slotId: slot.id,
+        parentName: state.form.name.trim(),
+        email: state.form.email.trim(),
+        childAge: Number(state.form.age),
+        lang: state.lang,
+        createdAt: new Date().toISOString(),
+        isNew: true
+      };
+      state.bookings.push(b);
+      state.lastBookingId = b.id;
+      state.form = { name: '', email: '', age: '' };
+      state.errors = {};
+      state.selectedSlotId = null;
+      state.screen = 'done';
+      render({ top: true });
+    }
+
+    if (kind === 'slot') {
+      var f = state.staffForm, e = {};
+      var cap = parseInt(f.capacity, 10);
+      if (!f.date) e.date = '日付を選択してください';
+      else if (f.date < todayIso()) e.date = '今日以降の日付を選択してください';
+      if (!f.time) e.time = '開始時刻を入力してください';
+      if (!f.capacity) e.capacity = '定員を入力してください';
+      else if (!(cap >= 1 && cap <= 12)) e.capacity = '1〜12の数字で入力してください';
+      if (!e.date && !e.time && state.slots.some(function (s) { return s.date === f.date && s.time === f.time; })) {
+        e.time = 'この日時の枠はすでにあります';
+      }
+      state.staffErrors = e;
+      state.staffAdded = null;
+      if (Object.keys(e).length) { render(); return; }
+      var ns = { id: 'n' + Date.now(), date: f.date, time: f.time, capacity: cap, isNew: true };
+      state.slots.push(ns);
+      state.staffAdded = slotLabel(ns, 'ja');
+      state.staffForm = { date: '', time: f.time, capacity: String(DEFAULT_CAPACITY) };
+      render();
+    }
+  });
+
+  // The staff screen opens at #staff (e.g. stylish.html#staff); everything else is the parent site.
+  function viewFromUrl() { return location.hash === '#staff' ? 'staff' : 'parent'; }
+  state.view = viewFromUrl();
+  window.addEventListener('hashchange', function () {
+    var v = viewFromUrl();
+    if (v !== state.view) { state.view = v; render({ top: true }); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../.astro/collections/works.schema.json",
+  "order": 5,
+  "url": "/demos/niconico-room/",
+  "image": "./niconico-room.jpg",
+  "concept": true,
+  "title": { "ja": "Niconico Room", "en": "Niconico Room" },
+  "category": { "ja": "ワイヤーフレーム / 申込機能", "en": "Wireframe / Request form" },
+  "desc": {
+    "ja": "児童発達支援事業所「にこにこルーム」のモバイルファーストのワイヤーフレーム。3つの教室の案内と見学・相談の申込フォーム、スタッフ向けの申込一覧つき。",
+    "en": "Mobile-first wireframe for a children's developmental support center, with three classrooms, a visit and consultation request form, and a staff list of requests."
+  }
+}

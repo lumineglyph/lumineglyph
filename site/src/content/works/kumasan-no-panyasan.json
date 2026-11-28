@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../.astro/collections/works.schema.json",
+  "order": 3,
+  "url": "/demos/kumasan-no-panyasan/",
+  "image": "./kumasan-no-panyasan.jpg",
+  "concept": true,
+  "title": { "ja": "Kuma-san's Bakery", "en": "Kuma-san's Bakery" },
+  "category": { "ja": "ホームページ制作 / 予約機能", "en": "Website / Booking" },
+  "desc": {
+    "ja": "小麦粉と白砂糖を使わない親子の米粉パン教室「くまさんのパン屋さん」のサイト。予約カレンダーと予約フォーム、運営者向けの予約管理ページつき。",
+    "en": "Site for a gluten-free rice-flour bread class for parents and children, with a booking calendar, a booking form and an admin page for reservations."
+  }
+}
