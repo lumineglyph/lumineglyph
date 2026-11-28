@@ -910,7 +910,7 @@
           var full = left === 0;
           var picked = sel && sel.id === s.id;
           return '<button type="button" class="slot' + (full ? ' full' : '') + '" ' +
-            (full ? 'disabled aria-disabled="true"' : 'data-action="pick" data-id="' + s.id + '" aria-pressed="' + !!picked + '"') + '>' +
+            (full ? 'disabled aria-disabled="true"' : 'data-action="pick" data-id="' + esc(s.id) + '" aria-pressed="' + !!picked + '"') + '>' +
             '<span class="time">' + esc(timeRange(s, state.lang)) + '</span>' +
             '<span class="status">' + (full ? esc(L.full) : picked ? '✓ ' + esc(L.selected) : esc(t('remaining', { n: left }))) + '</span>' +
           '</button>';
@@ -1043,17 +1043,17 @@
       if (s.id !== currentSlot) {
         if (currentSlot) html += '</div>';
         currentSlot = s.id;
-        html += '<div class="bk-group"><h3>' + esc(fmtDate(s.date, 'ja')) + ' ' + esc(timeRange(s, 'ja')) + '　' + bookedCount(s.id) + '/' + s.capacity + '名' + (remaining(s) === 0 ? '（満席）' : '') + '</h3>';
+        html += '<div class="bk-group"><h3>' + esc(fmtDate(s.date, 'ja')) + ' ' + esc(timeRange(s, 'ja')) + '　' + bookedCount(s.id) + '/' + esc(s.capacity) + '名' + (remaining(s) === 0 ? '（満席）' : '') + '</h3>';
       }
       var open = state.openBookingId === b.id;
-      html += '<button type="button" class="bk-row" data-action="openbk" data-id="' + b.id + '" aria-expanded="' + open + '" aria-controls="d-' + b.id + '">' +
+      html += '<button type="button" class="bk-row" data-action="openbk" data-id="' + esc(b.id) + '" aria-expanded="' + open + '" aria-controls="d-' + esc(b.id) + '">' +
         '<span class="t">' + esc(s.time) + '</span>' +
         '<span class="n">' + esc(b.parentName) + '<small>お子さま ' + esc(b.childAge) + '歳 ・ ' + (b.lang === 'en' ? '英語で予約' : '日本語で予約') + '</small></span>' +
         '<span>' + (b.isNew ? '<span class="badge solid">新規</span> ' : '') + '<span class="chev" aria-hidden="true">' + (open ? '▲' : '▼') + '</span></span>' +
       '</button>';
       if (open) {
         var created = new Date(b.createdAt);
-        html += '<div class="bk-detail" id="d-' + b.id + '"><dl>' +
+        html += '<div class="bk-detail" id="d-' + esc(b.id) + '"><dl>' +
           '<dt>予約番号</dt><dd>' + esc(b.id) + '</dd>' +
           '<dt>状態</dt><dd><span class="badge">確定</span></dd>' +
           '<dt>日時</dt><dd>' + esc(slotLabel(s, 'ja')) + '</dd>' +
@@ -1062,7 +1062,7 @@
           '<dt>お子さまの年齢</dt><dd>' + esc(b.childAge) + '歳</dd>' +
           '<dt>予約時の言語</dt><dd>' + (b.lang === 'en' ? 'English' : '日本語') + '</dd>' +
           '<dt>受付日時</dt><dd>' + (created.getMonth() + 1) + '/' + created.getDate() + ' ' + pad(created.getHours()) + ':' + pad(created.getMinutes()) + '</dd>' +
-          '<dt>同じ枠の人数</dt><dd>' + bookedCount(s.id) + ' / ' + s.capacity + '名</dd>' +
+          '<dt>同じ枠の人数</dt><dd>' + bookedCount(s.id) + ' / ' + esc(s.capacity) + '名</dd>' +
         '</dl></div>';
       }
     });
@@ -1092,7 +1092,7 @@
     '<table class="slot-table"><thead><tr><th>日付</th><th>時間</th><th>予約/定員</th><th>状態</th></tr></thead><tbody>' +
       slots.map(function (s) {
         var left = remaining(s);
-        return '<tr' + (s.isNew ? ' class="new"' : '') + '><td>' + esc(fmtDate(s.date, 'ja')) + '</td><td>' + esc(timeRange(s, 'ja')) + '</td><td>' + bookedCount(s.id) + '/' + s.capacity + '</td><td>' +
+        return '<tr' + (s.isNew ? ' class="new"' : '') + '><td>' + esc(fmtDate(s.date, 'ja')) + '</td><td>' + esc(timeRange(s, 'ja')) + '</td><td>' + bookedCount(s.id) + '/' + esc(s.capacity) + '</td><td>' +
           (left === 0 ? '満席' : '残り' + left) + (s.isNew ? '（追加）' : '') + '</td></tr>';
       }).join('') +
     '</tbody></table>';
